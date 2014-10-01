@@ -19,7 +19,8 @@ if (is_file($autoload = __DIR__ . '/../vendor/autoload.php')) {
 }
 
 use Neoxygen\Neogen\Neogen,
-    Neoxygen\Neogen\Console\GenerateCommand;
+    Neoxygen\Neogen\Console\GenerateCommand,
+    Neoxygen\Neogen\Console\InitCommand;
 use Symfony\Component\Console\Application;
 
 
@@ -28,4 +29,5 @@ $application->setName('Neogen Console');
 $application->setVersion(Neogen::getVersion());
 $generateCommand = new GenerateCommand();
 $application->add($generateCommand);
+$application->add(new InitCommand());
 $application->run();

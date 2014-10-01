@@ -7,7 +7,7 @@ use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Output\OutputInterface,
-    Symfony\Component\Yaml\Yaml;
+    Symfony\Component\Yaml\Dumper;
 
 class InitCommand extends Command
 {
@@ -28,14 +28,20 @@ class InitCommand extends Command
                 'host' => 'localhost',
                 'port' => 7474
             ],
-            'nodes' => [],
-            'relationships' => []
+            'nodes' => null,
+            'relationships' => null
         ];
 
         $initFile = getcwd().'/neogen.yml';
         if (!file_exists($initFile)) {
-            Yaml::dump($defaultSchema, $initFile);
+            $dumper = new Dumper();
+            $yaml = $dumper->dump($defaultSchema, 2);
+            file_put_contents($initFile, $yaml);
+            //Yaml::dump($defaultSchema, $initFile);
+            $output->writeln('<info>Graph Schema file created in "'.$initFile.'" modify it for your needs.</info>');
+        } else {
+            $output->writeln('<error>The file "neoxygen.yml" already exist, delete it or modify it</error>');
         }
-        $output->writeln('<info>Graph Schema file created in "'.$initFile.'" modify it for your needs.</info>');
+
     }
 }
