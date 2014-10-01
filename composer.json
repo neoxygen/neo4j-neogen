@@ -1,0 +1,19 @@
+{
+    "require": {
+        "fzaninotto/faker": "~1.4",
+        "symfony/console": "~2.5",
+        "symfony/yaml": "~2.5",
+        "symfony/finder": "~2.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*",
+        "phpspec/phpspec": "2.1.0-RC1",
+        "neoxygen/neoclient": "~1.5"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Neoxygen\\Neogen\\": "src"
+        }
+    }
+}
