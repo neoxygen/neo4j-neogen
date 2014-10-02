@@ -20,6 +20,13 @@ class Processor
         $this->faker = Factory::create();
     }
 
+    /**
+     * Generate the queries for the creation of the nodes and relationships based on a schema file
+     * It also add constraints for all node labels on the "neogen_id" property
+     *
+     *
+     * @param array $schema
+     */
     public function process(array $schema)
     {
         if (!isset($schema['nodes'])) {
@@ -141,21 +148,31 @@ class Processor
         }
     }
 
-        public function getConstraints()
-        {
-            $constraints = [];
-            $calias = 'n'.sha1(microtime());
-            foreach ($this->labels as $label) {
-                $constraint = 'DROP CONSTRAINT ON ('.$calias.':'.$label.') ASSERT '.$calias.'.neogen_id IS UNIQUE; ';
-                $constraint .= 'CREATE CONSTRAINT ON ('.$calias.':'.$label.') ASSERT '.$calias.'.neogen_id IS UNIQUE; ';
-                $constraints[] = $constraint;
-            }
-
-            return $constraints;
+    /**
+     * Returns the constraints queries on the "neogen_id" property for all labels
+     *
+     * @return array
+     */
+    public function getConstraints()
+    {
+        $constraints = [];
+        $calias = 'n'.sha1(microtime());
+        foreach ($this->labels as $label) {
+            $constraint = 'DROP CONSTRAINT ON ('.$calias.':'.$label.') ASSERT '.$calias.'.neogen_id IS UNIQUE; ';
+            $constraint .= 'CREATE CONSTRAINT ON ('.$calias.':'.$label.') ASSERT '.$calias.'.neogen_id IS UNIQUE; ';
+            $constraints[] = $constraint;
         }
 
-        public function getQueries()
-        {
-            return $this->queries;
-        }
+        return $constraints;
+    }
+
+    /**
+     * Return the queries to generate the nodes and the relationships to the database
+     *
+     * @return array
+     */
+    public function getQueries()
+    {
+        return $this->queries;
+    }
 }

@@ -9,7 +9,9 @@ use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Output\OutputInterface,
     Symfony\Component\Filesystem\Filesystem;
 use Neoxygen\Neogen\Schema\Parser,
-    Neoxygen\Neogen\Schema\Processor;
+    Neoxygen\Neogen\Schema\Processor,
+    Neoxygen\NeoClient\Client,
+    Neoxygen\NeoClient\Formatter\ResponseFormatter;
 
 class GenerateCommand extends Command
 {
@@ -30,6 +32,8 @@ class GenerateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
+
         $start = microtime(true);
         $output->writeln('<info>Locating fixtures file</info>');
         $fixtures_file = getcwd().'/neogen.yml';
@@ -39,10 +43,6 @@ class GenerateCommand extends Command
             $parser = new Parser();
             $processor = new Processor();
             $schema = $parser->parseSchema($fixtures_file);
-
-            $client = new \Neoxygen\NeoClient\Client();
-            $client->addConnection('default', $schema['connection']['scheme'], $schema['connection']['host'], $schema['connection']['port']);
-            $client->build();
 
             $processor->process($schema);
 
@@ -64,6 +64,28 @@ class GenerateCommand extends Command
                 }
                 $fs->dumpFile($exportFilePath, $txt);
                 $output->writeln('<info>Exporting the queries to '.$exportFile.'</info>');
+                exit();
+            }
+
+            $client = new Client();
+            $client->addConnection('default', $schema['connection']['scheme'], $schema['connection']['host'], $schema['connection']['port']);
+            $client->build();
+            $formatter = new ResponseFormatter();
+
+            try {
+                $response = $client->ping();
+            } catch (\Neoxygen\NeoClient\Exception\HttpException $e) {
+                $output->writeln('<error>Connection Unavailable</error>');
+                $output->writeln('<error>'.$e->getMessage().'</error>');
+                exit();
+            }
+
+            $result = $formatter->format($response);
+
+            if ($result->hasErrors()) {
+                foreach ($result->getErrors() as $error) {
+                    $output->writeln('<error>'.$error['code']."\n".$error['message']);
+                }
                 exit();
             }
 

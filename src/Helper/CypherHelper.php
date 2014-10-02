@@ -5,11 +5,23 @@ namespace Neoxygen\Neogen\Helper;
 class CypherHelper
 {
 
+    /**
+     * Opens the MERGE statement
+     *
+     * @return string
+     */
     public function openMerge()
     {
         return 'MERGE (';
     }
 
+    /**
+     * Add the node alias and the node label
+     *
+     * @param null $alias
+     * @param $label
+     * @return string
+     */
     public function addNodeLabel($alias = null, $label)
     {
         if (null === $alias) {
@@ -19,21 +31,45 @@ class CypherHelper
         return $alias.':'.$label.' ';
     }
 
+    /**
+     * Closes the merge statement
+     *
+     * @return string
+     */
     public function closeMerge()
     {
         return ') ';
     }
 
+
+    /**
+     * Opens the node properties bracket
+     *
+     * @return string
+     */
     public function openNodePropertiesBracket()
     {
         return '{ ';
     }
 
+    /**
+     * Closes the node properties bracket
+     *
+     * @return string
+     */
     public function closeNodePropertiesBracket()
     {
         return '}';
     }
 
+    /**
+     * Add a node property key => value, should be used
+     * between the "openNodePropertiesBracket" and "closeNodePropertiesBracket" methods
+     *
+     * @param $key
+     * @param $value
+     * @return string
+     */
     public function addNodeProperty($key, $value)
     {
         if (is_string($value)) {
@@ -44,6 +80,21 @@ class CypherHelper
         return $key.':'.$value;
     }
 
+    /**
+     * Add a relationship path
+     * First it try to merge nodes, id's are taken from the already node generated ids
+     *
+     * Trying to MERGE the nodes could add payload to the query, but as depending of the amount
+     * of nodes and relationships creations, the queries may be splitted in multiple statements
+     * to avoid dealing with too large bodies in http requests, that's why we first need to
+     * get the start and end nodes
+     *
+     * @param $start
+     * @param $end
+     * @param $type
+     * @param array $properties
+     * @return string
+     */
     public function addRelationship($start, $end, $type, array $properties = array())
     {
         $sa = 'r'.sha1($start.microtime());
