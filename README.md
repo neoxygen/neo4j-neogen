@@ -2,7 +2,7 @@
 
 ## Graph Generator for Neo4j
 
-The library ease the generation of test graphs. The [faker](https://github.com/fzazinotto/faker) library is also used to generate random property values.
+The library ease the generation of test graphs. The [faker](https://github.com/fzaninotto/faker) library is also used to generate random property values.
 
 ## This is in development
 
@@ -61,11 +61,17 @@ relationships:
 vendor/bin/neogen generate
 ```
 
+or you may want to export the generation queries to a file, handy for importing it in the Neo4j Console :
+
+```bash
+./vendor/bin/neogen generate --export="myfile.cql"
+```
+
 See the results in your graph browser !
 
 #### Quick configuration precisions:
 
-* When defining properties types (like company, firstName, ...), these types refers to the standard [faker](https://github.com/fzazinotto/faker) types.
+* When defining properties types (like company, firstName, ...), these types refers to the standard [faker](https://github.com/fzaninotto/faker) types.
 * count define the number of nodes you want
 * relationship mode : 1 for only one existing relationship per node, random for randomized number of relationships
 

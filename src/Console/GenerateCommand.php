@@ -6,7 +6,8 @@ use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Input\InputOption,
-    Symfony\Component\Console\Output\OutputInterface;
+    Symfony\Component\Console\Output\OutputInterface,
+    Symfony\Component\Filesystem\Filesystem;
 use Neoxygen\Neogen\Schema\Parser,
     Neoxygen\Neogen\Schema\Processor;
 
@@ -17,6 +18,13 @@ class GenerateCommand extends Command
         $this
             ->setName('generate')
             ->setDescription('Generate fixtures based on "neogen.yml" file')
+            ->addOption(
+                'export',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'If the generation queries should be exported to a file rather than loaded in the database?',
+                'neogen.export.cql'
+            )
             ;
     }
 
@@ -40,6 +48,24 @@ class GenerateCommand extends Command
 
             $constraints = $processor->getConstraints();
             $queries = $processor->getQueries();
+
+            if ($exportFile = $input->getOption('export')) {
+                $exportFilePath = getcwd().'/'.$exportFile;
+                $fs = new Filesystem();
+                if ($fs->exists($exportFilePath)) {
+                    $fs->copy($exportFilePath, $exportFilePath.'.backup');
+                }
+                $txt = '';
+                foreach ($constraints as $constraint) {
+                    $txt .= $constraint."\n";
+                }
+                foreach ($queries as $q) {
+                    $txt .= $q."\n";
+                }
+                $fs->dumpFile($exportFilePath, $txt);
+                $output->writeln('<info>Exporting the queries to '.$exportFile.'</info>');
+                exit();
+            }
 
             foreach ($constraints as $constraint) {
                 $client->sendCypherQuery($constraint);
