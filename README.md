@@ -75,6 +75,29 @@ See the results in your graph browser !
 * count define the number of nodes you want
 * relationship mode : 1 for only one existing relationship per node, random for randomized number of relationships
 
+#### Properties parameters
+
+Sometimes you'll maybe want to define some parameters for your properties, for e.g. to have a realistic date of birth for `Person` nodes,
+you may want to be sure that the date will be between 50 years ago and 18 years ago if you set dob for people working for a company.
+
+```yaml
+nodes:
+  persons:
+    label: Person
+    count: 10
+    properties:
+      firstname: firstName
+      date_of_birth: { type: "dateTimeBetween", params: ["-50 years", "-18 years"]}
+
+relationships:
+    person_works_for:
+        start: Person
+        end: Company
+        type: WORKS_AT
+        mode: random
+        properties:
+            since: { type: "dateTimeBetween", params: ["-10 years", "now"]}
+```
 
 ---
 
