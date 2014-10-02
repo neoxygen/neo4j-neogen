@@ -23,7 +23,7 @@ class GenerateCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'If the generation queries should be exported to a file rather than loaded in the database?',
-                'neogen.export.cql'
+                null
             )
             ;
     }

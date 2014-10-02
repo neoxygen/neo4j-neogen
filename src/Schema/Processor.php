@@ -44,7 +44,14 @@ class Processor
                 if ($c !== 0) {
 
                     foreach ($node['properties'] as $key => $type) {
-                        $value = $this->faker->$type;
+                        if (is_array($type)) {
+                            $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
+                            if ($value instanceof \DateTime) {
+                                $value = $value->format('Y-m-d H:i:s');
+                            }
+                        } else {
+                            $value = $this->faker->$type;
+                        }
                         $q .= $helper->addNodeProperty($key, $value);
                         if ($i < $c - 1) {
                             $q .= ', ';
@@ -67,6 +74,7 @@ class Processor
             $end = $rel['end'];
             $type = $rel['type'];
             $mode = $rel['mode'];
+            $props = [];
 
 
             if (!in_array($start, $this->labels) || !in_array($end, $this->labels)) {
@@ -76,10 +84,23 @@ class Processor
             switch ($mode) {
                 case '1':
                     foreach ($this->nodes[$start] as $node) {
+                        if (isset($rel['properties'])) {
+                            foreach ($rel['properties'] as $k => $t) {
+                                if (is_array($t)) {
+                                    $value = call_user_func_array(array($this->faker, $t['type']), $t['params']);
+                                    if ($value instanceof \DateTime) {
+                                        $value = $value->format('Y-m-d H:i:s');
+                                    }
+                                } else {
+                                    $value = $this->faker->$t;
+                                }
+                                $props[$k] = $value;
+                            }
+                        }
                         $endNodes = $this->nodes[$end];
                         shuffle($endNodes);
                         $endNode = current($endNodes);
-                        $this->queries[] = $helper->addRelationship($node, $endNode, $type);
+                        $this->queries[] = $helper->addRelationship($node, $endNode, $type, $props);
 
                     }
                     break;
@@ -92,12 +113,25 @@ class Processor
                     $random = rand(1, $maxi);
                     foreach ($this->nodes[$start] as $node) {
                         for ($i = 1; $i <= $random; $i++) {
+                            if (isset($rel['properties'])) {
+                                foreach ($rel['properties'] as $k => $t) {
+                                    if (is_array($t)) {
+                                        $value = call_user_func_array(array($this->faker, $t['type']), $t['params']);
+                                        if ($value instanceof \DateTime) {
+                                            $value = $value->format('Y-m-d H:i:s');
+                                        }
+                                    } else {
+                                        $value = $this->faker->$t;
+                                    }
+                                    $props[$k] = $value;
+                                }
+                            }
                             reset($endNodes);
                             shuffle($endNodes);
                             $endNode = current($endNodes);
                             next($endNodes);
                             if ($endNode !== $node) {
-                                $this->queries[] = $helper->addRelationship($node, $endNode, $type);
+                                $this->queries[] = $helper->addRelationship($node, $endNode, $type, $props);
                             }
 
                         }
