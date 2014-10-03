@@ -14,6 +14,14 @@ $parser = new PatternParser();
 $faker = Factory::create();
 $processor = new Processor();
 
+
+
+
+
+
+
+
+
 $models = [
     'PERSON' => [
         'firstname' => 'firstName',
@@ -40,11 +48,33 @@ $models = [
     ]
 ];
 
-$text = '(:Person *20*)-[:WROTE *1..n*]->(:Post)
+$text = '(:Person *20*)-[:WRITE *1..n*]->(:Post *35*)
 (:Person)-[:KNOWS *n..n*]->(:Person)
-(:Person)-[:WRITE_COMMENT *1..n*]->(:Comment *100*)
-(:Comment)-[:COMMENT_ON_POST *n..1*]->(:Post)
-(:Person)-[:WORKS_AT *n..1*]->(:Company *25*)';
+(:Person)-[:COMMENTED_ON *n..n*]->(:Post)';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 $parser->process($text);
 $lap = microtime(true);
