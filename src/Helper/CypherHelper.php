@@ -73,7 +73,7 @@ class CypherHelper
     public function addNodeProperty($key, $value)
     {
         if (is_string($value)) {
-            $value = '"'.$value.'"';
+            $value = '"'.htmlentities($value, ENT_QUOTES, 'UTF-8').'"';
         } elseif (is_int($value)) {
             $value = 'toInt('.$value.')';
         }
@@ -108,13 +108,13 @@ class CypherHelper
             $max = count($properties);
             foreach ($properties as $key => $value) {
                 if (is_string($value)) {
-                    $val = '"'.$value.'"';
+                    $val = '"'.htmlentities($value, ENT_QUOTES, 'UTF-8').'"';
                 } elseif (is_int($value)) {
                     $val = 'toInt('.$value.')';
                 } elseif (is_float($value)) {
                     $val = 'toFloat('.$value.')';
                 } else {
-                    $val = $value;
+                    $val = htmlentities($value);
                 }
                 $props .= $key.':'.$val;
                 if ($i < $max-1) {

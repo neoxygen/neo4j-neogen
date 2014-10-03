@@ -80,15 +80,6 @@ class GenerateCommand extends Command
                 exit();
             }
 
-            $result = $formatter->format($response);
-
-            if ($result->hasErrors()) {
-                foreach ($result->getErrors() as $error) {
-                    $output->writeln('<error>'.$error['code']."\n".$error['message']);
-                }
-                exit();
-            }
-
             foreach ($constraints as $constraint) {
                 $client->sendCypherQuery($constraint);
             }
