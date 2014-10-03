@@ -1,5 +1,22 @@
 {
+    "name": "neoxygen/neogen",
+    "type": "library",
+    "description": "Neo4j Graph generator for PHP5.4+",
+    "keywords": [
+        "graph",
+        "neo4j",
+        "generator"
+    ],
+    "homepage": "http://neoxygen.io",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christophe Willemsen",
+            "email": "chris@neoxygen.io"
+        }
+    ],
     "require": {
+        "php": ">=5.4",
         "fzaninotto/faker": "~1.4",
         "symfony/console": "~2.5",
         "symfony/yaml": "~2.5",
