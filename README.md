@@ -8,6 +8,8 @@ The library ease the generation of test graphs. The [faker](https://github.com/f
 
 The library is in its early stage, pushed on Github to have feedbacks or requirements for other people using Neo4j with PHP.
 
+A lot of work is currently done in order to have a start point, so changes are very likely to happen until the 1.0 version is released.
+
 ### Usage
 
 #### Download the library :
