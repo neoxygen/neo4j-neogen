@@ -15,6 +15,10 @@ class Processor
 
     private $nodes = [];
 
+    private $edges = [];
+
+    private $graphNodes = [];
+
     public function __construct()
     {
         $this->faker = Factory::create();
@@ -39,6 +43,7 @@ class Processor
         $diff1 = $lap1 - $start;
         echo 'lap1 : '.$diff1."\n";
 
+
         foreach ($schema['nodes'] as $node) {
             if (!in_array($node['label'], $this->labels)) {
                 $this->labels[] = $node['label'];
@@ -46,8 +51,11 @@ class Processor
             $count = isset($node['count']) ? $node['count'] : 1;
             $x = 1;
             while ($x <= $count) {
+                $graphNode = [];
+                $graphNode['type'] = $node['label'];
                 $alias = $alias = str_replace('.', '', 'n' . microtime(true) . rand(0, 100000000000));
                 $this->nodes[$node['label']][$alias] = $alias;
+                $graphNode['id'] = $alias;
                 $q = $helper->openMerge();
                 $q .= $helper->addNodeLabel($alias, $node['label']);
 
@@ -67,6 +75,7 @@ class Processor
                                 $value = $this->faker->$type;
                             }
                             $q .= $helper->addNodeProperty($key, $value);
+                            $graphNode[$key] = $value;
                             if ($i < $c - 1) {
                                 $q .= ', ';
                             }
@@ -76,6 +85,7 @@ class Processor
                         $q .= $helper->closeNodePropertiesBracket();
                     }
                 }
+                $this->graphNodes[] = $graphNode;
 
 
                 $q .= $helper->closeMerge();
@@ -127,6 +137,7 @@ class Processor
                         shuffle($endNodes);
                         $endNode = current($endNodes);
                         $this->queries[] = $helper->addRelationship($node, $endNode, $type, $props);
+                        $this->setEdge($node, $endNode, $type);
 
                     }
                     break;
@@ -158,6 +169,7 @@ class Processor
                             next($endNodes);
                             if ($endNode !== $node) {
                                 $this->queries[] = $helper->addRelationship($node, $endNode, $type, $props);
+                                $this->setEdge($node, $endNode, $type);
                             }
 
                         }
@@ -182,6 +194,7 @@ class Processor
                         shuffle($endNodes);
                         $endNode = current($endNodes);
                         $this->queries[] = $helper->addRelationship($endNode, $node, $type, $props);
+                        $this->setEdge($endNode, $node, $type);
 
                     }
                     break;
@@ -192,6 +205,47 @@ class Processor
         $diff3 = $lap3 - $lap2;
         echo 'lap 3 : '.$diff3."\n";
         echo '----------'."\n";
+    }
+
+    public function setEdge($startId, $endId, $type)
+    {
+        $this->edges[] = [
+            'source' => $startId,
+            'target' => $endId,
+            'caption' => $type
+        ];
+    }
+
+    public function getEdges()
+    {
+        return $this->edges;
+    }
+
+    public function getNodes()
+    {
+        return $this->nodes;
+    }
+
+    public function getGraphNodes()
+    {
+        return $this->graphNodes;
+    }
+
+    public function getGraph()
+    {
+        $g = [
+            'nodes' => $this->graphNodes,
+            'edges' => $this->edges
+        ];
+
+        return $g;
+    }
+
+    public function getGraphJson()
+    {
+        $json = json_encode($this->getGraph());
+
+        return $json;
     }
 
     /**

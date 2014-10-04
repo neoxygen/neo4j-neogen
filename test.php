@@ -91,10 +91,11 @@ foreach ($schema['nodes'] as $type => $node) {
 
 $processor->process($schema);
 
+$json = $processor->getGraphJson();
+
 $end = microtime(true);
 $diff = $end - $start;
 echo $diff;
-//exit();
 
 $client = new Client();
 $client->addConnection('default', 'http', 'localhost', 7474);
