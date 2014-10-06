@@ -19,6 +19,8 @@ class Processor
 
     private $graphNodes = [];
 
+    private $labelColors = [];
+
     public function __construct()
     {
         $this->faker = Factory::create();
@@ -33,20 +35,18 @@ class Processor
      */
     public function process(array $schema)
     {
-        echo '------'."\n";
-        $start = microtime(true);
         if (!isset($schema['nodes'])) {
             throw new \InvalidArgumentException('You need to define at least one node to generate');
         }
         $helper = new CypherHelper();
-        $lap1 = microtime(true);
-        $diff1 = $lap1 - $start;
-        echo 'lap1 : '.$diff1."\n";
 
 
         foreach ($schema['nodes'] as $node) {
             if (!in_array($node['label'], $this->labels)) {
                 $this->labels[] = $node['label'];
+            }
+            if (!isset($this->labelColors[$node['label']])) {
+                $this->labelColors[$node['label']] = $this->faker->hexcolor;
             }
             $count = isset($node['count']) ? $node['count'] : 1;
             $x = 1;
@@ -94,10 +94,6 @@ class Processor
 
             }
         }
-
-        $lap2 = microtime(true);
-        $diff2 = $lap2 - $lap1;
-        echo 'lap 2 : '.$diff2."\n";
 
         foreach ($schema['relationships'] as $k => $rel) {
             $start = $rel['start'];
@@ -201,10 +197,6 @@ class Processor
             }
         }
 
-        $lap3 = microtime(true);
-        $diff3 = $lap3 - $lap2;
-        echo 'lap 3 : '.$diff3."\n";
-        echo '----------'."\n";
     }
 
     public function setEdge($startId, $endId, $type)
@@ -243,7 +235,16 @@ class Processor
 
     public function getGraphJson()
     {
-        $json = json_encode($this->getGraph());
+        $graph = [
+            'nodes' => [],
+            'edges' => []
+        ];
+        foreach ($this->graphNodes as $node) {
+            $node['neogen_node_color'] = $this->labelColors[$node['type']];
+            $graph['nodes'][] = $node;
+        }
+        $graph['edges'] = $this->edges;
+        $json = json_encode($graph);
 
         return $json;
     }
