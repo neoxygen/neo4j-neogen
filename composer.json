@@ -15,6 +15,9 @@
             "email": "chris@neoxygen.io"
         }
     ],
+    "repositories": {
+        "packagist": false
+    },
     "require": {
         "php": ">=5.4",
         "fzaninotto/faker": "~1.4",
@@ -31,6 +34,11 @@
     "autoload": {
         "psr-4": {
             "Neoxygen\\Neogen\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neoxygen\\Neogen\\Tests\\": "tests/Neoxygen/Neogen/Tests"
         }
     }
 }

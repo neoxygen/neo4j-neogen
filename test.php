@@ -52,6 +52,7 @@ $text = '(:Person *20*)-[:WRITE *1..n*]->(:Post *35*)
 (:Person)-[:KNOWS *n..n*]->(:Person)
 (:Person)-[:COMMENTED_ON *n..n*]->(:Post)';
 
+$text = null;
 
 
 
@@ -75,8 +76,9 @@ $text = '(:Person *20*)-[:WRITE *1..n*]->(:Post *35*)
 
 
 
-
-$parser->process($text);
+$parser->parse($text);
+echo '-----';
+exit();
 $lap = microtime(true);
 $lapdiff = $lap - $start;
 echo $lapdiff."\n";

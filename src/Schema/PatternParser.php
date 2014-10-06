@@ -50,8 +50,9 @@ class PatternParser
     public function parse($pattern = null)
     {
         if (null === $pattern) {
-            //$cypherPattern = '(:Person *25*)-[:KNOWS*n..n*]->(:Person)-[:WROTE*1..n*]->(:Post *100*)<-[:COMMENTED*n..n*]-(:Person)';
-            $cypherPattern = '(:Kid)';
+            $cypherPattern = '(:Person 25)-[:KNOWS n..n]->(:Person)-[:WROTE 1..n]->(:Post 100)<-[:COMMENTED n..n]-(:Person)';
+            print($cypherPattern);
+            //$cypherPattern = '(:Kid)';
         } else {
             $cypherPattern = $pattern;
         }
@@ -61,6 +62,7 @@ class PatternParser
         $relPattern = '/((-<?>?)(\\[[:*.\\s\\w]+\\])(-<?>?))/';
 
             $split = preg_split($nodePattern, $cypherPattern, null, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
+        print_r($split);
             foreach ($split as $key => $part) {
                 if (0 === $key && !preg_match($nodePattern, $part)) {
                     throw new \InvalidArgumentException(sprintf('The pattern must start with a node part, "%s" given', $part));
@@ -78,11 +80,13 @@ class PatternParser
 
     public function processNodePart($nodePart, $key)
     {
-        $labelPattern = '/(:([\\w]+))+/';
-        $nodeCountPattern = '/(\\*[\\d]+\\*)/';
+        $labelPattern = '/(([\\w]]+):([\\w]+))+/';
+        $nodeCountPattern = '/(\\s+[\\d]+\\*)/';
 
         // Labels matching
         preg_match($labelPattern, $nodePart, $output);
+        print_r($output);
+        exit();
         $expl = explode(':', $output[0]);
         $labels = [];
         foreach ($expl as $label) {
