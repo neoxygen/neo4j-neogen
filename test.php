@@ -42,14 +42,11 @@ $models = [
 
 $text = '(p:Person 20)-[:WRITE 1..n]->(post:Post 35)
 (p)-[:KNOWS n..n]->(p)
-(p)-[:COMMENTED_ON n..n]->(post)';
-
+(p)-[:COMMENTED_ON n..n]->(post)
+(p)-[:HAS n..n]->(s:Skill 100)
+(c:Company 500)-[:LOOKS_FOR n..n]->(s)';
 
 $parser->parseCypher($text);
-echo '-----';
-$lap = microtime(true);
-$lapdiff = $lap - $start;
-echo $lapdiff."\n";
 
 $cypherSchema = $parser->getSchema();
 $schema = [
@@ -72,9 +69,6 @@ $processor->process($schema);
 
 $json = $processor->getGraphJson();
 
-echo $json;
-exit();
-
 $end = microtime(true);
 $diff = $end - $start;
 echo $diff;
@@ -82,7 +76,6 @@ echo $diff;
 $client = new Client();
 $client->addConnection('default', 'http', 'localhost', 7474);
 $client->build();
-//$formatter = new ResponseFormatter();
 
 $constraints = $processor->getConstraints();
 $queries = $processor->getQueries();

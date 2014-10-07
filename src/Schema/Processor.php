@@ -102,12 +102,6 @@ class Processor
             $mode = $rel['mode'];
             $props = [];
 
-            //preg_match('/([\\d]+|n)(\\.\\.)([\\d]+|n)/', $mode, $outputx);
-            //if (isset($outputx[1]) && isset($output[3])) {
-            //    $from = $outputx[1];
-            //    $to = $outputx[3];
-            //}
-
 
             if (!in_array($start, $this->labels) || !in_array($end, $this->labels)) {
                 throw new \InvalidArgumentException('The start or end node of relationship ' . $k . ' is not defined');
@@ -173,6 +167,7 @@ class Processor
                     break;
                 case '1..n':
                     foreach ($this->nodes[$end] as $node) {
+
                         if (isset($rel['properties'])) {
                             foreach ($rel['properties'] as $k => $t) {
                                 if (is_array($t)) {

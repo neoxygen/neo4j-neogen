@@ -18,18 +18,23 @@ class CypherPattern
 
     const OUTGOING_RELATIONSHIP = 'OUT';
 
-    private $nodes = [];
+    private $nodes;
 
-    private $edges = [];
+    private $edges;
 
-    private $labels = [];
+    private $labels;
 
-    private $identifiers = [];
+    private $identifiers;
 
-    private $nodeInfoMap = [];
+    private $nodeInfoMap;
 
     public function parseCypher($cypherPattern)
     {
+        $this->nodes = [];
+        $this->edges = [];
+        $this->labels = [];
+        $this->identifiers = [];
+        $this->nodeInfoMap = [];
         $lines = $this->splitLineBreaks($cypherPattern);
 
         foreach ($lines as $line) {
@@ -105,7 +110,7 @@ class CypherPattern
     {
         $prev = trim($parts[$key-1]);
         $previous = $this->nodeInfoMap[trim($prev)];
-        $prevNode = !empty($previous['label']) ?: $this->identifiers[$previous['identifier']];
+        $prevNode = !empty($previous['label']) ? $previous['label'] : $this->identifiers[$previous['identifier']];
 
         $next = trim($parts[$key+1]);
 
@@ -114,7 +119,7 @@ class CypherPattern
         $this->processNode($info);
 
         $nextious = $this->nodeInfoMap[trim($next)];
-        $nextNode = !empty($nextious['label']) ?: $this->identifiers[$nextious['identifier']];
+        $nextNode = !empty($nextious['label']) ? $nextious['label'] : $this->identifiers[$nextious['identifier']];
 
         $start = 'OUT' === $edgeInfo['direction'] ? $prevNode : $nextNode;
         $end = 'OUT' === $edgeInfo['direction'] ? $nextNode : $prevNode;
