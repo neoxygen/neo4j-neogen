@@ -6,7 +6,6 @@ use Neoxygen\Neogen\Parser\CypherPattern,
     Neoxygen\Neogen\Schema\Processor;
 use Neoxygen\NeoClient\Client;
 use Faker\Factory;
-use Symfony\Component\Yaml\Dumper;
 
 
 $start = microtime(true);
