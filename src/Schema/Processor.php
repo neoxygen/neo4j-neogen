@@ -53,6 +53,7 @@ class Processor
             while ($x <= $count) {
                 $graphNode = [];
                 $graphNode['type'] = $node['label'];
+                $graphNode['neogen_color'] = $this->faker->rgbCssColor;
                 $alias = $alias = str_replace('.', '', 'n' . microtime(true) . rand(0, 100000000000));
                 $this->nodes[$node['label']][$alias] = $alias;
                 $graphNode['id'] = $alias;
