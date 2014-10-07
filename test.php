@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/vendor/autoload.php';
 
-use Neoxygen\Neogen\Schema\PatternParser,
+use Neoxygen\Neogen\Parser\CypherPattern,
     Neoxygen\Neogen\Schema\Processor;
 use Neoxygen\NeoClient\Client;
 use Faker\Factory;
@@ -10,17 +10,9 @@ use Symfony\Component\Yaml\Dumper;
 
 
 $start = microtime(true);
-$parser = new PatternParser();
+$parser = new CypherPattern();
 $faker = Factory::create();
 $processor = new Processor();
-
-
-
-
-
-
-
-
 
 $models = [
     'PERSON' => [
@@ -48,52 +40,40 @@ $models = [
     ]
 ];
 
-$text = '(:Person *20*)-[:WRITE *1..n*]->(:Post *35*)
-(:Person)-[:KNOWS *n..n*]->(:Person)
-(:Person)-[:COMMENTED_ON *n..n*]->(:Post)';
-
-$text = null;
+$text = '(p:Person 20)-[:WRITE 1..n]->(post:Post 35)
+(p)-[:KNOWS n..n]->(p)
+(p)-[:COMMENTED_ON n..n]->(post)';
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-$parser->parse($text);
+$parser->parseCypher($text);
 echo '-----';
-exit();
 $lap = microtime(true);
 $lapdiff = $lap - $start;
 echo $lapdiff."\n";
 
-$schema = $parser->getSchema();
-foreach ($schema['nodes'] as $type => $node) {
-    $model = strtoupper($type);
+$cypherSchema = $parser->getSchema();
+$schema = [
+    'nodes' => [],
+    'relationships' => []
+];
+foreach ($cypherSchema['nodes'] as $node) {
+    $model = strtoupper($node['label']);
     if (array_key_exists($model, $models)) {
-        $schema['nodes'][$type]['properties'] = $models[$model];
+        $node['properties'] = $models[$model];
     }
+    $schema['nodes'][] = $node;
+}
+
+foreach ($cypherSchema['relationships'] as $edge){
+    $schema['relationships'][uniqid().strtolower($edge['type'])] = $edge;
 }
 
 $processor->process($schema);
 
 $json = $processor->getGraphJson();
+
+echo $json;
+exit();
 
 $end = microtime(true);
 $diff = $end - $start;
