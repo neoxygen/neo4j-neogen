@@ -57,8 +57,14 @@ class CypherPattern
     public function splitLineBreaks($cypherPattern)
     {
         $lines = explode("\n", $cypherPattern);
+        $parsedLines = [];
+        foreach ($lines as $line) {
+            if (false !== strpos($line, '//')) {
+                $parsedLines[] = htmlspecialchars_decode($line);
+            }
+        }
 
-        return $lines;
+        return $parsedLines;
     }
 
     public function parseLine($cypherLineText)
