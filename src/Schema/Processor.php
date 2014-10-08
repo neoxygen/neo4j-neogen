@@ -59,11 +59,11 @@ class Processor
                 $graphNode['id'] = $alias;
                 $q = $helper->openMerge();
                 $q .= $helper->addNodeLabel($alias, $node['label']);
+                $q .= $helper->openNodePropertiesBracket();
 
                 if (isset($node['properties'])) {
                     $c = count($node['properties']);
                     $i = 0;
-                    $q .= $helper->openNodePropertiesBracket();
                     if ($c !== 0) {
 
                         foreach ($node['properties'] as $key => $type) {
@@ -82,13 +82,14 @@ class Processor
                             }
                             $i++;
                         }
-                        $q .= ', ' . $helper->addNodeProperty('neogen_id', $alias);
-                        $q .= $helper->closeNodePropertiesBracket();
+
                     }
                 }
+
                 $this->graphNodes[] = $graphNode;
 
-
+                $q .= ', ' . $helper->addNodeProperty('neogen_id', $alias);
+                $q .= $helper->closeNodePropertiesBracket();
                 $q .= $helper->closeMerge();
                 $this->queries[] = $q;
                 $x++;
