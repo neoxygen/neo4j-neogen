@@ -59,7 +59,7 @@ class CypherPattern
         $lines = explode("\n", $cypherPattern);
         $parsedLines = [];
         foreach ($lines as $line) {
-            if (false !== strpos($line, '//')) {
+            if (false === strpos($line, '//')) {
                 $parsedLines[] = htmlspecialchars_decode($line);
             }
         }
