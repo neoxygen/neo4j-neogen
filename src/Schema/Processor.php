@@ -87,8 +87,10 @@ class Processor
                 }
 
                 $this->graphNodes[] = $graphNode;
-
-                $q .= ', ' . $helper->addNodeProperty('neogen_id', $alias);
+                if (isset($node['properties']) && 0 < count($node['properties'])) {
+                    $q .= ', ';
+                }
+                $q .= $helper->addNodeProperty('neogen_id', $alias);
                 $q .= $helper->closeNodePropertiesBracket();
                 $q .= $helper->closeMerge();
                 $this->queries[] = $q;
