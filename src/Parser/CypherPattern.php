@@ -4,7 +4,8 @@ namespace Neoxygen\Neogen\Parser;
 
 use Neoxygen\Neogen\Exception\CypherPatternException;
 use Neoxygen\Neogen\Exception\SchemaException;
-use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Yaml\Yaml,
+    Symfony\Component\Yaml\Exception\ParseException;
 
 class CypherPattern
 {
@@ -38,9 +39,6 @@ class CypherPattern
         $lines = $this->splitLineBreaks($cypherPattern);
 
         foreach ($lines as $line) {
-            if ( false !== strpos($line, '//')){
-                continue;
-            }
             $parts = $this->parseLine($line);
             foreach($parts as $key => $part){
                 if (preg_match(self::NODE_PATTERN, $part, $output)) {
@@ -101,8 +99,13 @@ class CypherPattern
         }
 
         if ($nodeInfo['properties']){
-            $props = Yaml::parse($nodeInfo['properties']);
-            $node['properties'] = $props;
+
+            try {
+                $props = Yaml::parse($node['properties']);
+                $node['properties'] = $props;
+            } catch (ParseException $e){
+                throw new CypherPatternException(sprintf('Malformed inline properties near "%s"', $node['properties']));
+            }
         }
 
         $this->nodes[] = $node;
@@ -126,13 +129,19 @@ class CypherPattern
 
         $start = 'OUT' === $edgeInfo['direction'] ? $prevNode : $nextNode;
         $end = 'OUT' === $edgeInfo['direction'] ? $nextNode : $prevNode;
+
         $edge = [
             'start' => $start,
             'end' => $end,
             'type' => $edgeInfo['type'],
             'mode' => $edgeInfo['cardinality'],
-            'properties' => Yaml::parse($edgeInfo['properties'])
         ];
+
+        try {
+            $edge['properties'] = Yaml::parse($edgeInfo['properties']);
+        } catch (ParseException $e) {
+            throw new CypherPatternException(sprintf('Malformed inline properties near "%s"', $edgeInfo['properties']));
+        }
 
         $this->edges[] = $edge;
 
