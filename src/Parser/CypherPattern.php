@@ -38,6 +38,9 @@ class CypherPattern
         $lines = $this->splitLineBreaks($cypherPattern);
 
         foreach ($lines as $line) {
+            if ( false !== strpos($line, '//')){
+                continue;
+            }
             $parts = $this->parseLine($line);
             foreach($parts as $key => $part){
                 if (preg_match(self::NODE_PATTERN, $part, $output)) {
