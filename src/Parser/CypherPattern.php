@@ -9,9 +9,9 @@ use Symfony\Component\Yaml\Yaml,
 
 class CypherPattern
 {
-    const NODE_PATTERN = '/((\\()([\\w\\d]+)?(:?([\\w\\d]+))?(\\s?{[,:~\\\'\\"{}\\[\\]\\s\\w\\d]+})?(\\s?\\d+)?(\\s*\\)))/';
+    const NODE_PATTERN = '/((\\()([\\w\\d]+)?(:?([\\w\\d]+))?(\\s?{[,:~\\\'\\"{}\\[\\]\\s\\w\\d]+})?(\\s?\\*\\d+)?(\\s*\\)))/';
 
-    const EDGE_PATTERN = '/(<?>?-\[)(?::)([_\w\d]+)(\s?{(?:.*)})?(\s[\w\d]\.\.[\w\d])(\]-<?>?)/';
+    const EDGE_PATTERN = '/(<?>?-\[)(?::)([_\w\d]+)(\s?{(?:.*)})?(\s\*[\w\d+]\.\.[\w\d])(\]-<?>?)/';
 
     const SPLIT_PATTERN = '/((?:<?>?-).*\\s?(?:-<?>?))/';
 
@@ -228,7 +228,7 @@ class CypherPattern
     public function checkCardinality($pattern)
     {
         $allowedCardinalities = ['1..n', 'n..n', '1..1', 'n..1'];
-        $cardinality = trim($pattern[4]);
+        $cardinality = str_replace('*', '', trim($pattern[4]));
         if (!in_array($cardinality, $allowedCardinalities)) {
             throw new SchemaException(sprintf('The cardinality "%s" is not allowed', $cardinality));
         }
@@ -263,6 +263,6 @@ class CypherPattern
             return null;
         }
 
-        return trim($string);
+        return str_replace('*', '', trim($string));
     }
 }
