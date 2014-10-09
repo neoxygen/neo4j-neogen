@@ -29,10 +29,17 @@ $cypher->convert($graph);
 $client = new Client();
 $client->addConnection('default', 'http', 'localhost', 7474)
     ->build();
-
+$tx = $client->openTransaction();
+$decode = json_decode($tx, true);
+$commit = $decode['commit'];
+$p = '/(?:\\/)(\\d+)(?:\\/commit)/';
+preg_match($p, $commit, $output);
+$txid = $output[1];
+echo "\n";
 foreach ($cypher->getStatements() as $st){
-    $client->sendCypherQuery($st);
+    $client->pushToTransaction($txid, $st);
 }
+$client->commitTransaction($txid);
 /**
 $tx = $client->openTransaction();
 $decode = json_decode($tx, true);
