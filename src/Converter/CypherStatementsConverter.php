@@ -100,7 +100,6 @@ class CypherStatementsConverter implements ConverterInterface
                     'pairs' => $edgesByType[$type]
                 ]
             ];
-            print_r($ets);
             $this->edgeStatements[] = $ets;
             $i++;
         }
