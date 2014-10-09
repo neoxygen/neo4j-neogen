@@ -74,40 +74,34 @@ class CypherStatementsConverter implements ConverterInterface
         }
 
         // Creating edge statements
+        $i = 1;
         foreach ($edgesByType as $type => $rels){
-
-            $statementsMap = [];
-
-            foreach ($rels as $rel) {
-                $si = 's'.sha1(uniqid() . microtime(true));
-                $ei = 'e'.sha1(uniqid() . microtime(true));
-                $edgeId = 'edge'.sha1(uniqid() . microtime(true));
-                $edgePropMapId = $edgeId;
-                $q = 'MATCH ('.$si.' {neogen_id: \''.$rel['source'].'\'}), ('.$ei.' {neogen_id: \''.$rel['target'].'\'})'.PHP_EOL;
-                $q .= 'MERGE ('.$si.')-['.$edgeId.':'.$rel['type'].']->('.$ei.')'.PHP_EOL;
-                if (count($rel['properties'])){
-                    $q .= 'SET ';
-                    $relPropsCount = count($rel['properties']);
-                    $einc = 1;
-                    foreach ($rel['properties'] as $ep => $ev){
-                        $q .= $edgeId.'.'.$ep.' = {param}.'.$ep;
-                        if ($einc < $relPropsCount) {
-                            $q .= ','.PHP_EOL;
-                        }
+            if (!isset($type[0])){
+                continue;
+            }
+            $rel = $rels[0];
+            $q = 'UNWIND {pairs} as pair'.PHP_EOL;
+            $q .= 'MATCH (start {neogen_id: pair.source}), (end {neogen_id: pair.target})'.PHP_EOL;
+            $q .= 'MERGE (start)-[edge:'.$type.']->(end)'.PHP_EOL;
+            $propsCount = count($rel['properties']);
+            if ($propsCount > 0) {
+                $q .= 'SET ';
+                $i = 1;
+                foreach ($rel['properties'] as $property => $value) {
+                    $q .= 'edge.'.$property.' = pair.properties.'.$property;
+                    if ($i < $propsCount) {
+                        $q .= ','.PHP_EOL;
                     }
                 }
-
-                $st = [
-                    'statement' => $q
-                ];
-
-                if (!empty($rel['properties'])) {
-                    $st['parameters']['param'] = $rel['properties'];
-                }
-                $statementsMap[] = $st;
             }
-            $this->edgeStatements[] = $statementsMap;
-
+            $ets = [
+                'statement' => $q,
+                'parameters' => [
+                    'pairs' => $edgesByType[$type]
+                ]
+            ];
+            $this->edgeStatements[] = $ets;
+            $i++;
         }
 
     }
