@@ -53,7 +53,7 @@ class StandardCypherConverter implements ConverterInterface
             $starti = 's'.$e;
             $endi = 'e'.$i;
             $eid = 'edge'.$i;
-            $q = 'MATCH ('.$starti.' {neogen_id: \''.$rel['source'].'\'}), ('.$endi.' { neogen_id: \''.$rel['target'].'\'})'.PHP_EOL;
+            $q = 'MATCH ('.$starti.':'.$rel['source_label'].' {neogen_id: \''.$rel['source'].'\'}), ('.$endi.':'.$rel['target_label'].' { neogen_id: \''.$rel['target'].'\'})'.PHP_EOL;
             $q .= 'MERGE ('.$starti.')-['.$eid.':'.$rel['type'].']->('.$endi.')'.PHP_EOL;
             if (!empty($rel['properties'])) {
                 $q .= 'SET ';

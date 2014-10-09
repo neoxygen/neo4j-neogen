@@ -81,7 +81,7 @@ class CypherStatementsConverter implements ConverterInterface
             }
             $rel = $rels[0];
             $q = 'UNWIND {pairs} as pair'.PHP_EOL;
-            $q .= 'MATCH (start {neogen_id: pair.source}), (end {neogen_id: pair.target})'.PHP_EOL;
+            $q .= 'MATCH (start:'.$rel['source_label'].' {neogen_id: pair.source}), (end:'.$rel['target_label'].' {neogen_id: pair.target})'.PHP_EOL;
             $q .= 'MERGE (start)-[edge:'.$type.']->(end)'.PHP_EOL;
             $propsCount = count($rel['properties']);
             if ($propsCount > 0) {
@@ -100,6 +100,7 @@ class CypherStatementsConverter implements ConverterInterface
                     'pairs' => $edgesByType[$type]
                 ]
             ];
+            print_r($ets);
             $this->edgeStatements[] = $ets;
             $i++;
         }

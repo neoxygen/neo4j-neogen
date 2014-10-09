@@ -70,7 +70,7 @@ class VertEdgeProcessor
                         $endNodes = $this->nodesByTypes[$end];
                         shuffle($endNodes);
                         $endNode = current($endNodes);
-                        $this->setEdge($node, $endNode, $type, $props);
+                        $this->setEdge($node, $endNode, $type, $props, $start, $end);
                     }
                     break;
 
@@ -87,7 +87,7 @@ class VertEdgeProcessor
                             $endNode = current($endNodes);
                             next($endNodes);
                             if ($endNode !== $node) {
-                                $this->setEdge($node, $endNode, $type, $props);
+                                $this->setEdge($node, $endNode, $type, $props, $start, $end);
                             }
 
                         }
@@ -98,7 +98,7 @@ class VertEdgeProcessor
                         $endNodes = $this->nodesByTypes[$start];
                         shuffle($endNodes);
                         $endNode = current($endNodes);
-                        $this->setEdge($endNode, $node, $type, $props);
+                        $this->setEdge($endNode, $node, $type, $props, $end, $start);
 
                     }
                     break;
@@ -109,13 +109,15 @@ class VertEdgeProcessor
 
     }
 
-    public function setEdge($startId, $endId, $type, $properties = [])
+    public function setEdge($startId, $endId, $type, $properties = [], $startlabel, $endlabel)
     {
         $this->edges[] = [
             'source' => $startId,
             'target' => $endId,
             'type' => $type,
-            'properties' => $properties
+            'properties' => $properties,
+            'source_label' => $startlabel,
+            'target_label' => $endlabel
         ];
     }
 
