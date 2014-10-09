@@ -2,7 +2,9 @@
 
 namespace Neoxygen\Neogen\Converter;
 
+use Neoxygen\Neogen\Graph\Graph;
+
 interface ConverterInterface
 {
-    public function convert(array $graph);
+    public function convert(Graph $graph);
 }

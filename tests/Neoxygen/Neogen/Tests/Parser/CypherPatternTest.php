@@ -32,7 +32,7 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $parser->parseCypher($cypher);
         $schema = $parser->getSchema();
 
-        $this->assertArrayHasKey('dateTimeBetween', $schema['relationships'][1]['properties']['since']);
+        $this->assertArrayHasKey('type', $schema['relationships'][1]['properties']['since']);
         $this->assertArrayHasKey('firstname', $schema['nodes'][0]['properties']);
 
         $cypher = '(p:Person *20)-[:WRITE *1..n]->(post:Post *35)

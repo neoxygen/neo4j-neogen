@@ -144,7 +144,22 @@ class CypherPattern
         ];
 
         try {
-            $edge['properties'] = Yaml::parse($edgeInfo['properties']);
+            $props = [];
+            $properties = Yaml::parse($edgeInfo['properties']);
+            if (null !== $properties) {
+                foreach ($properties as $key => $type) {
+                    if (is_array($type)){
+                        $props[$key]['type'] = key($type);
+                        $props[$key]['params'] = [];
+                        foreach(current($type) as $k => $v) {
+                            $props[$key]['params'][] = $v;
+                        }
+                    } else {
+                        $props[$key] = $type;
+                    }
+                }
+            }
+            $edge['properties'] = $props;
         } catch (ParseException $e) {
             throw new CypherPatternException(sprintf('Malformed inline properties near "%s"', $edgeInfo['properties']));
         }
