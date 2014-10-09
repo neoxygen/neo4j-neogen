@@ -4,7 +4,7 @@ require_once __DIR__.'/vendor/autoload.php';
 
 use Neoxygen\Neogen\Neogen,
     Neoxygen\Neogen\Converter\GraphJSONConverter,
-    Neoxygen\Neogen\Converter\CypherStatementsConverter,
+    Neoxygen\Neogen\Converter\StandardCypherConverter,
     Neoxygen\NeoClient\Client;
 
 
@@ -23,34 +23,40 @@ $graph = $gen->generateGraphFromCypher($text);
 $converter = new GraphJSONConverter();
 $json = $converter->convert($graph);
 
-$cypher = new CypherStatementsConverter();
+$cypher = new StandardCypherConverter();
 $cypher->convert($graph);
 
 $client = new Client();
 $client->addConnection('default', 'http', 'localhost', 7474)
     ->build();
 
+foreach ($cypher->getStatements() as $st){
+    $client->sendCypherQuery($st);
+}
+/**
 $tx = $client->openTransaction();
 $decode = json_decode($tx, true);
 $commit = $decode['commit'];
 $p = '/(?:\\/)(\\d+)(?:\\/commit)/';
 preg_match($p, $commit, $output);
 $txid = $output[1];
-print_r($txid);
+echo "\n";
+foreach ($cypher->getConstraintStatements() as $constraint){
+    $response = $client->sendCypherQuery($constraint['statement']);
+    echo '.';
+}
+
 foreach ($cypher->getNodeStatements() as $node){
     $response = $client->pushToTransaction($txid, $node['statement'], $node['parameters']);
-    print($response);
+    echo '.';
 }
 foreach ($cypher->getEdgeStatements() as $edgeType) {
-
-    foreach ($edgeType as $edge) {
-        $props = !isset($edge['param']) ? array() : $edge['param'];
-        $response = $client->pushToTransaction($txid, $edge['statement'], $props);
-        print($response);
-    }
+    $response = $client->pushMultipleToTransaction($txid, $edgeType);
+    echo '.';
 }
+echo "\n";
 $response = $client->commitTransaction($txid);
-print($response);
+ */
 $diff = microtime(true) - $start;
 echo $graph->getNodesCount() .' nodes & '. $graph->getEdgesCount() . ' edges generated in '.$diff.' seconds'."\n";
 

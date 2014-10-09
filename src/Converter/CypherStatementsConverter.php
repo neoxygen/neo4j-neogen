@@ -29,9 +29,6 @@ class CypherStatementsConverter implements ConverterInterface
         // Creating constraints statements
         foreach ($labels as $label) {
             $identifier = strtolower($label);
-            $dcs = 'DROP CONSTRAINT ON (' . $identifier . ':' . $label . ') ASSERT ' . $identifier . '.neogen_id IS UNIQUE';
-            $dst = ['statement' => $dcs];
-            $this->constraintsStatements[] = $dst;
 
             $ccs = 'CREATE CONSTRAINT ON (' . $identifier . ':' . $label . ') ASSERT ' . $identifier . '.neogen_id IS UNIQUE';
             $cst = ['statement' => $ccs];
@@ -105,7 +102,7 @@ class CypherStatementsConverter implements ConverterInterface
                 ];
 
                 if (!empty($rel['properties'])) {
-                    $st['param']['param'] = $rel['properties'];
+                    $st['parameters']['param'] = $rel['properties'];
                 }
                 $statementsMap[] = $st;
             }
