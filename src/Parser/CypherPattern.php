@@ -107,7 +107,20 @@ class CypherPattern
         if ($nodeInfo['properties']){
 
             try {
-                $props = Yaml::parse($node['properties']);
+                $properties = Yaml::parse($node['properties']);
+                if (null !== $properties) {
+                    foreach ($properties as $key => $type) {
+                        if (is_array($type)){
+                            $props[$key]['type'] = key($type);
+                            $props[$key]['params'] = [];
+                            foreach(current($type) as $k => $v) {
+                                $props[$key]['params'][] = $v;
+                            }
+                        } else {
+                            $props[$key] = $type;
+                        }
+                    }
+                }
                 $node['properties'] = $props;
             } catch (ParseException $e){
                 throw new CypherPatternException(sprintf('Malformed inline properties near "%s"', $node['properties']));

@@ -32,7 +32,7 @@ class GraphJSONConverter implements ConverterInterface
         foreach ($graph->getNodes() as $node){
             if (!in_array($node['label'], $this->labels)) {
                 $this->labels[] = $node['label'];
-                $this->clusterColors[$node['label']] = $this->getClusterNumber();
+                $this->setClusterForLabel($node['label']);
             }
             $n = [];
             $n['_id'] = $node['neogen_id'];
@@ -80,12 +80,12 @@ class GraphJSONConverter implements ConverterInterface
         return $json;
     }
 
-    private function getClusterNumber()
+    private function setClusterForLabel($label)
     {
         $cluster = $this->faker->numberBetween(0, 12);
         if (in_array($cluster, $this->clusterColors) && count($this->clusterColors) < 12){
             $this->getClusterNumber();
         }
-        return $cluster;
+        $this->clusterColors[$label] = $cluster;
     }
 }
