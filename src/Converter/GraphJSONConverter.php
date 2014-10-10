@@ -84,7 +84,7 @@ class GraphJSONConverter implements ConverterInterface
     {
         $cluster = $this->faker->numberBetween(0, 12);
         if (in_array($cluster, $this->clusterColors) && count($this->clusterColors) < 12){
-            $this->getClusterNumber();
+            $this->setClusterForLabel($label);
         }
         $this->clusterColors[$label] = $cluster;
     }
