@@ -23,6 +23,7 @@ class GraphJSONConverter implements ConverterInterface
         $this->edges = [];
         $this->labels = [];
         $this->style = [];
+        $this->clusterColors = [];
         $this->faker = Factory::create();
     }
 
@@ -31,11 +32,13 @@ class GraphJSONConverter implements ConverterInterface
         foreach ($graph->getNodes() as $node){
             if (!in_array($node['label'], $this->labels)) {
                 $this->labels[] = $node['label'];
+                $this->clusterColors[$node['label']] = $this->faker->randomNumber(2);
             }
             $n = [];
             $n['_id'] = $node['neogen_id'];
             $n['label'] = $node['label'];
             $n['properties'] = $node['properties'];
+            $n['cluster'] = $this->clusterColors[$node['label']];
             $this->nodes[] = $n;
         }
 
