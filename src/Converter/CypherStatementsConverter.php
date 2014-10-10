@@ -67,10 +67,11 @@ class CypherStatementsConverter implements ConverterInterface
         }
 
         foreach ($graph->getEdges() as $edge){
-            if (!in_array($edge['type'], $edgeTypes)){
-                $edgeTypes[] = $edge['type'];
+            $edgeType = $edge['source_label'] . $edge['type'] . $edge['target_label'];
+            if (!in_array($edgeType, $edgeTypes)){
+                $edgeTypes[] = $edgeType;
             }
-            $edgesByType[$edge['type']][] = $edge;
+            $edgesByType[$edgeType][] = $edge;
         }
 
         // Creating edge statements
