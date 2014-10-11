@@ -49,7 +49,7 @@ class StandardCypherConverter implements ConverterInterface
                     }
                     $xi++;
                 }
-                $q .= ';';
+                $statement .= ';';
             }
             $this->statements[] = $statement;
             $i++;
