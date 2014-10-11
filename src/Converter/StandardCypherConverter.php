@@ -28,7 +28,7 @@ class StandardCypherConverter implements ConverterInterface
         $i = 1;
         foreach ($graph->getNodes() as $node) {
             $identifier = 'n'.$i;
-            $statement = 'MERGE ('.$identifier.':'.$node['label'].' {neogen_id: \''.$node['neogen_id'].'\’ });'.PHP_EOL;
+            $statement = 'MERGE ('.$identifier.':'.$node['label'].' {neogen_id: \''.$node['neogen_id'].'\' });'.PHP_EOL;
             if (!empty($node['properties'])) {
                 $statement .= 'SET ';
                 $xi = 1;
@@ -47,9 +47,9 @@ class StandardCypherConverter implements ConverterInterface
                     if ($xi < $propsCount) {
                         $statement .= ', ';
                     }
-                    $statement .= PHP_EOL;
                     $xi++;
                 }
+                $q .= ';';
             }
             $this->statements[] = $statement;
             $i++;
@@ -62,7 +62,7 @@ class StandardCypherConverter implements ConverterInterface
             $endi = 'e'.$i;
             $eid = 'edge'.$i;
             $q = 'MATCH ('.$starti.':'.$rel['source_label'].' {neogen_id: \''.$rel['source'].'\'}), ('.$endi.':'.$rel['target_label'].' { neogen_id: \''.$rel['target'].'\'})'.PHP_EOL;
-            $q .= 'MERGE ('.$starti.')-['.$eid.':'.$rel['type'].']->('.$endi.')'.PHP_EOL;
+            $q .= 'MERGE ('.$starti.')-['.$eid.':'.$rel['type'].']->('.$endi.');'.PHP_EOL;
             if (!empty($rel['properties'])) {
                 $q .= 'SET ';
                 $xi = 1;
@@ -81,9 +81,9 @@ class StandardCypherConverter implements ConverterInterface
                     if ($xi < $propsCount) {
                         $q .= ', ';
                     }
-                    $eid .= PHP_EOL;
                     $xi++;
                 }
+                $q .= ';';
             }
             $this->statements[] = $q;
             $e++;
