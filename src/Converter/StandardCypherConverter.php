@@ -34,7 +34,7 @@ class StandardCypherConverter implements ConverterInterface
                 $xi = 1;
                 $propsCount = count($node['properties']);
                 foreach ($node['properties'] as $prop => $value) {
-                    if (is_int($value)){
+                    if (is_string($value)){
                         $val = '\''.$value.'\'';
                     } elseif (is_int($value)){
                         $val = 'toInt('.$value.')';
