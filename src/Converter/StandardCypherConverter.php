@@ -22,19 +22,28 @@ class StandardCypherConverter implements ConverterInterface
         foreach ($labels as $label) {
             $identifier = strtolower($label);
 
-            $ccs = 'CREATE CONSTRAINT ON (' . $identifier . ':' . $label . ') ASSERT ' . $identifier . '.neogen_id IS UNIQUE';
+            $ccs = 'CREATE CONSTRAINT ON (' . $identifier . ':' . $label . ') ASSERT ' . $identifier . '.neogen_id IS UNIQUE;';
             $this->statements[] = $ccs;
         }
         $i = 1;
         foreach ($graph->getNodes() as $node) {
             $identifier = 'n'.$i;
-            $statement = 'MERGE ('.$identifier.':'.$node['label'].' {neogen_id: '.$node['neogen_id'].' })'.PHP_EOL;
+            $statement = 'MERGE ('.$identifier.':'.$node['label'].' {neogen_id: \''.$node['neogen_id'].'\’ });'.PHP_EOL;
             if (!empty($node['properties'])) {
                 $statement .= 'SET ';
                 $xi = 1;
                 $propsCount = count($node['properties']);
                 foreach ($node['properties'] as $prop => $value) {
-                    $statement .= $identifier.'.'.$prop.' = '.$value;
+                    if (is_int($value)){
+                        $val = '\''.$value.'\'';
+                    } elseif (is_int($value)){
+                        $val = 'toInt('.$value.')';
+                    } elseif (is_float($value)){
+                        $val = 'toFloat('.$value.')';
+                    } else {
+                        $val = $value;
+                    }
+                    $statement .= $identifier.'.'.$prop.' = '.$val;
                     if ($xi < $propsCount) {
                         $statement .= ', ';
                     }
@@ -59,7 +68,16 @@ class StandardCypherConverter implements ConverterInterface
                 $xi = 1;
                 $propsCount = count($rel['properties']);
                 foreach ($rel['properties'] as $prop => $value) {
-                    $q .= $eid.'.'.$prop.' = '.$value;
+                    if (is_int($value)){
+                        $val = '\''.$value.'\'';
+                    } elseif (is_int($value)){
+                        $val = 'toInt('.$value.')';
+                    } elseif (is_float($value)){
+                        $val = 'toFloat('.$value.')';
+                    } else {
+                        $val = $value;
+                    }
+                    $q .= $eid.'.'.$prop.' = '.$val;
                     if ($xi < $propsCount) {
                         $q .= ', ';
                     }
