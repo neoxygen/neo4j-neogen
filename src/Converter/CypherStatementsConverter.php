@@ -139,7 +139,7 @@ class CypherStatementsConverter implements ConverterInterface
     {
         $i = 1;
         foreach ($labels as $label){
-            $q = 'MATCH (n'.$i.':'.$label.') REMOVE n.neogen_id;';
+            $q = 'MATCH (n'.$i.':'.$label.') REMOVE n'.$i.'.neogen_id;';
             $statement = [
                 'statement' => $q
             ];
