@@ -143,6 +143,6 @@ class CypherStatementsConverter implements ConverterInterface
             'statement' => $q
         ];
 
-        $this->edgeStatements = $statement;
+        $this->edgeStatements[] = $statement;
     }
 }
