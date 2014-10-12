@@ -77,7 +77,7 @@ class VertEdgeProcessor
                 case 'n..n':
                     $endNodes = $this->nodesByTypes[$end];
                     $max = count($endNodes);
-                    $pct = $max <= 20 ? 0.3 : 0.1;
+                    $pct = $max <= 100 ? 0.8 : 0.55;
                     $maxi = round($max * $pct);
                     $random = rand(1, $maxi);
                     foreach ($this->nodesByTypes[$start] as $node) {
