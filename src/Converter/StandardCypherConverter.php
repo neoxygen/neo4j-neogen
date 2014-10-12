@@ -39,13 +39,13 @@ class StandardCypherConverter implements ConverterInterface
                 $propsCount = count($node['properties']);
                 foreach ($node['properties'] as $prop => $value) {
                     if (is_string($value)){
-                        $val = '\''.$value.'\'';
+                        $val = '\''.addslashes($value).'\'';
                     } elseif (is_int($value)){
-                        $val = 'toInt('.$value.')';
-                    } elseif (is_float($value)){
-                        $val = 'toFloat('.$value.')';
-                    } else {
                         $val = $value;
+                    } elseif (is_float($value)){
+                        $val = $value;
+                    } else {
+                        $val = addslashes($value);
                     }
                     $statement .= $identifier.'.'.$prop.' = '.$val;
                     if ($xi < $propsCount) {
@@ -76,13 +76,13 @@ class StandardCypherConverter implements ConverterInterface
                 $propsCount = count($rel['properties']);
                 foreach ($rel['properties'] as $prop => $value) {
                     if (is_int($value)){
-                        $val = '\''.$value.'\'';
+                        $val = '\''.addslashes($value).'\'';
                     } elseif (is_int($value)){
-                        $val = 'toInt('.$value.')';
-                    } elseif (is_float($value)){
-                        $val = 'toFloat('.$value.')';
-                    } else {
                         $val = $value;
+                    } elseif (is_float($value)){
+                        $val = $value;
+                    } else {
+                        $val = addslashes($value);
                     }
                     $q .= $eid.'.'.$prop.' = '.$val;
                     if ($xi < $propsCount) {
