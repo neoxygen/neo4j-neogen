@@ -105,7 +105,7 @@ class CypherStatementsConverter implements ConverterInterface
             $i++;
         }
 
-        $this->addRemoveIdStatement();
+        $this->addRemoveIdsStatements($labels);
 
     }
 
@@ -135,14 +135,17 @@ class CypherStatementsConverter implements ConverterInterface
         return $this->nodeStatements;
     }
 
-    private function addRemoveIdStatement()
+    private function addRemoveIdsStatements(array $labels)
     {
-        $q = 'MATCH (n) REMOVE n.neogen_id';
+        $i = 1;
+        foreach ($labels as $label){
+            $q = 'MATCH (n'.$i.':'.$label.') REMOVE n.neogen_id;';
+            $statement = [
+                'statement' => $q
+            ];
 
-        $statement = [
-            'statement' => $q
-        ];
-
-        $this->edgeStatements[] = $statement;
+            $this->edgeStatements[] = $statement;
+            $i++;
+        }
     }
 }

@@ -96,7 +96,12 @@ class StandardCypherConverter implements ConverterInterface
             $e++;
         }
 
-        $this->statements[] = 'MATCH (n) REMOVE n.neogen_id';
+        $ssi = 1;
+        foreach ($labels as $label){
+            $this->statements[] = 'MATCH (n'.$i.':'.$label.') REMOVE n.neogen_id;';
+            $ssi++;
+        }
+
     }
 
     public function getStatements()
