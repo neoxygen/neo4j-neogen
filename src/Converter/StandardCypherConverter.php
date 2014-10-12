@@ -95,6 +95,8 @@ class StandardCypherConverter implements ConverterInterface
             $this->statements[] = $q;
             $e++;
         }
+
+        $this->statements[] = 'MATCH (n) REMOVE n.neogen_id';
     }
 
     public function getStatements()
