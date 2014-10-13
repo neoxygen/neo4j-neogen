@@ -13,7 +13,7 @@ class CypherPattern
 
     const EDGE_PATTERN = '/(<?>?-\[)(?::)([_\w\d]+)(\s?{(?:.*)})?(\s\*[\w\d+]\.\.[\w\d])(\]-<?>?)/';
 
-    const SPLIT_PATTERN = '/((?:<?>?-).*\\s?(?:-<?>?))/';
+    const SPLIT_PATTERN = "/((?:<?->?)(?:\\[[^-^<^>.]*\\*[a-z0-9]\\.\\.\\d+\\])(?:<?->?))/";
 
     const INGOING_RELATIONSHIP = 'IN';
 

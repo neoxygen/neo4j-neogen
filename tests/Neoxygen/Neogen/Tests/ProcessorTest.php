@@ -20,7 +20,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
         $converter->convert($schema);
 
         $edgesStatements = $converter->getEdgeStatements();
-        $this->assertCount(3, $edgesStatements);
+        $this->assertCount(7, $edgesStatements);
         $this->assertCount(4, $converter->getNodeStatements());
 
 

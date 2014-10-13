@@ -5,8 +5,18 @@ require_once __DIR__.'/vendor/autoload.php';
 use Neoxygen\Neogen\Neogen,
     Neoxygen\Neogen\Converter\GraphJSONConverter,
     Neoxygen\Neogen\Converter\CypherStatementsConverter,
-    Neoxygen\NeoClient\Client;
+    Neoxygen\NeoClient\Client,
+    Neoxygen\Neogen\Parser\CypherPattern;
 
+
+$cypher = '(p:Person {name:lastName} *15)-[:WORKS_AT *n..1]->(s:Startup {name:company} *6)-[:IN_MARKET *n..1]->(m:Market {name:catchPhrase} *2)';
+$parser = new CypherPattern();
+$parser->parseCypher($cypher);
+$schema = $parser->getSchema();
+
+print_r($schema);
+
+exit();
 
 $text = '(p:Person {firstname: firstName, lastname: lastName } *50)-[:WRITE { created_at: dateTime } *1..n]->(post:Post *50)
 (p)-[:KNOWS {since: { dateTimeBetween: ["-10 years", "-5 years"] }} *n..n]->(p)
