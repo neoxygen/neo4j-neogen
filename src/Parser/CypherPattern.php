@@ -212,7 +212,7 @@ class CypherPattern
         ];
 
         if (!$defaultInfo['identifier'] && !$defaultInfo['label']) {
-            throw new SchemaException(sprintf('You must use or a label or an identifier near "%s"', $nodePattern));
+            throw new SchemaException(sprintf('You must use a label or an identifier near "%s"', $part));
         }
 
         $this->nodeInfoMap[trim($part)] = $defaultInfo;
