@@ -73,6 +73,9 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $cypher = '(p:Post *35)';
         $this->assertNodeInfo($cypher, 'p', 'Post', null, 35);
 
+        $cypher = '(p:Post*35)';
+        $this->assertNodeInfo($cypher, 'p', 'Post', null, 35);
+
         $cypher = '(p:Post *35 )';
         $this->assertNodeInfo($cypher, 'p', 'Post', null, 35);
 
@@ -110,6 +113,12 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
 
         $cypher = '<-[:COMMENT *n..n]-';
         $this->assertEdgeInfo($cypher, 'COMMENT', 'IN', 'n..n');
+
+        $cypher = '-[:WORKS_AT*n..1]->';
+        $this->assertEdgeInfo($cypher, 'WORKS_AT', 'OUT', 'n..1');
+
+        $cypher = '-[:WORKS_AT {since: {dateTimeBetween: ["-10 years", "-5 years"]}}*n..1]->';
+        $this->assertEdgeInfo($cypher, 'WORKS_AT', 'OUT', 'n..1', '{since: {dateTimeBetween: ["-10 years", "-5 years"]}}');
     }
 
     private function assertNodeInfo($cypher, $id = null, $label = null, $props = null, $count = null)
