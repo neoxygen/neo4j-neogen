@@ -9,11 +9,11 @@ use Symfony\Component\Yaml\Yaml,
 
 class CypherPattern
 {
-    const NODE_PATTERN = '/((\\()([\\w\\d]+)?(:?([\\w\\d]+))?(\\s?{[,:~\\\'\\"{}\\[\\]\\s\\w\\d]+})?(\\s?\\*\\d+)?(\\s*\\)))/';
+    const NODE_PATTERN = '/(^(\\()([\\w\\d]+)?(:?([\\w\\d]+))?(\\s?{[,:~\\\'\\"{}\\[\\]\\s\\w\\d]+})?(\\s?\\*\\d+)?(\\s*\\)$))/';
 
     const EDGE_PATTERN = '/(<?>?-\[)(?::)([_\w\d]+)(\s?{(?:.*)})?(\s?\*[\w\d+]\.\.[\w\d])(\]-<?>?)/';
 
-    const SPLIT_PATTERN = "/((?:<?->?)(?:\\[[^-^<^>.]*\\*[a-z0-9]+\\.\\.[a-z0-9]+\\])(?:<?->?))/";
+    const SPLIT_PATTERN = "/((?:<?->?)(?:\\[[^<^>.]*\\*[a-z0-9]+\\.\\.[a-z0-9]+\\])(?:<?->?))/";
 
     const INGOING_RELATIONSHIP = 'IN';
 
@@ -60,7 +60,7 @@ class CypherPattern
         $parsedLines = [];
         foreach ($lines as $line) {
             if (false === strpos($line, '//')) {
-                $parsedLines[] = htmlspecialchars_decode($line);
+                $parsedLines[] = trim(htmlspecialchars_decode($line));
             }
         }
 

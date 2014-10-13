@@ -25,14 +25,14 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
 
     public function testParserProcessEdges()
     {
-        $cypher = '(p:Person {firstname: ~ } *10)-[:WORKS_AT *n..1]->(c:Company *20)
+        $cypher = '(p:Person {firstname: firstName } *10)-[:WORKS_AT *n..1]->(c:Company *20)
         (s:Skill *40)
         (p)-[:HAS { since: { dateTimeBetween: ["-10 years","-5 years"]}} *n..n]->(s)';
         $parser = new CypherPattern();
         $parser->parseCypher($cypher);
         $schema = $parser->getSchema();
 
-        //$this->assertArrayHasKey('type', $schema['relationships'][1]['properties']['since']);
+        $this->assertArrayHasKey('type', $schema['relationships'][1]['properties']['since']);
         $this->assertArrayHasKey('firstname', $schema['nodes'][0]['properties']);
 
         $cypher = '(p:Person *20)-[:WRITE *1..n]->(post:Post *35)
@@ -40,45 +40,6 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
 (p)-[:COMMENTED_ON *n..n]->(post)';
 
         $parser->parseCypher($cypher);
-    }
-
-    public function testLineParser()
-    {
-        $p = '(p:Person {firstname: firstName, lastname: lastName} *10)-[:KNOWS *n..n]->(p)';
-        $parser = new CypherPattern();
-        $parts = $parser->parseLine($p);
-
-        $this->assertEquals('(p:Person {firstname: firstName, lastname: lastName} *10)', $parts[0]);
-        $this->assertEquals('-[:KNOWS *n..n]->', $parts[1]);
-        $this->assertEquals('(p)', $parts[2]);
-
-        $p = '(p:Person {firstname: firstName, lastname: lastName} *10)-[:KNOWS *1..1]->(p)';
-        $parser = new CypherPattern();
-        $parts = $parser->parseLine($p);
-
-        $this->assertEquals('(p:Person {firstname: firstName, lastname: lastName} *10)', $parts[0]);
-        $this->assertEquals('-[:KNOWS *1..1]->', $parts[1]);
-        $this->assertEquals('(p)', $parts[2]);
-
-        $p = '(p:Person {firstname: firstName, lastname: lastName} *10)-[:KNOWS *n..10]->(p)';
-        $parser = new CypherPattern();
-        $parts = $parser->parseLine($p);
-
-        $this->assertEquals('(p:Person {firstname: firstName, lastname: lastName} *10)', $parts[0]);
-        $this->assertEquals('-[:KNOWS *n..10]->', $parts[1]);
-        $this->assertEquals('(p)', $parts[2]);
-    }
-
-    public function testMultiplePatternIsParsed()
-    {
-        $cypher = '(p:Person {name:lastName} *15)-[:WORKS_AT *n..1]->(s:Startup {name:company} *6)-[:IN_MARKET *n..1]->(m:Market {name:catchPhrase} *2)';
-        $parser = new CypherPattern();
-        $parser->parseCypher($cypher);
-        $schema = $parser->getSchema();
-        $this->assertCount(2, $schema['relationships']);
-        $this->assertArrayHasKey('name', $schema['nodes'][0]['properties']);
-        $this->assertEquals('WORKS_AT', $schema['relationships'][0]['type']);
-        $this->assertEquals('IN_MARKET', $schema['relationships'][1]['type']);
     }
 
     public function testNodePatternInfo()
@@ -98,9 +59,6 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $this->assertNodeInfo($cypher, 'p', 'Post');
 
         $cypher = '(p:Post *35)';
-        $this->assertNodeInfo($cypher, 'p', 'Post', null, 35);
-
-        $cypher = '(p:Post*35)';
         $this->assertNodeInfo($cypher, 'p', 'Post', null, 35);
 
         $cypher = '(p:Post *35 )';
@@ -140,12 +98,21 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
 
         $cypher = '<-[:COMMENT *n..n]-';
         $this->assertEdgeInfo($cypher, 'COMMENT', 'IN', 'n..n');
+    }
 
-        $cypher = '-[:WORKS_AT*n..1]->';
-        $this->assertEdgeInfo($cypher, 'WORKS_AT', 'OUT', 'n..1');
+    public function testWrongPatternThrowErrors()
+    {
 
-        $cypher = '-[:WORKS_AT {since: {dateTimeBetween: ["-10 years", "-5 years"]}}*n..1]->';
-        $this->assertEdgeInfo($cypher, 'WORKS_AT', 'OUT', 'n..1', '{since: {dateTimeBetween: ["-10 years", "-5 years"]}}');
+        $this->setExpectedException('Neoxygen\\Neogen\\Exception\\SchemaException');
+        $p = '(p:Person {firstname: firstName, lastname: lastName } *35)-[:KNOWS *n..n]->(p)
+(p)-[:HAS *n..n]->(s:Skill *20)
+(c:Company {name: company, desc: catchPhrase} *20)-[:LOOKS_FOR_COMPETENCE *n..n]->(s)
+(c)-[:LOCATED_IN *n..1]->(country:Country {name: country} *70)
+(p)-[:LIVES_IN *n..1]->(country)
+(p)-[';
+        $parser = new CypherPattern();
+        $match = '/((?:^-^<^>)(\\()([\\w\\d]+)?(:?([\\w\\d]+))?(\\s?{[,:~\\\'\\"{}\\[\\]\\s\\w\\d]+})?(\\s?\\*\\d+)?(\\s*\\))(?:^-^<^>))/';
+        $parser->parseCypher($p);
     }
 
     private function assertNodeInfo($cypher, $id = null, $label = null, $props = null, $count = null)
