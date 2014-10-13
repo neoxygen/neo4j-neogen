@@ -42,6 +42,33 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $parser->parseCypher($cypher);
     }
 
+    public function testLineParser()
+    {
+        $p = '(p:Person {firstname: firstName, lastname: lastName} *10)-[:KNOWS *n..n]->(p)';
+        $parser = new CypherPattern();
+        $parts = $parser->parseLine($p);
+
+        $this->assertEquals('(p:Person {firstname: firstName, lastname: lastName} *10)', $parts[0]);
+        $this->assertEquals('-[:KNOWS *n..n]->', $parts[1]);
+        $this->assertEquals('(p)', $parts[2]);
+
+        $p = '(p:Person {firstname: firstName, lastname: lastName} *10)-[:KNOWS *1..1]->(p)';
+        $parser = new CypherPattern();
+        $parts = $parser->parseLine($p);
+
+        $this->assertEquals('(p:Person {firstname: firstName, lastname: lastName} *10)', $parts[0]);
+        $this->assertEquals('-[:KNOWS *1..1]->', $parts[1]);
+        $this->assertEquals('(p)', $parts[2]);
+
+        $p = '(p:Person {firstname: firstName, lastname: lastName} *10)-[:KNOWS *n..10]->(p)';
+        $parser = new CypherPattern();
+        $parts = $parser->parseLine($p);
+
+        $this->assertEquals('(p:Person {firstname: firstName, lastname: lastName} *10)', $parts[0]);
+        $this->assertEquals('-[:KNOWS *n..10]->', $parts[1]);
+        $this->assertEquals('(p)', $parts[2]);
+    }
+
     public function testMultiplePatternIsParsed()
     {
         $cypher = '(p:Person {name:lastName} *15)-[:WORKS_AT *n..1]->(s:Startup {name:company} *6)-[:IN_MARKET *n..1]->(m:Market {name:catchPhrase} *2)';
