@@ -9,7 +9,7 @@ use Symfony\Component\Yaml\Yaml,
 
 class CypherPattern
 {
-    const NODE_PATTERN = '/(^(\\()([\\w\\d]+)?(:?([\\w\\d]+))?(\\s?{[,:~\\\'\\"{}\\[\\]\\s\\w\\d]+})?(\\s?\\*\\d+)?(\\s*\\)$))/';
+    const NODE_PATTERN = '/(^(\\()([\\w\\d]+)?(:?([\\w\\d]+))?(\\s?{[,:~\\\'\\"{}\\[\\]\\s\\w\\d]+})?(\\s?\\*\\d+)?(\\s*\\))$)/';
 
     const EDGE_PATTERN = '/(<?>?-\[)(?::)([_\w\d]+)(\s?{(?:.*)})?(\s?\*[\w\d+]\.\.[\w\d])(\]-<?>?)/';
 
@@ -203,6 +203,9 @@ class CypherPattern
 
     public function getNodePatternInfo(array $nodePattern, $part)
     {
+        if (!isset($nodePattern[3]) || !isset($nodePattern[5]) || !isset($nodePattern[6]) || !isset($nodePattern[7])){
+            throw new SchemaException(sprintf('Unable to parse part "%s"', $part));
+        }
 
         $defaultInfo = [
             'identifier' => $this->nullString($nodePattern[3]),

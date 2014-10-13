@@ -115,6 +115,22 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $parser->parseCypher($p);
     }
 
+    public function testWrongPatternThrowErrors2()
+    {
+
+        $this->setExpectedException('Neoxygen\\Neogen\\Exception\\SchemaException');
+        $p = '(p:Person {firstname: firstName, lastname: lastName } *35)-[:KNOWS *n..n]->(p)
+(p)-[:HAS *n..n]->(s:Skill *20)
+(c:Company {name: company, desc: catchPhrase} *20)-[:LOOKS_FOR_COMPETENCE *n..n]->(s)
+(c)-[:LOCATED_IN *n..1]->(country:Country {name: country} *70)
+(p)-[:LIVES_IN *n..1]->(country)-
+(p)-[';
+        $parser = new CypherPattern();
+        $parser->parseCypher($p);
+    }
+
+
+
     private function assertNodeInfo($cypher, $id = null, $label = null, $props = null, $count = null)
     {
         $info = $this->getNodeInfo($cypher);
