@@ -1,5 +1,7 @@
 # Neogen
 
+[![Build Status](https://travis-ci.org/neoxygen/neo4j-neogen.svg?branch=master)](https://travis-ci.org/neoxygen/neo4j-neogen)
+
 ## Graph Generator for Neo4j
 
 The library ease the generation of test graphs. The [faker](https://github.com/fzaninotto/faker) library is also used to generate random property values.
