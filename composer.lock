@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "1ce76e851997c7ac51d7f76e5b4cd01ae50e607f"
+                "reference": "4d9244b1703d302553c4b0db2140b00b7f126b39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/1ce76e851997c7ac51d7f76e5b4cd01ae50e607f",
-                "reference": "1ce76e851997c7ac51d7f76e5b4cd01ae50e607f",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/4d9244b1703d302553c4b0db2140b00b7f126b39",
+                "reference": "4d9244b1703d302553c4b0db2140b00b7f126b39",
                 "shasum": ""
             },
             "require": {
@@ -54,11 +54,11 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2014-10-01 07:35:35"
+            "time": "2014-10-14 14:29:47"
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "dev-master",
+            "version": "4.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
@@ -123,16 +123,16 @@
         },
         {
             "name": "guzzlehttp/streams",
-            "version": "dev-master",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/streams.git",
-                "reference": "30d5c8e7646e004768054c4143a433c89bc9ece0"
+                "reference": "f91b721d73f0e561410903b3b3c90a5d0e40b534"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/streams/zipball/30d5c8e7646e004768054c4143a433c89bc9ece0",
-                "reference": "30d5c8e7646e004768054c4143a433c89bc9ece0",
+                "url": "https://api.github.com/repos/guzzle/streams/zipball/f91b721d73f0e561410903b3b3c90a5d0e40b534",
+                "reference": "f91b721d73f0e561410903b3b3c90a5d0e40b534",
                 "shasum": ""
             },
             "require": {
@@ -144,7 +144,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev"
+                    "dev-master": "2.0-dev"
                 }
             },
             "autoload": {
@@ -172,7 +172,7 @@
                 "Guzzle",
                 "stream"
             ],
-            "time": "2014-09-15 01:45:40"
+            "time": "2014-08-17 21:15:53"
         },
         {
             "name": "monolog/monolog",
@@ -252,12 +252,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/neoxygen/neo4j-neoclient.git",
-                "reference": "6f761b346b01de1c480efaa108524c696b089181"
+                "reference": "c64ca04379be990fc56fe179533754296e83d3dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/neoxygen/neo4j-neoclient/zipball/6f761b346b01de1c480efaa108524c696b089181",
-                "reference": "6f761b346b01de1c480efaa108524c696b089181",
+                "url": "https://api.github.com/repos/neoxygen/neo4j-neoclient/zipball/c64ca04379be990fc56fe179533754296e83d3dd",
+                "reference": "c64ca04379be990fc56fe179533754296e83d3dd",
                 "shasum": ""
             },
             "require": {
@@ -306,7 +306,7 @@
                 "http",
                 "neo4j"
             ],
-            "time": "2014-10-09 17:49:11"
+            "time": "2014-10-12 13:19:28"
         },
         {
             "name": "psr/log",
@@ -720,16 +720,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/instantiator.git",
-                "reference": "4bdc0421209a00e6f425f4c3554d1b0df3a7e897"
+                "reference": "f976e5de371104877ebc89bd8fecb0019ed9c119"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/4bdc0421209a00e6f425f4c3554d1b0df3a7e897",
-                "reference": "4bdc0421209a00e6f425f4c3554d1b0df3a7e897",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/f976e5de371104877ebc89bd8fecb0019ed9c119",
+                "reference": "f976e5de371104877ebc89bd8fecb0019ed9c119",
                 "shasum": ""
             },
             "require": {
-                "php": "~5.3"
+                "php": ">=5.3,<8.0-DEV"
             },
             "require-dev": {
                 "athletic/athletic": "~0.1.8",
@@ -766,7 +766,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2014-10-05 00:20:37"
+            "time": "2014-10-13 12:58:55"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
