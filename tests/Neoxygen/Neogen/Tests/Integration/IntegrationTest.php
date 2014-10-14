@@ -189,6 +189,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     public function sendQuery($q, array $p = array())
     {
         $response = $this->getClient()->sendCypherQuery($q, $p, null, array('row', 'graph'));
+        sleep(0.2);
         $formatter = new ResponseFormatter();
         $result = $formatter->format($response);
 
