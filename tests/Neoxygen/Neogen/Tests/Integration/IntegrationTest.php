@@ -6,6 +6,7 @@ use Neoxygen\Neogen\Neogen,
     Neoxygen\Neogen\Converter\CypherStatementsConverter,
     Neoxygen\NeoClient\Client,
     Neoxygen\NeoClient\Formatter\ResponseFormatter;
+use Neoxygen\Neogen\Parser\CypherPattern;
 
 class IntegrationTest extends \PHPUnit_Framework_TestCase
 {
@@ -155,6 +156,21 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(8, $result->getNodesByLabel('Channel'));
         $this->assertCount(8, $result->getRelationships());
         $this->clearDB();
+    }
+
+    public function testLinkedList()
+    {
+        $p = '(root:Root *1)-[:LINK *1..n]->(link1:Link *1)-[:LINK *1..n]->(link2:Link2 *1)-[:LINK *1..n]->(root)';
+        $this->clearDB();
+        $this->loadGraphInDB($p);
+
+        $q = 'MATCH p=(n)-[r]-() RETURN p';
+        $result = $this->sendQuery($q);
+
+        $root = $result->getSingleNodeByLabel('Root');
+        $this->assertTrue($root->getSingleRelationship('LINK', 'OUT')->getEndNode()->getLabel() == 'Link');
+        //$link = $result->getSingleNodeByLabel('Link');
+        //$this->assertTrue($link->getSingleRelationship('LINK', 'OUT')->getEndNode()->getLabel()->getSingleRelationship('LINK', 'OUT')->getEndNode()->getLabel() == 'Root');
     }
 
     public function getClient()
