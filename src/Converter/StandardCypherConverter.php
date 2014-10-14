@@ -27,6 +27,9 @@ class StandardCypherConverter implements ConverterInterface
         }
         $i = 1;
         foreach ($graph->getNodes() as $node) {
+            if (!isset($node['neogen_id']) && isset($node['_id'])){
+                $node['neogen_id'] = $node['_id'];
+            }
             $identifier = 'n'.$i;
             $statement = 'MERGE ('.$identifier.':'.$node['label'].' {neogen_id: \''.$node['neogen_id'].'\' })';
             if (empty($node['properties'])){
@@ -101,6 +104,8 @@ class StandardCypherConverter implements ConverterInterface
             $this->statements[] = 'MATCH (n'.$ssi.':'.$label.') REMOVE n'.$ssi.'.neogen_id;';
             $ssi++;
         }
+
+        return $this->statements;
 
     }
 

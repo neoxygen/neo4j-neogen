@@ -48,6 +48,8 @@ class GraphJSONConverter implements ConverterInterface
             $e['_target'] = $edge['target'];
             $e['type'] = $edge['type'];
             $e['properties'] = $edge['properties'];
+            $e['source_label'] = $edge['source_label'];
+            $e['target_label'] = $edge['target_label'];
             $this->edges[] = $e;
         }
 

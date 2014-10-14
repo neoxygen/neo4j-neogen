@@ -107,6 +107,8 @@ class CypherStatementsConverter implements ConverterInterface
 
         $this->addRemoveIdsStatements($labels);
 
+        return $this->getStatements();
+
     }
 
     public function getStatements()
