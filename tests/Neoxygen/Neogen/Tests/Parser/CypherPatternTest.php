@@ -129,6 +129,13 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $parser->parseCypher($p);
     }
 
+    public function testSimpleLine()
+    {
+        $p = '(p:Person *10)-[:WORKS_AT *1..1]->(s:Startup *5)';
+        $parser = new CypherPattern();
+        $parser->parseCypher($p);
+    }
+
 
 
     private function assertNodeInfo($cypher, $id = null, $label = null, $props = null, $count = null)

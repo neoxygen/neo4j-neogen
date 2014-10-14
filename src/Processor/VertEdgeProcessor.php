@@ -61,7 +61,7 @@ class VertEdgeProcessor
             // Currently only these modes supported
             $allowedModes = array('n..1', '1..n', 'n..n');
             if (!in_array($mode, $allowedModes)) {
-                throw new SchemaException(sprintf('The cardinality "%s" for the relationship %s is not suppored', array($mode, $type)));
+                throw new SchemaException(sprintf('The cardinality "%s" for the relationship is not supported', $mode));
             }
 
             switch ($mode) {
