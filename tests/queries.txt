@@ -1,0 +1,1 @@
+(genre:Genre*3)-[:HAS_CHANNEL]->(channel:Channel*4)-[:HAS_PROGRAM]->(program:Program*3)-[:HAS_GENDER]->(gender:Gender*3)-[genderRelationDevice:HAS_PROGRAM_DISCOVERY_BY_DEVICE*0..n]->(programDiscoveryByDevice:ProgramDiscoveryByDevice*10)

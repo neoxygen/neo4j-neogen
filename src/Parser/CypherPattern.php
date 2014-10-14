@@ -229,7 +229,10 @@ class CypherPattern
         $arrowEnd = $edgePattern[5];
         $direction = $this->detectEdgeDirection($arrowStart, $arrowEnd);
         if (null === $direction) {
-            throw new SchemaException(sprintf('The direction of the relationship must be defined, near "%s".', $edgePattern));
+            $edgePart = &$edgePattern;
+            unset($edgePart[0]);
+            $patt = implode('', $edgePart);
+            throw new SchemaException(sprintf('The direction of the relationship must be defined, near "%s".', $patt));
         }
         $type = $this->nullString($edgePattern[2]);
         if (null === $type) {
