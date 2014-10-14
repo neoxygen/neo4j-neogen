@@ -94,12 +94,41 @@ class VertEdgeProcessor
                     }
                     break;
                 case '1..n':
-                    foreach ($this->nodesByTypes[$end] as $node) {
-                        $endNodes = $this->nodesByTypes[$start];
-                        shuffle($endNodes);
-                        $endNode = current($endNodes);
-                        $this->setEdge($endNode, $node, $type, $props, $end, $start);
-
+                    $cstart = count($this->nodesByTypes[$start]);
+                    $cend = count($this->nodesByTypes[$end]);
+                    if ($cstart <= $cend){
+                        $left = $cend - $cstart;
+                        $free = 1;
+                        if ($left > 1){
+                            $round = round($left / $cstart, null, PHP_ROUND_HALF_UP);
+                            $free = $round >= 1 ? $round : 1;
+                        }
+                        $endNodes = $this->nodesByTypes[$end];
+                        $x = 1;
+                        foreach($this->nodesByTypes[$start] as $startNode){
+                            for($i=1; $i <= $free; $i++){
+                                $endNode = array_shift($endNodes);
+                                $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
+                            }
+                            if ($x === $cstart){
+                                $remaining = count($endNodes);
+                                for ($i = 1; $i <= $remaining; $i++){
+                                    $endNode = array_shift($endNodes);
+                                    $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
+                                }
+                            }
+                            $x++;
+                        }
+                    } else {
+                        $approx = round($cstart / $cend);
+                        $endNodes = $this->nodesByTypes[$end];
+                        foreach ($this->nodesByTypes[$start] as $startNode){
+                            $to = (count($endNodes) >= $approx) ? $approx : count($endNodes);
+                            for ($i = 1; $i <= $to; $i++){
+                                $endNode = array_shift($endNodes);
+                                $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
+                            }
+                        }
                     }
                     break;
             }

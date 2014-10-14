@@ -63,8 +63,8 @@ class StandardCypherConverter implements ConverterInterface
         foreach ($graph->getEdges() as $rel)
         {
             $starti = 's'.$e;
-            $endi = 'e'.$i;
-            $eid = 'edge'.$i;
+            $endi = 'e'.$e;
+            $eid = 'edge'.$e;
             $q = 'MATCH ('.$starti.':'.$rel['source_label'].' {neogen_id: \''.$rel['source'].'\'}), ('.$endi.':'.$rel['target_label'].' { neogen_id: \''.$rel['target'].'\'})'.PHP_EOL;
             $q .= 'MERGE ('.$starti.')-['.$eid.':'.$rel['type'].']->('.$endi.')'.PHP_EOL;
             if (empty($rel['properties'])){

@@ -124,6 +124,39 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($result->getSingleNode()->hasRelationships());
 ;    }
 
+    public function test1NCardinality()
+    {
+        $p = '(g:Genre *6)-[:HAS_CHANNEL *1..n]->(channel:Channel *8)';
+        $this->loadGraphInDB($p);
+        $query = 'MATCH p=(g:Genre)-[:HAS_CHANNEL]->(channel:Channel) RETURN p';
+        $result = $this->sendQuery($query);
+
+        $this->assertCount(6, $result->getNodesByLabel('Genre'));
+        $this->assertCount(8, $result->getNodesByLabel('Channel'));
+        $this->assertCount(8, $result->getRelationships());
+        $this->assertEquals('HAS_CHANNEL', $result->getSingleNode()->getSingleRelationship()->getType());
+
+        $this->clearDB();
+        $p = '(g:Genre *6)-[:HAS_CHANNEL *1..n]->(channel:Channel *37)';
+        $this->loadGraphInDB($p);
+        $query = 'MATCH p=(g:Genre)-[:HAS_CHANNEL]->(channel:Channel) RETURN p';
+        $result = $this->sendQuery($query);
+
+        $this->assertCount(6, $result->getNodesByLabel('Genre'));
+        $this->assertCount(37, $result->getNodesByLabel('Channel'));
+        $this->assertCount(37, $result->getRelationships());
+        $this->assertEquals('HAS_CHANNEL', $result->getSingleNode()->getSingleRelationship()->getType());
+
+        $this->clearDB();
+        $p = '(g:Genre *35)-[:HAS_CHANNEL *1..n]->(channel:Channel *8)';
+        $this->loadGraphInDB($p);
+        $query = 'MATCH p=(g:Genre)-[:HAS_CHANNEL]->(channel:Channel) RETURN p';
+        $result = $this->sendQuery($query);
+        $this->assertCount(8, $result->getNodesByLabel('Channel'));
+        $this->assertCount(8, $result->getRelationships());
+        $this->clearDB();
+    }
+
     public function getClient()
     {
         if (null === $this->client) {
