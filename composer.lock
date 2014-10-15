@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2b57f5cd0779492a9ae6e27f1bcfed9a",
+    "hash": "322f9e0fb6178c3151ef52c4b2b80ffd",
     "packages": [
         {
             "name": "fzaninotto/faker",
@@ -1236,12 +1236,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f75e6b2e0764bcf4faa5082f4b60d5e7cf0959bb"
+                "reference": "a0d821158f305c48ff401c32bec15f60a878d9c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f75e6b2e0764bcf4faa5082f4b60d5e7cf0959bb",
-                "reference": "f75e6b2e0764bcf4faa5082f4b60d5e7cf0959bb",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a0d821158f305c48ff401c32bec15f60a878d9c1",
+                "reference": "a0d821158f305c48ff401c32bec15f60a878d9c1",
                 "shasum": ""
             },
             "require": {
@@ -1299,7 +1299,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2014-10-07 09:30:07"
+            "time": "2014-10-15 17:08:28"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
