@@ -91,8 +91,9 @@ class CypherStatementsConverter implements ConverterInterface
                 foreach ($rel['properties'] as $property => $value) {
                     $q .= 'edge.'.$property.' = pair.properties.'.$property;
                     if ($i < $propsCount) {
-                        $q .= ','.PHP_EOL;
+                        $q .= ', '.PHP_EOL;
                     }
+                    $i++;
                 }
             }
             $ets = [

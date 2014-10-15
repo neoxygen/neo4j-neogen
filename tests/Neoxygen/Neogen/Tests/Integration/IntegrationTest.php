@@ -173,6 +173,19 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         //$this->assertTrue($link->getSingleRelationship('LINK', 'OUT')->getEndNode()->getLabel()->getSingleRelationship('LINK', 'OUT')->getEndNode()->getLabel() == 'Root');
     }
 
+    public function testEdgeWithMultiProps()
+    {
+        $p = '(person:Person {name: firstName, lastname:{numberBetween:[2,5]}} *15)-[:WORKS_AT {weight:{numberBetween:[2,8]}, activity:{numberBetween:[2,50]}} *n..1]->(company:Company {name:company}*10)';
+        $this->clearDB();
+        $this->loadGraphInDB($p);
+
+        $q = 'MATCH p=(:Person)-[:WORKS_AT]->(:Company) RETURN p';
+        $result = $this->sendQuery($q);
+
+        $this->assertCount(15, $result->getRelationships());
+
+    }
+
     public function getClient()
     {
         if (null === $this->client) {
