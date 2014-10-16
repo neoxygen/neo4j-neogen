@@ -105,7 +105,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     public function testSiteExamplePattern()
     {
         $pattern = '(p:Person {firstname: firstName, lastname: lastName} *10)-[:KNOWS *n..n]->(p)
-(p)-[:HAS *n..n]->(s:Skill *10)
+(p)-[:HAS *n..n]->(s:Skill {name: progLanguage} *10)
 (c:Company {name: company, desc: catchPhrase} *5)-[:LOOKS_FOR_COMPETENCE *n..n]->(s)
 (c)-[:LOCATED_IN *n..1]->(country:Country {name: country} *5)
 (p)-[:LIVES_IN *n..1]->(country)';

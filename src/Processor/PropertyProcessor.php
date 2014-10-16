@@ -6,6 +6,7 @@ use Faker\Factory;
 use Neoxygen\Neogen\Exception\SchemaException,
     Neoxygen\Neogen\Processor\VertEdgeProcessor,
     Neoxygen\Neogen\Graph\Graph;
+use Ikwattro\FakerExtra\Provider\Skill;
 
 class PropertyProcessor
 {
@@ -16,7 +17,10 @@ class PropertyProcessor
 
     public function __construct()
     {
-        $this->faker = Factory::create();
+        $faker = Factory::create();
+        $faker->addProvider(new Skill($faker));
+
+        $this->faker = $faker;
     }
 
     public function process(VertEdgeProcessor $vertEdge, Graph $graph)

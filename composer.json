@@ -21,7 +21,8 @@
         "symfony/console": "~2.5",
         "symfony/yaml": "~2.5",
         "symfony/finder": "~2.5",
-        "neoxygen/neoclient": "~1.6"
+        "neoxygen/neoclient": "~1.6",
+        "ikwattro/faker-extra": "~0.1"
     },
     "require-dev": {
         "phpunit/phpunit": "4.*",

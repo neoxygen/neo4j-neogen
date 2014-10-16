@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "322f9e0fb6178c3151ef52c4b2b80ffd",
+    "hash": "4f8809cb6ad9d60597fc494d6eed5aec",
     "packages": [
         {
             "name": "fzaninotto/faker",
@@ -175,6 +175,51 @@
             "time": "2014-08-17 21:15:53"
         },
         {
+            "name": "ikwattro/faker-extra",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ikwattro/faker-extra.git",
+                "reference": "ea68fbb8f2eb32711c9eaeefdfaa7d913b63fcd2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ikwattro/faker-extra/zipball/ea68fbb8f2eb32711c9eaeefdfaa7d913b63fcd2",
+                "reference": "ea68fbb8f2eb32711c9eaeefdfaa7d913b63fcd2",
+                "shasum": ""
+            },
+            "require": {
+                "fzaninotto/faker": "~1.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ikwattro\\FakerExtra\\": "src/FakerExtra"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christophe Willemsen",
+                    "email": "chris@neoxygen.io"
+                }
+            ],
+            "description": "Extra providers for the Faker library",
+            "keywords": [
+                "faker",
+                "generation",
+                "provider",
+                "random"
+            ],
+            "time": "2014-10-16 12:56:16"
+        },
+        {
             "name": "monolog/monolog",
             "version": "dev-master",
             "source": {
@@ -252,12 +297,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/neoxygen/neo4j-neoclient.git",
-                "reference": "c64ca04379be990fc56fe179533754296e83d3dd"
+                "reference": "b33c84732bdc778eab534e16d08d94516304bee9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/neoxygen/neo4j-neoclient/zipball/c64ca04379be990fc56fe179533754296e83d3dd",
-                "reference": "c64ca04379be990fc56fe179533754296e83d3dd",
+                "url": "https://api.github.com/repos/neoxygen/neo4j-neoclient/zipball/b33c84732bdc778eab534e16d08d94516304bee9",
+                "reference": "b33c84732bdc778eab534e16d08d94516304bee9",
                 "shasum": ""
             },
             "require": {
@@ -306,7 +351,7 @@
                 "http",
                 "neo4j"
             ],
-            "time": "2014-10-12 13:19:28"
+            "time": "2014-10-16 11:55:15"
         },
         {
             "name": "psr/log",
