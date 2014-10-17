@@ -6,7 +6,8 @@ use Faker\Factory;
 use Neoxygen\Neogen\Exception\SchemaException,
     Neoxygen\Neogen\Processor\VertEdgeProcessor,
     Neoxygen\Neogen\Graph\Graph;
-use Ikwattro\FakerExtra\Provider\Skill;
+use Ikwattro\FakerExtra\Provider\Skill,
+    Ikwattro\FakerExtra\Provider\PersonExtra;
 
 class PropertyProcessor
 {
@@ -19,6 +20,7 @@ class PropertyProcessor
     {
         $faker = Factory::create();
         $faker->addProvider(new Skill($faker));
+        $faker->addProvider(new PersonExtra($faker));
 
         $this->faker = $faker;
     }
