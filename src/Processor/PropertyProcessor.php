@@ -7,7 +7,8 @@ use Neoxygen\Neogen\Exception\SchemaException,
     Neoxygen\Neogen\Processor\VertEdgeProcessor,
     Neoxygen\Neogen\Graph\Graph;
 use Ikwattro\FakerExtra\Provider\Skill,
-    Ikwattro\FakerExtra\Provider\PersonExtra;
+    Ikwattro\FakerExtra\Provider\PersonExtra,
+    Ikwattro\FakerExtra\Provider\Hashtag;
 
 class PropertyProcessor
 {
@@ -21,6 +22,7 @@ class PropertyProcessor
         $faker = Factory::create();
         $faker->addProvider(new Skill($faker));
         $faker->addProvider(new PersonExtra($faker));
+        $faker->addProvider(new Hashtag($faker));
 
         $this->faker = $faker;
     }
