@@ -176,16 +176,16 @@
         },
         {
             "name": "ikwattro/faker-extra",
-            "version": "0.1.0",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ikwattro/faker-extra.git",
-                "reference": "ea68fbb8f2eb32711c9eaeefdfaa7d913b63fcd2"
+                "reference": "35d74d6845d7cedbd7d3d33618251b34b15ec8d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ikwattro/faker-extra/zipball/ea68fbb8f2eb32711c9eaeefdfaa7d913b63fcd2",
-                "reference": "ea68fbb8f2eb32711c9eaeefdfaa7d913b63fcd2",
+                "url": "https://api.github.com/repos/ikwattro/faker-extra/zipball/35d74d6845d7cedbd7d3d33618251b34b15ec8d5",
+                "reference": "35d74d6845d7cedbd7d3d33618251b34b15ec8d5",
                 "shasum": ""
             },
             "require": {
@@ -217,7 +217,7 @@
                 "provider",
                 "random"
             ],
-            "time": "2014-10-16 12:56:16"
+            "time": "2014-10-17 13:44:30"
         },
         {
             "name": "monolog/monolog",
@@ -297,12 +297,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/neoxygen/neo4j-neoclient.git",
-                "reference": "b33c84732bdc778eab534e16d08d94516304bee9"
+                "reference": "f9e8658e1579772567a1f642678ca42614a7f4f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/neoxygen/neo4j-neoclient/zipball/b33c84732bdc778eab534e16d08d94516304bee9",
-                "reference": "b33c84732bdc778eab534e16d08d94516304bee9",
+                "url": "https://api.github.com/repos/neoxygen/neo4j-neoclient/zipball/f9e8658e1579772567a1f642678ca42614a7f4f9",
+                "reference": "f9e8658e1579772567a1f642678ca42614a7f4f9",
                 "shasum": ""
             },
             "require": {
@@ -351,7 +351,7 @@
                 "http",
                 "neo4j"
             ],
-            "time": "2014-10-16 11:55:15"
+            "time": "2014-10-16 21:20:12"
         },
         {
             "name": "psr/log",
@@ -1281,12 +1281,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "a0d821158f305c48ff401c32bec15f60a878d9c1"
+                "reference": "cd4014775069d7d39d20f617037c2c0f9b4bc25b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a0d821158f305c48ff401c32bec15f60a878d9c1",
-                "reference": "a0d821158f305c48ff401c32bec15f60a878d9c1",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/cd4014775069d7d39d20f617037c2c0f9b4bc25b",
+                "reference": "cd4014775069d7d39d20f617037c2c0f9b4bc25b",
                 "shasum": ""
             },
             "require": {
@@ -1344,7 +1344,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2014-10-15 17:08:28"
+            "time": "2014-10-17 09:28:50"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
