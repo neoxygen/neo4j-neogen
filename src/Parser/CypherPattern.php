@@ -59,7 +59,10 @@ class CypherPattern
         $lines = explode("\n", $pattern);
         $paste = '';
         foreach ($lines as $line){
-            $paste .= trim($line);
+            $l = trim($line);
+            if (false === strpos($l, '//')) {
+                $paste .= $l;
+            }
         }
         $formatInLines = str_replace(')(',")\n(", $paste);
 

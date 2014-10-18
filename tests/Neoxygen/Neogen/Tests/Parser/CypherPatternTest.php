@@ -148,6 +148,19 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($format, $expected);
     }
 
+    public function testPatternOnMultipleLinesWithCommentLines()
+    {
+        $p = '// Example :
+(c:Customer {id: randomNumber, name: fullName } *35)
+// This is a comment
+(c)-[:KNOWS *n..n]->(c)';
+        $parser = new CypherPattern();
+        $format = $parser->preFormatPattern($p);
+        $expected = '(c:Customer {id: randomNumber, name: fullName } *35)
+(c)-[:KNOWS *n..n]->(c)';
+        $this->assertEquals($expected, $format);
+    }
+
 
 
     private function assertNodeInfo($cypher, $id = null, $label = null, $props = null, $count = null)
