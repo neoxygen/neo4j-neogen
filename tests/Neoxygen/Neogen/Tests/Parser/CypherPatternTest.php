@@ -53,10 +53,10 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('post', $info['identifier']);
         $this->assertNull($info['label']);
         $this->assertNull($info['properties']);
-        $this->assertNull($info['count']);
+        $this->assertEquals(1, $info['count']);
 
         $cypher = '(p:Post)';
-        $this->assertNodeInfo($cypher, 'p', 'Post');
+        $this->assertNodeInfo($cypher, 'p', 'Post', null, 1);
 
         $cypher = '(p:Post *35)';
         $this->assertNodeInfo($cypher, 'p', 'Post', null, 35);
@@ -65,16 +65,16 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $this->assertNodeInfo($cypher, 'p', 'Post', null, 35);
 
         $cypher = '(:Post)';
-        $this->assertNodeInfo($cypher, null, 'Post');
+        $this->assertNodeInfo($cypher, null, 'Post', null, 1);
 
         $cypher = '(:Post *35)';
         $this->assertNodeInfo($cypher, null, 'Post', null, 35);
 
         $cypher = '(p:Post {firstname, weight: {numberBetween: [10,100]}})';
-        $this->assertNodeInfo($cypher, 'p', 'Post', '{firstname, weight: {numberBetween: [10,100]}}');
+        $this->assertNodeInfo($cypher, 'p', 'Post', '{firstname, weight: {numberBetween: [10,100]}}', 1);
 
         $cypher = '(:Post {firstname, weight: {numberBetween: [10,100]}})';
-        $this->assertNodeInfo($cypher, null, 'Post', '{firstname, weight: {numberBetween: [10,100]}}');
+        $this->assertNodeInfo($cypher, null, 'Post', '{firstname, weight: {numberBetween: [10,100]}}', 1);
 
         $cypher = '(p:Post {firstname, weight: {numberBetween: [10,100]}} *35)';
         $this->assertNodeInfo($cypher, 'p', 'Post', '{firstname, weight: {numberBetween: [10,100]}}', 35);

@@ -226,6 +226,10 @@ class CypherPattern
             'count' => $this->nullString($nodePattern[7])
         ];
 
+        if (empty($defaultInfo['count'])){
+            $defaultInfo['count'] = 1;
+        }
+
         if (!$defaultInfo['identifier'] && !$defaultInfo['label']) {
             throw new SchemaException(sprintf('You must use a label or an identifier near "%s"', $part));
         }
