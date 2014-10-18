@@ -136,6 +136,18 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $parser->parseCypher($p);
     }
 
+    public function testPatternOnMultipleLines()
+    {
+        $p = '(p:Person {firstname: firstName, lastname: lastName,
+        dateOfBirth: {dateTimeBetween: ["-50 years", "-18 years"]}} *10)
+        -[:KNOWS *n..n]->
+        (p)';
+        $parser = new CypherPattern();
+        $format = $parser->preFormatPattern($p);
+        $expected = '(p:Person {firstname: firstName, lastname: lastName,dateOfBirth: {dateTimeBetween: ["-50 years", "-18 years"]}} *10)-[:KNOWS *n..n]->(p)';
+        $this->assertEquals($format, $expected);
+    }
+
 
 
     private function assertNodeInfo($cypher, $id = null, $label = null, $props = null, $count = null)

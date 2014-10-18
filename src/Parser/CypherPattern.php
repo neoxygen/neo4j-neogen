@@ -36,7 +36,7 @@ class CypherPattern
         $this->labels = [];
         $this->identifiers = [];
         $this->nodeInfoMap = [];
-        $lines = $this->splitLineBreaks($cypherPattern);
+        $lines = explode("\n", $this->preFormatPattern($cypherPattern));
 
         foreach ($lines as $line) {
             $parts = $this->parseLine($line);
@@ -52,6 +52,18 @@ class CypherPattern
                 }
             }
         }
+    }
+
+    public function preFormatPattern($pattern)
+    {
+        $lines = explode("\n", $pattern);
+        $paste = '';
+        foreach ($lines as $line){
+            $paste .= trim($line);
+        }
+        $formatInLines = str_replace(')(',")\n(", $paste);
+
+        return $formatInLines;
     }
 
     public function splitLineBreaks($cypherPattern)
