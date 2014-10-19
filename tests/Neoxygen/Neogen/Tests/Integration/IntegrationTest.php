@@ -186,6 +186,53 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testOneToOneCardinality()
+    {
+        $p = '(root:Root)-[:CHILD *1..1]->(child:Child)';
+        $this->clearDB();
+        $this->loadGraphInDB($p);
+
+        $q = 'MATCH p=(root:Root)-[r]-() RETURN p';
+        $result = $this->sendQuery($q);
+
+        $this->assertTrue($result->getSingleNode('Root')->getLabel() == 'Root');
+        $this->assertTrue($result->getSingleNode('Root')->getSingleRelationship()->getType() == 'CHILD');
+        $this->assertTrue($result->getSingleNode('Root')->getSingleRelationship()->getEndNode()->getLabel() == 'Child');
+
+    }
+
+    public function testOneToOneCardinality2()
+    {
+        $p = '(root:Root2 *10)-[:CHILD2 *1..1]->(child:Child *7)';
+        $this->clearDB();
+        $this->loadGraphInDB($p);
+
+        $q = 'MATCH p=(root:Root2)-[r:CHILD2]-() RETURN p';
+        $result = $this->sendQuery($q);
+
+        $this->assertTrue($result->getSingleNode('Root2')->getLabel() == 'Root2');
+        $this->assertTrue($result->getSingleNode('Root2')->getSingleRelationship()->getType() == 'CHILD2');
+        $this->assertTrue($result->getSingleNode('Root2')->getSingleRelationship()->getEndNode()->getLabel() == 'Child');
+        $this->assertEquals(7, $result->getRelationshipsCount());
+
+    }
+
+    public function testOneToOneCardinality3()
+    {
+        $p = '(root:Root3 *5)-[:CHILD3 *1..1]->(child:Child *7)';
+        $this->clearDB();
+        $this->loadGraphInDB($p);
+
+        $q = 'MATCH p=(root:Root3)-[r:CHILD3]-() RETURN p';
+        $result = $this->sendQuery($q);
+
+        $this->assertTrue($result->getSingleNode('Root3')->getLabel() == 'Root3');
+        $this->assertTrue($result->getSingleNode('Root3')->getSingleRelationship()->getType() == 'CHILD3');
+        $this->assertTrue($result->getSingleNode('Root3')->getSingleRelationship()->getEndNode()->getLabel() == 'Child');
+        $this->assertEquals(5, $result->getRelationshipsCount());
+
+    }
+
     public function getClient()
     {
         if (null === $this->client) {

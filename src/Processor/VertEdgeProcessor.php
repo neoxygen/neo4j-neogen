@@ -59,7 +59,7 @@ class VertEdgeProcessor
             }
 
             // Currently only these modes supported
-            $allowedModes = array('n..1', '1..n', 'n..n');
+            $allowedModes = array('n..1', '1..n', 'n..n', '1..1');
             if (!in_array($mode, $allowedModes)) {
                 throw new SchemaException(sprintf('The cardinality "%s" for the relationship is not supported', $mode));
             }
@@ -71,6 +71,19 @@ class VertEdgeProcessor
                         shuffle($endNodes);
                         $endNode = current($endNodes);
                         $this->setEdge($node, $endNode, $type, $props, $start, $end);
+                    }
+                    break;
+
+                case '1..1':
+                    $startNodes = $this->nodesByTypes[$start];
+                    $endNodes = $this->nodesByTypes[$end];
+                    $startCount = count($startNodes);
+                    for ($i = 0; $i <= $startCount -1; $i++){
+                        if (!empty($endNodes)){
+                            $endN = array_shift($endNodes);
+                            $startN = array_shift($startNodes);
+                            $this->setEdge($startN, $endN, $type, $props, $start, $end);
+                        }
                     }
                     break;
 

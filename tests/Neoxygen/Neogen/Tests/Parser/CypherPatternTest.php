@@ -161,6 +161,15 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $format);
     }
 
+    public function testOneToOneCardinality()
+    {
+        $p = '(root:Root *10)-[:CHILD *1..1]->(child:Child *15)';
+        $parser = new CypherPattern();
+        $parser->parseCypher($p);
+        $schema = $parser->getSchema();
+        $this->assertEquals('1..1', $schema['relationships'][0]['mode']);
+    }
+
 
 
     private function assertNodeInfo($cypher, $id = null, $label = null, $props = null, $count = null)

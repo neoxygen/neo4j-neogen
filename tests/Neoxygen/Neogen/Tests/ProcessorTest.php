@@ -22,7 +22,5 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
         $edgesStatements = $converter->getEdgeStatements();
         $this->assertCount(7, $edgesStatements);
         $this->assertCount(4, $converter->getNodeStatements());
-
-
     }
 }
