@@ -39,7 +39,7 @@ class GraphJSONConverter implements ConverterInterface
             $n['identifier'] = $node['identifier'];
             $n['properties'] = $node['properties'];
             $n['labels'] = $node['labels'];
-            $n['cluster'] = $this->clusterColors[$node['label']];
+            $n['cluster'] = $this->clusterColors[$node['identifier']];
             $this->nodes[] = $n;
         }
 

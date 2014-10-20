@@ -15,6 +15,8 @@ class VertEdgeProcessor
 
     private $nodesByIdentifier = [];
 
+    private $nodeDefinitions = [];
+
     /**
      *
      *
@@ -29,6 +31,9 @@ class VertEdgeProcessor
         foreach ($schema->getNodes() as $identifier => $node) {
             if (!in_array($identifier, $this->identifiers)) {
                 $this->identifiers[] = $identifier;
+            }
+            if (!array_key_exists($node['identifier'], $this->nodeDefinitions)){
+                $this->nodeDefinitions[$node['identifier']] = $node;
             }
             $count = isset($node['count']) ? $node['count'] : range(10, 50);
             $x = 1;
@@ -157,8 +162,8 @@ class VertEdgeProcessor
             'target' => $endId,
             'type' => $type,
             'properties' => $properties,
-            'source_label' => $this->nodesByIdentifier[$startIdentifier][0]['labels'][0],
-            'target_label' => $this->nodesByIdentifier[$endIdentifier][0]['labels'][0]
+            'source_label' => $this->nodeDefinitions[$startIdentifier]['labels'][0],
+            'target_label' => $this->nodeDefinitions[$endIdentifier]['labels'][0]
         ];
     }
 
