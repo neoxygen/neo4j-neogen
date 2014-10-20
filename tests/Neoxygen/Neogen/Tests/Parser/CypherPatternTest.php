@@ -3,6 +3,7 @@
 namespace Neoxygen\Neogen\Tests\Parser;
 
 use Neoxygen\Neogen\Parser\CypherPattern;
+use Neoxygen\Neogen\Exception\SchemaException;
 
 class CypherPatternTest extends \PHPUnit_Framework_TestCase
 {
@@ -64,17 +65,17 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $cypher = '(p:Post *35 )';
         $this->assertNodeInfo($cypher, 'p', 'Post', null, 35);
 
-        $cypher = '(:Post)';
-        $this->assertNodeInfo($cypher, null, 'Post', null, 1);
+        $cypher = '(post:Post)';
+        $this->assertNodeInfo($cypher, 'post', 'Post', null, 1);
 
-        $cypher = '(:Post *35)';
-        $this->assertNodeInfo($cypher, null, 'Post', null, 35);
+        $cypher = '(post:Post *35)';
+        $this->assertNodeInfo($cypher, 'post', 'Post', null, 35);
 
         $cypher = '(p:Post {firstname, weight: {numberBetween: [10,100]}})';
         $this->assertNodeInfo($cypher, 'p', 'Post', '{firstname, weight: {numberBetween: [10,100]}}', 1);
 
-        $cypher = '(:Post {firstname, weight: {numberBetween: [10,100]}})';
-        $this->assertNodeInfo($cypher, null, 'Post', '{firstname, weight: {numberBetween: [10,100]}}', 1);
+        $cypher = '(post:Post {firstname, weight: {numberBetween: [10,100]}})';
+        $this->assertNodeInfo($cypher, 'post', 'Post', '{firstname, weight: {numberBetween: [10,100]}}', 1);
 
         $cypher = '(p:Post {firstname, weight: {numberBetween: [10,100]}} *35)';
         $this->assertNodeInfo($cypher, 'p', 'Post', '{firstname, weight: {numberBetween: [10,100]}}', 35);
@@ -168,6 +169,35 @@ class CypherPatternTest extends \PHPUnit_Framework_TestCase
         $parser->parseCypher($p);
         $schema = $parser->getSchema();
         $this->assertEquals('1..1', $schema['relationships'][0]['mode']);
+    }
+
+    public function testIdentifierIsMandatory()
+    {
+        $p = '(root:Root)';
+        $parser = new CypherPattern();
+        preg_match($parser->getNodePattern(), $p, $output);
+        $this->assertEquals('root', $output[3]);
+        $info = $parser->getNodePatternInfo($output, $p);
+        $this->assertEquals('root', $info['identifier']);
+    }
+
+    public function testNoIdentifierThrowsException()
+    {
+        $p = '(:Root *10)';
+        $parser = new CypherPattern();
+        $this->setExpectedException('Neoxygen\\Neogen\\Exception\\SchemaException', 'An identifier must be defined for nodes');
+        $parser->parseCypher($p);
+    }
+
+    public function testMultipleLabelsAreAllowed()
+    {
+        $p = '(post)';
+        $parser = new CypherPattern();
+        preg_match($parser->getNodePattern(), $p, $output);
+        print_r($output);
+        $info = $parser->getNodePatternInfo($output, $p);
+
+        print_r($info);
     }
 
 
