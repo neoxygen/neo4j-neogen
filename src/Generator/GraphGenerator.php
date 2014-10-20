@@ -4,6 +4,7 @@ namespace Neoxygen\Neogen\Generator;
 
 use Neoxygen\Neogen\Processor\VertEdgeProcessor,
     Neoxygen\Neogen\Processor\PropertyProcessor,
+    Neoxygen\Neogen\Schema\GraphSchemaDefinition,
     Neoxygen\Neogen\Graph\Graph;
 
 class GraphGenerator
@@ -18,7 +19,7 @@ class GraphGenerator
         $this->propertyProcessor = new PropertyProcessor();
     }
 
-    public function generate(array $schema)
+    public function generate(GraphSchemaDefinition $schema)
     {
         $graph = new Graph();
         $vertEdge = $this->vertEdgeProcessor->process($schema);

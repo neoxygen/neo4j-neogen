@@ -3,25 +3,10 @@
 namespace Neoxygen\Neogen\Tests\Parser;
 
 use Neoxygen\Neogen\Parser\CypherPattern;
-use SebastianBergmann\Diff\Parser;
 
 class NewCypherPatternTest extends \PHPUnit_Framework_TestCase
 {
     private $schemaException = 'Neoxygen\\Neogen\\Exception\\SchemaException';
-
-    public function testPatternWithoutLabel()
-    {
-        $parser = new CypherPattern();
-        $p = '(post)-[:WRITTEN_BY *1..n]->(user)';
-        $parser->parseCypher($p);
-        $schema = $parser->getSchema();
-        $this->assertCount(2, $schema->getNodes());
-        $this->assertEquals(1, $schema->getNodes()['post']['count']);
-        $this->assertEquals('1..n', $schema->getEdges()[0]['mode']);
-        $this->assertEquals('post', $schema->getEdges()[0]['start']);
-        $this->assertArrayHasKey('post', $schema->getNodes());
-        $this->assertArrayHasKey('user', $schema->getNodes());
-    }
 
     public function testParseSimpleNode()
     {
@@ -97,7 +82,6 @@ class NewCypherPatternTest extends \PHPUnit_Framework_TestCase
         $parser = new CypherPattern();
         $parser->parseCypher($p);
         $schema = $parser->getSchema();
-        print_r($schema);
         $this->assertArrayHasKey('person', $schema->getNodes());
         $this->assertCount(1, $schema->getNodes()['person']['labels']);
         $this->assertCount(1, $schema->getNodes()['person']['properties']);
@@ -126,6 +110,22 @@ class NewCypherPatternTest extends \PHPUnit_Framework_TestCase
     {
         $parser = new CypherPattern();
         $p = '(p:Person)-[ *n..1]->(p)';
+        $this->setExpectedException($this->schemaException);
+        $parser->parseCypher($p);
+    }
+
+    public function testErrorWhenBadPattern()
+    {
+        $parser = new CypherPattern();
+        $p = ':Person *10)';
+        $this->setExpectedException($this->schemaException);
+        $parser->parseCypher($p);
+    }
+
+    public function testErrorWhenIdentifierWasNotDeclared()
+    {
+        $p = '(post)-[:WRITTEN_BY *n..1]->(user:User)';
+        $parser = new CypherPattern();
         $this->setExpectedException($this->schemaException);
         $parser->parseCypher($p);
     }

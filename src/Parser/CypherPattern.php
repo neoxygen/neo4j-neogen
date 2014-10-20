@@ -96,6 +96,9 @@ class CypherPattern
         if (array_key_exists($identifier, $this->nodes)){
             return;
         }
+        if (empty($nodeInfo['labels']) && !array_key_exists($nodeInfo['identifier'], $this->nodes)){
+            throw new SchemaException(sprintf('The identifier "%s" has not been declared in "%s"', $nodeInfo['identifier'], $part));
+        }
 
         $labels = $nodeInfo['labels'];
 
