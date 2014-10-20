@@ -15,5 +15,13 @@ class StandardCypherConverterTest extends \PHPUnit_Framework_TestCase
         $graph = $gen->generateGraphFromCypher($p);
         $converter = new StandardCypherConverter();
         $converter->convert($graph);
+
+        $file = getcwd().'/sts.cql';
+        $contents = '';
+        foreach($converter->getStatements() as $st){
+            $contents .= $st . "\n";
+        }
+        file_put_contents($file, $contents);
+
     }
 }

@@ -44,17 +44,36 @@ class CypherStatementsConverter implements ConverterInterface
                 continue;
             }
             $node = $type[0];
+            $label = $node['labels'][0];
+            $labelsCount = count($node['labels']);
             $idx = strtolower($key);
             $q = 'UNWIND {props} as prop'.PHP_EOL;
-            $q .= 'MERGE ('.$idx.':'.$key.' {neogen_id: prop.neogen_id})'.PHP_EOL;
+            $q .= 'MERGE ('.$idx.':'.$label.' {neogen_id: prop.neogen_id})'.PHP_EOL;
+            if ($labelsCount > 1){
+                $q .= 'SET ';
+                $li = 1;
+                foreach ($node['labels'] as $lbl){
+                    if ($lbl !== $label){
+                        $q .= $idx.' :'.$lbl;
+                        if ($li < $labelsCount){
+                            $q .= ', ';
+                        }
+                    }
+                    $li++;
+                }
+            }
             $propsCount = count($node['properties']);
             if ($propsCount > 0) {
-                $q .= 'SET ';
+                if ($labelsCount > 1){
+                    $q .= ', ';
+                } else {
+                    $q .= 'SET ';
+                }
                 $i = 1;
                 foreach ($node['properties'] as $property => $value) {
                         $q .= $idx.'.'.$property.' = prop.properties.'.$property;
                         if ($i < $propsCount) {
-                            $q .= ','.PHP_EOL;
+                            $q .= ', ';
                         }
                         $i++;
                 }
@@ -63,7 +82,7 @@ class CypherStatementsConverter implements ConverterInterface
             $nts = [
                 'statement' => $q,
                 'parameters' => [
-                    'props' => $nodesByLabel[$key]
+                    'props' => $nodesByIdentifier[$key]
                 ]
             ];
             $this->nodeStatements[] = $nts;
