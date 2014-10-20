@@ -15,20 +15,23 @@ class CypherStatementsConverter implements ConverterInterface
     public function convert(Graph $graph)
     {
         $labels = [];
-        $nodesByLabel = [];
+        $nodesByIdentifier = [];
+        $identifierToLabelMap = [];
         $edgesByType = [];
         $edgeTypes = [];
 
         foreach ($graph->getNodes() as $node) {
-            $nodesByLabel[$node['label']][] = $node;
-            if (!in_array($node['label'], $labels)) {
-                $labels[] = $node['label'];
+            $nodesByIdentifier[$node['identifier']][] = $node;
+            if (!array_key_exists($node['identifier'], $identifierToLabelMap)) {
+                $identifierToLabelMap[$node['identifier']] = $node['labels'][0];
+                $labels[] = $node['labels'][0];
             }
         }
 
         // Creating constraints statements
-        foreach ($labels as $label) {
-            $identifier = strtolower($label);
+        foreach ($nodesByIdentifier as $nodeIdentifier => $node) {
+            $identifier = strtolower($nodeIdentifier);
+            $label = $identifierToLabelMap[$nodeIdentifier];
 
             $ccs = 'CREATE CONSTRAINT ON (' . $identifier . ':' . $label . ') ASSERT ' . $identifier . '.neogen_id IS UNIQUE';
             $cst = ['statement' => $ccs];
@@ -36,7 +39,7 @@ class CypherStatementsConverter implements ConverterInterface
         }
 
         // Creating node creation statements
-        foreach ($nodesByLabel as $key => $type) {
+        foreach ($nodesByIdentifier as $key => $type) {
             if (!isset($type[0])){
                 continue;
             }
