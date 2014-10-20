@@ -10,9 +10,9 @@ use Symfony\Component\Yaml\Yaml,
 
 class CypherPattern
 {
-    const NODE_PATTERN = '/(^(\\()([_\w\d]+)([:\w\d]+)*(\s?{[,:~\'\"{}\[\]\s\w\d]+})?(\s?\*\d+)?(\s*\))$)/';
+    const NODE_PATTERN = '/(^(\\()([_\w\d]+)([:\w\d]+)*(\s?{[-,:~\'\"{}\[\]\s\w\d]+})?(\s?\*\d+)?(\s*\))$)/';
 
-    const EDGE_PATTERN = '/(<?>?-\[)(?::)([_\w\d]+)(\s?{(?:.*)})?(\s?\*[\w\d+]\.\.[\w\d])(\]-<?>?)/';
+    const EDGE_PATTERN = '/(<?>?-\[)(?::)([_\w\d]+)(\s?{[-,:~\'\"{}\[\]\s\w\d]+})?(\s?\*[\w\d+]\.\.[\w\d])(\]-<?>?)/';
 
     const SPLIT_PATTERN = "/((?:<?->?)(?:\\[[^<^>.]*\\*[a-z0-9]+\\.\\.[a-z0-9]+\\])(?:<?->?))/";
 
