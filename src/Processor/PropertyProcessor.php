@@ -47,12 +47,16 @@ class PropertyProcessor
         $props = [];
         foreach($vertedge['properties'] as $key => $type){
             if (is_array($type)) {
+                if ($type['type'] == 'password'){
+                    $type['type'] = 'sha1';
+                }
                 $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
                 if ($value instanceof \DateTime) {
                     $value = $value->format('Y-m-d H:i:s');
                 }
             } else {
-                $value = $this->faker->$type;
+                $ntype = $type == 'password' ? 'sha1' : $type;
+                $value = $this->faker->$ntype;
             }
             $props[$key] = $value;
         }
