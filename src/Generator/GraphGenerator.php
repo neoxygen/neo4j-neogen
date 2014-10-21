@@ -25,7 +25,6 @@ class GraphGenerator
 
     public function generate(GraphSchemaDefinition $schema)
     {
-        print_r($schema);
         $graph = new Graph();
 
         $this->modelLayersHandler->findModelResources();
@@ -39,7 +38,6 @@ class GraphGenerator
                 }
             }
         }
-        print_r($schema);
 
         $vertEdge = $this->vertEdgeProcessor->process($schema);
         $this->propertyProcessor->process($vertEdge, $graph);
