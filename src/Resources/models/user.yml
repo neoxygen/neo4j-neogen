@@ -1,7 +1,6 @@
 User:
   properties:
     _id: uuid
-    name: fullName
     login: username
     password: password
     email: email
