@@ -29,7 +29,7 @@ class GraphGenerator
 
         $this->modelLayersHandler->findModelResources();
         foreach ($schema->getNodes() as $identifier => $node){
-            foreach($node['labels'] as $label){
+            foreach($node['models'] as $label){
                 if (array_key_exists($label, $this->modelLayersHandler->getModels())){
                     $oldProps = null !== $node['properties'] ? $node['properties'] : array();
                     $newProps = $this->mergeModelProperties($oldProps, $label);

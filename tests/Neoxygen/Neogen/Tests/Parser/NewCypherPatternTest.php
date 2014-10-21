@@ -90,6 +90,22 @@ class NewCypherPatternTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $schema->getNodes());
     }
 
+    public function testModelLayerIdentifier()
+    {
+        $p = '(person:#Person {id:uuid} *10)-[:WORKS_AT *n..1]->(company:#Company *5)
+        (person)-[:KNOWS *n..n]->(person)';
+        $label = '#Person';
+        $parser = new CypherPattern();
+        $parser->parseCypher($p);
+        $schema = $parser->getSchema();
+        $this->assertCount(1, $schema->getNodes()['person']['labels']);
+        $this->assertCount(1, $schema->getNodes()['person']['properties']);
+        $this->assertArrayHasKey('company', $schema->getNodes());
+        $this->assertCount(2, $schema->getEdges());
+        $this->assertCount(2, $schema->getNodes());
+        $this->assertEquals('Company', $schema->getNodes()['company']['models'][0]);
+    }
+
     public function testErrorWhenNoIdentifier()
     {
         $p = '(:Person)';

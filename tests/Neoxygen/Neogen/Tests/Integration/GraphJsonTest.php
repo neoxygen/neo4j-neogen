@@ -11,7 +11,7 @@ class GraphJsonTest extends \PHPUnit_Framework_TestCase
     {
         $gen = new Neogen();
         $p = '// Example :
-(p:Person:User {name: fullName} *35)-[:KNOWS *n..n]->(p)
+(p:Person:#User {name: fullName} *35)-[:KNOWS *n..n]->(p)
 (p)-[:HAS *n..n]->(s:Skill {name: progLanguage} *20)
 (c:Company *20)-[:LOOKS_FOR_COMPETENCE *n..n]->(s)
 (c)-[:LOCATED_IN *n..1]->(country:Country {name: country} *70)
@@ -20,5 +20,13 @@ class GraphJsonTest extends \PHPUnit_Framework_TestCase
         $converter = new GraphJSONConverter();
         $json = $converter->convert($graph);
         //print_r($json);
+    }
+
+    public function testSimpleNode()
+    {
+        $gen = new Neogen();
+        $p = '(p:Person:User *3)';
+        $graph = $gen->generateGraphFromCypher($p);
+        print_r($graph);
     }
 }

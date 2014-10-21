@@ -10,7 +10,7 @@ use Symfony\Component\Yaml\Yaml,
 
 class CypherPattern
 {
-    const NODE_PATTERN = '/(^(\\()([_\w\d]+)([:\w\d]+)*(\s?{[-,:~\'\"{}\[\]\s\w\d]+})?(\s?\*\d+)?(\s*\))$)/';
+    const NODE_PATTERN = '/(^(\\()([_\w\d]+)([:#\w\d]+)*(\s?{[-,:~\'\"{}\[\]\s\w\d]+})?(\s?\*\d+)?(\s*\))$)/';
 
     const EDGE_PATTERN = '/(<?>?-\[)(?::)([_\w\d]+)(\s?{[-,:~\'\"{}\[\]\s\w\d]+})?(\s?\*[\w\d+]\.\.[\w\d])(\]-<?>?)/';
 
@@ -106,7 +106,8 @@ class CypherPattern
             'identifier' => $identifier,
             'labels' => $labels,
             'count' => $nodeInfo['count'],
-            'properties' => $nodeInfo['properties']
+            'properties' => $nodeInfo['properties'],
+            'models' => $nodeInfo['models']
         ];
         if (null !== $nodeInfo['identifier']) {
             $this->identifiers[$nodeInfo['identifier']] = $identifier;
@@ -226,11 +227,24 @@ class CypherPattern
 
         $labels = explode(':', trim($nodePattern['4']));
         array_shift($labels);
+        $models = [];
+        $lbls = [];
+        foreach ($labels as $lbl){
+            $pos = strpos($lbl, '#');
+            if ($pos !== false && 0 === $pos){
+                $sanitized = str_replace('#', '', $lbl);
+                $models[] = $sanitized;
+                $lbls[] = $sanitized;
+            } else {
+                $lbls[] = $lbl;
+            }
+        }
         $defaultInfo = [
             'identifier' => $this->nullString($nodePattern[3]),
-            'labels' => $labels,
+            'labels' => $lbls,
             'properties' => $this->nullString($nodePattern[5]),
-            'count' => $this->nullString($nodePattern[6])
+            'count' => $this->nullString($nodePattern[6]),
+            'models' => $models
         ];
         if (empty($defaultInfo['count']) || '' == $defaultInfo['count']){
             $defaultInfo['count'] = 1;
