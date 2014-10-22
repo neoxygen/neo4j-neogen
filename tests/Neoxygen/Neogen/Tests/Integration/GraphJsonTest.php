@@ -29,4 +29,15 @@ class GraphJsonTest extends \PHPUnit_Framework_TestCase
         $graph = $gen->generateGraphFromCypher($p);
         print_r($graph);
     }
+
+    public function testLinkedList()
+    {
+        $gen = new Neogen();
+        $p = '(test:Test *10)
+        (test)-[:NEXT *1..1]->(test)';
+        $graph = $gen->generateGraphFromCypher($p);
+        print_r($graph);
+    }
+
+
 }
