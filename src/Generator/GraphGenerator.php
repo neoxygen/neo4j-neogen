@@ -23,9 +23,20 @@ class GraphGenerator
         $this->modelLayersHandler = new ModelLayerHandler();
     }
 
-    public function generate(GraphSchemaDefinition $schema)
+    public function generate(GraphSchemaDefinition $schema, $precalculationOnly = false)
     {
         $graph = new Graph();
+        if ($precalculationOnly){
+            $nCount = 0;
+            foreach ($schema->getNodes() as $n){
+                $nCount = $nCount + $n['count'];
+            }
+            if ($nCount > 10000){
+                return array(
+                    'nodes' => $nCount
+                );
+            }
+        }
 
         $this->modelLayersHandler->findModelResources();
         foreach ($schema->getNodes() as $identifier => $node){
@@ -40,6 +51,10 @@ class GraphGenerator
         }
 
         $vertEdge = $this->vertEdgeProcessor->process($schema);
+        if ($precalculationOnly){
+            return $vertEdge->getGraph();
+        }
+
         $this->propertyProcessor->process($vertEdge, $graph);
 
         return $graph;

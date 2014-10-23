@@ -82,7 +82,7 @@ class VertEdgeProcessor
                     $startNodes = $this->nodesByIdentifier[$start];
                     $endNodes = $this->nodesByIdentifier[$end];
                     $startCount = count($startNodes);
-                    if ($start == $end){
+                    if ($start === $end){
                         for ($i = 0; $i < $startCount; $i++){
                             $x = array_shift($startNodes);
                             $y = $startNodes[0];

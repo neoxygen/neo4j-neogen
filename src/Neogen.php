@@ -26,11 +26,11 @@ class Neogen
 
     }
 
-    public function generateGraphFromCypher($cypher)
+    public function generateGraphFromCypher($cypher, $precalculationOnly = false)
     {
         $parser = new CypherPattern();
         $parser->parseCypher($cypher);
 
-        return $this->generator->generate($parser->getSchema());
+        return $this->generator->generate($parser->getSchema(), $precalculationOnly);
     }
 }
