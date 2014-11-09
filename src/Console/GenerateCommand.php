@@ -7,11 +7,12 @@ use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Output\OutputInterface,
-    Symfony\Component\Filesystem\Filesystem;
-use Neoxygen\Neogen\Schema\Parser,
-    Neoxygen\Neogen\Schema\Processor,
-    Neoxygen\NeoClient\Client,
-    Neoxygen\NeoClient\Formatter\ResponseFormatter;
+    Symfony\Component\Filesystem\Filesystem,
+    Symfony\Component\Yaml\Yaml;
+use Neoxygen\NeoClient\ClientBuilder,
+    Neoxygen\NeoClient\Formatter\ResponseFormatter,
+    Neoxygen\Neogen\Neogen,
+    Neoxygen\Neogen\Converter\StandardCypherConverter;
 
 class GenerateCommand extends Command
 {
@@ -40,14 +41,13 @@ class GenerateCommand extends Command
         if (!file_exists($fixtures_file)) {
             $output->writeln('<error>No fixtures file found</error>');
         } else {
-            $parser = new Parser();
-            $processor = new Processor();
-            $schema = $parser->parseSchema($fixtures_file);
+            $schema = Yaml::parse($fixtures_file);
+            $gen = new Neogen();
+            $graph = $gen->generateGraphFromFile($fixtures_file);
+            $converter = new StandardCypherConverter();
+            $converter->convert($graph);
 
-            $processor->process($schema);
-
-            $constraints = $processor->getConstraints();
-            $queries = $processor->getQueries();
+            $statements = $converter->getStatements();
 
             if ($exportFile = $input->getOption('export')) {
                 $exportFilePath = getcwd().'/'.$exportFile;
@@ -56,21 +56,18 @@ class GenerateCommand extends Command
                     $fs->copy($exportFilePath, $exportFilePath.'.backup');
                 }
                 $txt = '';
-                foreach ($constraints as $constraint) {
-                    $txt .= $constraint."\n";
-                }
-                foreach ($queries as $q) {
-                    $txt .= $q."\n";
+                foreach ($statements as $statement) {
+                    $txt .= $statement."\n";
                 }
                 $fs->dumpFile($exportFilePath, $txt);
                 $output->writeln('<info>Exporting the queries to '.$exportFile.'</info>');
                 exit();
             }
 
-            $client = new Client();
-            $client->addConnection('default', $schema['connection']['scheme'], $schema['connection']['host'], $schema['connection']['port']);
-            $client->build();
-            $formatter = new ResponseFormatter();
+            $client = ClientBuilder::create()
+                ->addConnection('default', $schema['connection']['scheme'], $schema['connection']['host'], $schema['connection']['port'])
+                ->setAutoFormatResponse(true)
+                ->build();
 
             try {
                 $response = $client->ping();
@@ -80,24 +77,8 @@ class GenerateCommand extends Command
                 exit();
             }
 
-            foreach ($constraints as $constraint) {
-                $client->sendCypherQuery($constraint);
-            }
-
-            $max = 50;
-            $i = 1;
-            $q = '';
-            foreach ($queries as $query) {
-                $q .= $query."\n";
-                if ($i >= $max) {
-                    $i = 0;
-                    $response = $client->sendCypherQuery($q);
-                    $q = '';
-                }
-                $i++;
-            }
-            if ($q !== '') {
-                $response = $client->sendCypherQuery($q);
+            foreach ($statements as $statement) {
+                $client->sendCypherQuery($statement);
             }
         }
 
