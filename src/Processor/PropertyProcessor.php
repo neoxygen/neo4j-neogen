@@ -62,10 +62,9 @@ class PropertyProcessor
 
     public function addEdgeProperties(array $vertedge)
     {
-        if (isset($vertedge['properties'])) {
-
-            try {
-                $props = [];
+        try {
+            $props = [];
+            if (isset($vertedge['properties'])) {
                 foreach($vertedge['properties'] as $key => $type){
                     if (is_array($type)) {
                         $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
@@ -77,17 +76,16 @@ class PropertyProcessor
                     }
                     $props[$key] = $value;
                 }
-                $vertedge['properties'] = $props;
-                $this->graph->setEdge($vertedge);
-            } catch(\InvalidArgumentException $e) {
-                $msg = $e->getMessage();
-                preg_match('/((?:")(.*)(?:"))/', $msg, $output);
-                if (isset($output[2])) {
-                    $msg = sprintf('The faker type "%s" is not defined', $output[2]);
-                }
-                throw new SchemaException($msg);
             }
-
+            $vertedge['properties'] = $props;
+            $this->graph->setEdge($vertedge);
+        } catch(\InvalidArgumentException $e) {
+            $msg = $e->getMessage();
+            preg_match('/((?:")(.*)(?:"))/', $msg, $output);
+            if (isset($output[2])) {
+                $msg = sprintf('The faker type "%s" is not defined', $output[2]);
+            }
+            throw new SchemaException($msg);
         }
 
     }
