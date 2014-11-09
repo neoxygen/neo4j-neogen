@@ -50,13 +50,13 @@ relationships:
     start: Person
     end: Company
     type: WORKS_AT
-    mode: 1
+    mode: n..1
 
   friendships:
     start: Person
     end: Person
     type: KNOWS
-    mode: random
+    mode: n..n
 ```
 
 #### Run the generate command :
