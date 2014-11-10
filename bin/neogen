@@ -20,7 +20,9 @@ if (extension_loaded('phar') && ($uri = Phar::running())) {
 
 use Neoxygen\Neogen\Neogen,
     Neoxygen\Neogen\Console\GenerateCommand,
-    Neoxygen\Neogen\Console\InitCommand;
+    Neoxygen\Neogen\Console\InitCommand,
+    Neoxygen\Neogen\Console\GenerateCypherCommand,
+    Neoxygen\Neogen\Console\InitCypherCommand;
 use Symfony\Component\Console\Application;
 
 
@@ -30,4 +32,6 @@ $application->setVersion(Neogen::getVersion());
 $generateCommand = new GenerateCommand();
 $application->add($generateCommand);
 $application->add(new InitCommand());
+$application->add(new GenerateCypherCommand());
+$application->add(new InitCypherCommand());
 $application->run();

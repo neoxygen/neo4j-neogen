@@ -1,3 +1,5 @@
 vendor/
 neogen.yml
+neogen.cql
 tests/_reports
+composer.lock
