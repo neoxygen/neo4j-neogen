@@ -24,7 +24,8 @@ class VertEdgeProcessor
      */
     public function process(GraphSchemaDefinition $schema)
     {
-        if (empty($schema->getNodes())) {
+        $schemaNodes = $schema->getNodes(); // Required for PHP 5.4 support
+        if (empty($schemaNodes)) {
             throw new SchemaException('You need to define at least one node to generate');
         }
 
