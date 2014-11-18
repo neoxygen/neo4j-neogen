@@ -1,1 +1,5 @@
-
+Person:
+  properties:
+    firstname: firstName
+    lastname: lastName
+    birth_date: {type: dateTimeBetween, params: ["-50 years", "-18 years"]}

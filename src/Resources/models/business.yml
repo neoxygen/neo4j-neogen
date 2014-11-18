@@ -1,0 +1,4 @@
+Company:
+  properties:
+    name: company
+    activity: catchPhrase

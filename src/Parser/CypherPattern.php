@@ -3,15 +3,16 @@
 namespace Neoxygen\Neogen\Parser;
 
 use Neoxygen\Neogen\Exception\CypherPatternException;
-use Neoxygen\Neogen\Exception\SchemaException;
+use Neoxygen\Neogen\Exception\SchemaException,
+    Neoxygen\Neogen\Schema\GraphSchemaDefinition;
 use Symfony\Component\Yaml\Yaml,
     Symfony\Component\Yaml\Exception\ParseException;
 
 class CypherPattern
 {
-    const NODE_PATTERN = '/(^(\\()([\\w\\d]+)?(:?([\\w\\d]+))?(\\s?{[,:~\\\'\\"{}\\[\\]\\s\\w\\d]+})?(\\s?\\*\\d+)?(\\s*\\))$)/';
+    const NODE_PATTERN = '/(^(\\()([_\w\d]+)([:#\w\d]+)*(\s?{[-,:~\'\"{}\[\]\s\w\d]+})?(\s?\*\d+)?(\s*\))$)/';
 
-    const EDGE_PATTERN = '/(<?>?-\[)(?::)([_\w\d]+)(\s?{(?:.*)})?(\s?\*[\w\d+]\.\.[\w\d])(\]-<?>?)/';
+    const EDGE_PATTERN = '/(<?>?-\[)(?::)([_\w\d]+)(\s?{[-,:~\'\"{}\[\]\s\w\d]+})?(\s?\*[\w\d+]\.\.[\w\d])(\]-<?>?)/';
 
     const SPLIT_PATTERN = "/((?:<?->?)(?:\\[[^<^>.]*\\*[a-z0-9]+\\.\\.[a-z0-9]+\\])(?:<?->?))/";
 
@@ -91,30 +92,31 @@ class CypherPattern
 
     public function processNode(array $nodeInfo, $part = null)
     {
-        if (!$nodeInfo['label'] && !$nodeInfo['properties']) {
-            if (!array_key_exists($nodeInfo['identifier'], $this->identifiers)){
-                throw new SchemaException(sprintf('The identifer "%s" has not been declared', $nodeInfo['identifier']));
-            }
+        $identifier = $nodeInfo['identifier'];
+        if (array_key_exists($identifier, $this->nodes)){
             return;
+        }
+        if (empty($nodeInfo['labels']) && !array_key_exists($nodeInfo['identifier'], $this->nodes)){
+            throw new SchemaException(sprintf('The identifier "%s" has not been declared in "%s"', $nodeInfo['identifier'], $part));
         }
 
-        $label = $nodeInfo['label'];
-        if (in_array($label, $this->labels)) {
-            return;
-        }
+        $labels = $nodeInfo['labels'];
+
         $node = [
-            'label' => $label,
+            'identifier' => $identifier,
+            'labels' => $labels,
             'count' => $nodeInfo['count'],
-            'properties' => $nodeInfo['properties']
+            'properties' => $nodeInfo['properties'],
+            'models' => $nodeInfo['models']
         ];
         if (null !== $nodeInfo['identifier']) {
-            $this->identifiers[$nodeInfo['identifier']] = $label;
-            if (null !== $label) {
+            $this->identifiers[$nodeInfo['identifier']] = $identifier;
+            if (null !== $identifier) {
                 $virtualPart = '('.$nodeInfo['identifier'].')';
                 $this->nodeInfoMap[$virtualPart] = $nodeInfo;
             }
 
-            if (null !== $part && null !== $nodeInfo['label']) {
+            if (null !== $part && null !== $nodeInfo['identifier']) {
                 $this->nodeInfoMap[trim($part)] = $nodeInfo;
             }
         }
@@ -135,22 +137,23 @@ class CypherPattern
                             $props[$key] = $type;
                         }
                     }
+                    $node['properties'] = $props;
                 }
-                $node['properties'] = $props;
+
             } catch (ParseException $e){
                 throw new CypherPatternException(sprintf('Malformed inline properties near "%s"', $node['properties']));
             }
         }
 
-        $this->nodes[] = $node;
-        $this->labels[] = $label;
+        $this->nodes[$identifier] = $node;
+        $this->labels[] = $labels;
     }
 
     public function processEdge(array $edgeInfo, $key, array $parts)
     {
         $prev = trim($parts[$key-1]);
         $previous = $this->nodeInfoMap[trim($prev)];
-        $prevNode = !empty($previous['label']) ? $previous['label'] : $this->identifiers[$previous['identifier']];
+        $prevNode = $previous['identifier'];
 
         $next = trim($parts[$key+1]);
 
@@ -159,7 +162,7 @@ class CypherPattern
         $this->processNode($info);
 
         $nextious = $this->nodeInfoMap[trim($next)];
-        $nextNode = !empty($nextious['label']) ? $nextious['label'] : $this->identifiers[$nextious['identifier']];
+        $nextNode = !empty($nextious['identifier']) ? $nextious['identifier'] : $this->identifiers[$nextious['identifier']];
 
         $start = 'OUT' === $edgeInfo['direction'] ? $prevNode : $nextNode;
         $end = 'OUT' === $edgeInfo['direction'] ? $nextNode : $prevNode;
@@ -218,23 +221,33 @@ class CypherPattern
 
     public function getNodePatternInfo(array $nodePattern, $part)
     {
-        if (!isset($nodePattern[3]) || !isset($nodePattern[5]) || !isset($nodePattern[6]) || !isset($nodePattern[7])){
-            throw new SchemaException(sprintf('Unable to parse part "%s"', $part));
+        if (empty($nodePattern[3])){
+            throw new SchemaException(sprintf('An identifier must be defined for nodes in "%s"', $part));
         }
 
+        $labels = explode(':', trim($nodePattern['4']));
+        array_shift($labels);
+        $models = [];
+        $lbls = [];
+        foreach ($labels as $lbl){
+            $pos = strpos($lbl, '#');
+            if ($pos !== false && 0 === $pos){
+                $sanitized = str_replace('#', '', $lbl);
+                $models[] = $sanitized;
+                $lbls[] = $sanitized;
+            } else {
+                $lbls[] = $lbl;
+            }
+        }
         $defaultInfo = [
             'identifier' => $this->nullString($nodePattern[3]),
-            'label' => $this->nullString($nodePattern[5]),
-            'properties' => $this->nullString($nodePattern[6]),
-            'count' => $this->nullString($nodePattern[7])
+            'labels' => $lbls,
+            'properties' => $this->nullString($nodePattern[5]),
+            'count' => $this->nullString($nodePattern[6]),
+            'models' => $models
         ];
-
-        if (empty($defaultInfo['count'])){
+        if (empty($defaultInfo['count']) || '' == $defaultInfo['count']){
             $defaultInfo['count'] = 1;
-        }
-
-        if (!$defaultInfo['identifier'] && !$defaultInfo['label']) {
-            throw new SchemaException(sprintf('You must use a label or an identifier near "%s"', $part));
         }
 
         $this->nodeInfoMap[trim($part)] = $defaultInfo;
@@ -291,10 +304,9 @@ class CypherPattern
 
     public function getSchema()
     {
-        $schema = [
-            'nodes' => $this->nodes,
-            'relationships' => $this->edges
-        ];
+        $schema = new GraphSchemaDefinition();
+        $schema->setNodes($this->nodes);
+        $schema->setEdges($this->edges);
 
         return $schema;
     }

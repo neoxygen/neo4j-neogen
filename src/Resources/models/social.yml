@@ -1,0 +1,7 @@
+Hashtag:
+  properties:
+    tag: hashtag
+
+Tweet:
+  properties:
+    text: {type:sentence, params:[10]}
