@@ -4,7 +4,7 @@ namespace Neoxygen\Neogen\Tests\Integration;
 
 use Neoxygen\Neogen\Converter\CypherStatementsConverter,
     Neoxygen\Neogen\Neogen,
-    Neoxygen\NeoClient\Client;
+    Neoxygen\NeoClient\ClientBuilder;
 
 class CypherStatementsConverterTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,9 +18,8 @@ class CypherStatementsConverterTest extends \PHPUnit_Framework_TestCase
         $converter = new CypherStatementsConverter();
         $converter->convert($graph);
 
-        $client = new Client();
-        $client
-            ->addConnection('default', 'http', 'localhost', 7474)
+        $client = ClientBuilder::create()
+            ->addDefaultLocalConnection()
             ->build();
 
         $client->sendCypherQuery('MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE r,n');
