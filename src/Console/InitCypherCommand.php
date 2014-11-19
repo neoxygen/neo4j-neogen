@@ -21,11 +21,11 @@ class InitCypherCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $defaultQuery = "// Example : \n" . 
-            "(person:Person {firstname: firstName, lastname: lastName } *20)-[:KNOWS *n..n]->(person) \n" . 
-            "(person)-[:HAS *n..n]->(skill:Skill {name: progLanguage} *15) \n" . 
-            "(company:Company {name: company, desc: catchPhrase} *10)-[:LOOKS_FOR_COMPETENCE *n..n]->(skill) \n" . 
-            "(company)-[:LOCATED_IN *n..1]->(country:Country {name: country} *25) \n" . 
+        $defaultQuery = "// Example : \n" .
+            "(person:Person {firstname: firstName, lastname: lastName } *20)-[:KNOWS *n..n]->(person) \n" .
+            "(person)-[:HAS *n..n]->(skill:Skill {name: progLanguage} *15) \n" .
+            "(company:Company {name: company, desc: catchPhrase} *10)-[:LOOKS_FOR_COMPETENCE *n..n]->(skill) \n" .
+            "(company)-[:LOCATED_IN *n..1]->(country:Country {name: country} *25) \n" .
             "(person)-[:LIVES_IN *n..1]->(country) \n";
 
         $initFile = getcwd().'/neogen.cql';

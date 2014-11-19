@@ -34,7 +34,6 @@ class GenerateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-
         $start = microtime(true);
         $output->writeln('<info>Locating fixtures file</info>');
         $fixtures_file = getcwd().'/neogen.yml';

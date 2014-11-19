@@ -29,7 +29,7 @@ class GraphJSONConverter implements ConverterInterface
 
     public function convert(Graph $graph)
     {
-        foreach ($graph->getNodes() as $node){
+        foreach ($graph->getNodes() as $node) {
             if (!in_array($node['identifier'], $this->identifiers)) {
                 $this->identifiers[] = $node['identifier'];
                 $this->setClusterForLabel($node['identifier']);
@@ -86,7 +86,7 @@ class GraphJSONConverter implements ConverterInterface
     private function setClusterForLabel($label)
     {
         $cluster = $this->faker->numberBetween(0, 12);
-        if (in_array($cluster, $this->clusterColors) && count($this->clusterColors) < 12){
+        if (in_array($cluster, $this->clusterColors) && count($this->clusterColors) < 12) {
             $this->setClusterForLabel($label);
         }
         $this->clusterColors[$label] = $cluster;
