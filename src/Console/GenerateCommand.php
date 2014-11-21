@@ -69,6 +69,7 @@ class GenerateCommand extends Command
                 ->build();
 
             try {
+                echo 'cool';
                 $response = $client->ping();
             } catch (\Neoxygen\NeoClient\Exception\HttpException $e) {
                 $output->writeln('<error>Connection Unavailable</error>');

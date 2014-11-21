@@ -3,7 +3,7 @@
 namespace Neoxygen\Neogen;
 
 use Neoxygen\Neogen\Parser\CypherPattern,
-    Neoxygen\Neogen\Schema\Parser,
+    Neoxygen\Neogen\Parser\YamlFile as Parser,
     Neoxygen\Neogen\Generator\GraphGenerator;
 
 class Neogen

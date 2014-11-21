@@ -308,6 +308,8 @@ class CypherPattern
         $schema->setNodes($this->nodes);
         $schema->setEdges($this->edges);
 
+        print_r($schema);
+
         return $schema;
     }
 
