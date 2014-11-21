@@ -1,0 +1,6 @@
+User:
+  properties:
+    _id: uuid
+    login: username
+    password: sha1
+    email: email

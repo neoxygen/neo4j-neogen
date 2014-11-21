@@ -15,7 +15,7 @@ class InitCommand extends Command
     {
         $this
             ->setName('init')
-            ->setDescription('Generate fixtures based on "neogen.yml" file')
+            ->setDescription('Generate a sample "neogen.yml" file')
         ;
     }
 

@@ -1,0 +1,5 @@
+BlogPost:
+  properties:
+    title: sentence
+    body: text
+    created_at: unixTime

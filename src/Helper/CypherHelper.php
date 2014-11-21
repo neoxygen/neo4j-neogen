@@ -18,7 +18,7 @@ class CypherHelper
     /**
      * Add the node alias and the node label
      *
-     * @param null $alias
+     * @param  null   $alias
      * @param $label
      * @return string
      */
@@ -40,7 +40,6 @@ class CypherHelper
     {
         return ') ';
     }
-
 
     /**
      * Opens the node properties bracket
@@ -77,6 +76,7 @@ class CypherHelper
         } elseif (is_int($value)) {
             $value = 'toInt('.$value.')';
         }
+
         return $key.':'.$value;
     }
 
@@ -92,7 +92,7 @@ class CypherHelper
      * @param $start
      * @param $end
      * @param $type
-     * @param array $properties
+     * @param  array  $properties
      * @return string
      */
     public function addRelationship($start, $end, $type, array $properties = array())
@@ -134,6 +134,7 @@ class CypherHelper
             //print_r($q);
             //exit();
         }
+
         return $q;
     }
 }

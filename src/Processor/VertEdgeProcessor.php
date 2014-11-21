@@ -2,34 +2,39 @@
 
 namespace Neoxygen\Neogen\Processor;
 
-use Neoxygen\Neogen\Exception\SchemaException;
+use Neoxygen\Neogen\Exception\SchemaException,
+    Neoxygen\Neogen\Schema\GraphSchemaDefinition;
 
 class VertEdgeProcessor
 {
-    private $labels = [];
+    private $identifiers = [];
 
     private $nodes = [];
 
     private $edges = [];
 
-    private $nodesByTypes = [];
+    private $nodesByIdentifier = [];
+
+    private $nodeDefinitions = [];
 
     /**
-     * Generate the queries for the creation of the nodes and relationships based on a schema file
-     * It also add constraints for all node labels on the "neogen_id" property
      *
      *
      * @param array $schema
      */
-    public function process(array $schema)
+    public function process(GraphSchemaDefinition $schema)
     {
-        if (!isset($schema['nodes'])) {
+        $schemaNodes = $schema->getNodes(); // Required for PHP 5.4 support
+        if (empty($schemaNodes)) {
             throw new SchemaException('You need to define at least one node to generate');
         }
 
-        foreach ($schema['nodes'] as $node) {
-            if (!in_array($node['label'], $this->labels)) {
-                $this->labels[] = $node['label'];
+        foreach ($schema->getNodes() as $identifier => $node) {
+            if (!in_array($identifier, $this->identifiers)) {
+                $this->identifiers[] = $identifier;
+            }
+            if (!array_key_exists($node['identifier'], $this->nodeDefinitions)) {
+                $this->nodeDefinitions[$node['identifier']] = $node;
             }
             $count = isset($node['count']) ? $node['count'] : range(10, 50);
             $x = 1;
@@ -37,24 +42,24 @@ class VertEdgeProcessor
                 $id = sha1(microtime(true) . rand(0, 100000000000));
                 $inode = [];
                 $inode['neogen_id'] = $id;
-                $inode['label'] = $node['label'];
+                $inode['labels'] = $node['labels'];
+                $inode['identifier'] = $identifier;
                 $np = isset($node['properties']) ? $node['properties'] : [];
                 $inode['properties'] = $np;
                 $this->nodes[] = $inode;
-                $this->nodesByTypes[$node['label']][] = $id;
+                $this->nodesByIdentifier[$identifier][] = $id;
                 $x++;
-
             }
         }
 
-        foreach ($schema['relationships'] as $k => $rel) {
+        foreach ($schema->getEdges() as $k => $rel) {
             $start = $rel['start'];
             $end = $rel['end'];
             $type = $rel['type'];
             $mode = $rel['mode'];
             $props = isset($rel['properties']) ? $rel['properties'] : null;
 
-            if (!in_array($start, $this->labels) || !in_array($end, $this->labels)) {
+            if (!in_array($start, $this->identifiers) || !in_array($end, $this->identifiers)) {
                 throw new SchemaException(sprintf('The start or end node of relationship "%s" is not defined', $k));
             }
 
@@ -66,8 +71,8 @@ class VertEdgeProcessor
 
             switch ($mode) {
                 case 'n..1':
-                    foreach ($this->nodesByTypes[$start] as $node) {
-                        $endNodes = $this->nodesByTypes[$end];
+                    foreach ($this->nodesByIdentifier[$start] as $node) {
+                        $endNodes = $this->nodesByIdentifier[$end];
                         shuffle($endNodes);
                         $endNode = current($endNodes);
                         $this->setEdge($node, $endNode, $type, $props, $start, $end);
@@ -75,11 +80,20 @@ class VertEdgeProcessor
                     break;
 
                 case '1..1':
-                    $startNodes = $this->nodesByTypes[$start];
-                    $endNodes = $this->nodesByTypes[$end];
+                    $startNodes = $this->nodesByIdentifier[$start];
+                    $endNodes = $this->nodesByIdentifier[$end];
                     $startCount = count($startNodes);
-                    for ($i = 0; $i <= $startCount -1; $i++){
-                        if (!empty($endNodes)){
+                    if ($start === $end) {
+                        for ($i = 0; $i < $startCount; $i++) {
+                            $x = array_shift($startNodes);
+                            $y = $startNodes[0];
+                            $this->setEdge($x, $y, $type, $props, $start, $end);
+                            $i++;
+                        }
+                        break;
+                    }
+                    for ($i = 0; $i <= $startCount -1; $i++) {
+                        if (!empty($endNodes)) {
                             $endN = array_shift($endNodes);
                             $startN = array_shift($startNodes);
                             $this->setEdge($startN, $endN, $type, $props, $start, $end);
@@ -88,12 +102,12 @@ class VertEdgeProcessor
                     break;
 
                 case 'n..n':
-                    $endNodes = $this->nodesByTypes[$end];
+                    $endNodes = $this->nodesByIdentifier[$end];
                     $max = count($endNodes);
                     $pct = $max <= 100 ? 0.8 : 0.55;
                     $maxi = round($max * $pct);
                     $random = rand(1, $maxi);
-                    foreach ($this->nodesByTypes[$start] as $node) {
+                    foreach ($this->nodesByIdentifier[$start] as $node) {
                         for ($i = 1; $i <= $random; $i++) {
                             reset($endNodes);
                             shuffle($endNodes);
@@ -107,42 +121,12 @@ class VertEdgeProcessor
                     }
                     break;
                 case '1..n':
-                    $cstart = count($this->nodesByTypes[$start]);
-                    $cend = count($this->nodesByTypes[$end]);
-                    if ($cstart <= $cend){
-                        $left = $cend - $cstart;
-                        $free = 1;
-                        if ($left > 1){
-                            $round = round($left / $cstart, null, PHP_ROUND_HALF_UP);
-                            $free = $round >= 1 ? $round : 1;
-                        }
-                        $endNodes = $this->nodesByTypes[$end];
-                        $x = 1;
-                        foreach($this->nodesByTypes[$start] as $startNode){
-                            for($i=1; $i <= $free; $i++){
-                                $endNode = array_shift($endNodes);
-                                $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
-                            }
-                            if ($x === $cstart){
-                                $remaining = count($endNodes);
-                                for ($i = 1; $i <= $remaining; $i++){
-                                    $endNode = array_shift($endNodes);
-                                    $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
-                                }
-                            }
-                            $x++;
-                        }
-                    } else {
-                        $approx = round($cstart / $cend);
-                        $endNodes = $this->nodesByTypes[$end];
-                        foreach ($this->nodesByTypes[$start] as $startNode){
-                            $to = (count($endNodes) >= $approx) ? $approx : count($endNodes);
-                            for ($i = 1; $i <= $to; $i++){
-                                $endNode = array_shift($endNodes);
-                                $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
-                            }
-                        }
-                    }
+                    $startNodes = $this->nodesByIdentifier[$start];
+                    $endNodes = $this->nodesByIdentifier[$end];
+                    foreach ($endNodes as $endNode) {
+                        $startNode = $startNodes[array_rand($startNodes)];
+                        $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
+                    }      
                     break;
             }
         }
@@ -151,15 +135,15 @@ class VertEdgeProcessor
 
     }
 
-    public function setEdge($startId, $endId, $type, $properties = [], $startlabel, $endlabel)
+    public function setEdge($startId, $endId, $type, $properties = [], $startIdentifier, $endIdentifier)
     {
         $this->edges[] = [
             'source' => $startId,
             'target' => $endId,
             'type' => $type,
             'properties' => $properties,
-            'source_label' => $startlabel,
-            'target_label' => $endlabel
+            'source_label' => $this->nodeDefinitions[$startIdentifier]['labels'][0],
+            'target_label' => $this->nodeDefinitions[$endIdentifier]['labels'][0]
         ];
     }
 
@@ -173,9 +157,9 @@ class VertEdgeProcessor
         return $this->nodes;
     }
 
-    public function getNodesByType()
+    public function getNodesByIdentifier()
     {
-        return $this->nodesByTypes;
+        return $this->nodesByIdentifier;
     }
 
     public function getGraph()

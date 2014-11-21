@@ -31,7 +31,7 @@ class PropertyProcessor
     {
         $this->graph = $graph;
 
-        foreach ($vertEdge->getNodes() as $node){
+        foreach ($vertEdge->getNodes() as $node) {
             $this->addNodeProperties($node);
         }
 
@@ -45,14 +45,18 @@ class PropertyProcessor
     public function addNodeProperties(array $vertedge)
     {
         $props = [];
-        foreach($vertedge['properties'] as $key => $type){
+        foreach ($vertedge['properties'] as $key => $type) {
             if (is_array($type)) {
+                if ($type['type'] == 'password') {
+                    $type['type'] = 'sha1';
+                }
                 $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
                 if ($value instanceof \DateTime) {
                     $value = $value->format('Y-m-d H:i:s');
                 }
             } else {
-                $value = $this->faker->$type;
+                $ntype = $type == 'password' ? 'sha1' : $type;
+                $value = $this->faker->$ntype;
             }
             $props[$key] = $value;
         }
@@ -65,7 +69,7 @@ class PropertyProcessor
         try {
             $props = [];
             if (isset($vertedge['properties'])) {
-                foreach($vertedge['properties'] as $key => $type){
+                foreach ($vertedge['properties'] as $key => $type) {
                     if (is_array($type)) {
                         $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
                     } else {
@@ -79,7 +83,7 @@ class PropertyProcessor
             }
             $vertedge['properties'] = $props;
             $this->graph->setEdge($vertedge);
-        } catch(\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             $msg = $e->getMessage();
             preg_match('/((?:")(.*)(?:"))/', $msg, $output);
             if (isset($output[2])) {

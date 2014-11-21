@@ -3,7 +3,7 @@
 namespace Neoxygen\Neogen;
 
 use Neoxygen\Neogen\Parser\CypherPattern,
-    Neoxygen\Neogen\Schema\Parser,
+    Neoxygen\Neogen\Parser\YamlFile as Parser,
     Neoxygen\Neogen\Generator\GraphGenerator;
 
 class Neogen
@@ -30,11 +30,11 @@ class Neogen
         return $this->generator->generate($schema);
     }
 
-    public function generateGraphFromCypher($cypher)
+    public function generateGraphFromCypher($cypher, $precalculationOnly = false)
     {
         $parser = new CypherPattern();
         $parser->parseCypher($cypher);
 
-        return $this->generator->generate($parser->getSchema());
+        return $this->generator->generate($parser->getSchema(), $precalculationOnly);
     }
 }

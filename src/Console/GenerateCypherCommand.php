@@ -14,18 +14,23 @@ use Neoxygen\NeoClient\ClientBuilder,
     Neoxygen\Neogen\Neogen,
     Neoxygen\Neogen\Converter\StandardCypherConverter;
 
-class GenerateCommand extends Command
+class GenerateCypherCommand extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('generate')
-            ->setDescription('Generate fixtures based on "neogen.yml" file')
+            ->setName('generate-cypher')
+            ->setDescription('Generate fixtures based on "neogen.cql" file')
+            ->addOption(
+                'source',
+                null,
+                InputOption::VALUE_REQUIRED,
+                '/neogen.cql')
             ->addOption(
                 'export',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'If the generation queries should be exported to a file rather than loaded in the database?',
+                'Export generated cypher statements into file',
                 null
             )
             ;
@@ -33,24 +38,30 @@ class GenerateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         $start = microtime(true);
+
         $output->writeln('<info>Locating fixtures file</info>');
-        $fixtures_file = getcwd().'/neogen.yml';
-        if (!file_exists($fixtures_file)) {
-            $output->writeln('<error>No fixtures file found</error>');
-        } else {
-            $schema = Yaml::parse($fixtures_file);
+        $fixtures_file = getcwd().'/'.$input->getOption('source');
+        $fs = new Filesystem();
+
+        if (!$fs->exists($fixtures_file)) {
+            throw new \InvalidArgumentException(sprintf('The source file %s does not exist', $fixtures_file));
+        }
+
+        if ($input->getOption('export') == null) {
+            $output->writeln('<error>The --export option is mandatory</error>');
+            throw new \InvalidArgumentException('The --export option is mandatory');
+        }
+
             $gen = new Neogen();
-            $graph = $gen->generateGraphFromFile($fixtures_file);
+            $graph = $gen->generateGraphFromCypher(file_get_contents($fixtures_file));
+
             $converter = new StandardCypherConverter();
             $converter->convert($graph);
-
             $statements = $converter->getStatements();
 
-            if ($exportFile = $input->getOption('export')) {
-                $exportFilePath = getcwd().'/'.$exportFile;
-                $fs = new Filesystem();
+            $exportFile = $input->getOption('export');
+            $exportFilePath = getcwd().'/'.$exportFile;
                 if ($fs->exists($exportFilePath)) {
                     $fs->copy($exportFilePath, $exportFilePath.'.backup');
                 }
@@ -60,31 +71,10 @@ class GenerateCommand extends Command
                 }
                 $fs->dumpFile($exportFilePath, $txt);
                 $output->writeln('<info>Exporting the queries to '.$exportFile.'</info>');
-                exit();
-            }
-
-            $client = ClientBuilder::create()
-                ->addConnection('default', $schema['connection']['scheme'], $schema['connection']['host'], $schema['connection']['port'])
-                ->setAutoFormatResponse(true)
-                ->build();
-
-            try {
-                echo 'cool';
-                $response = $client->ping();
-            } catch (\Neoxygen\NeoClient\Exception\HttpException $e) {
-                $output->writeln('<error>Connection Unavailable</error>');
-                $output->writeln('<error>'.$e->getMessage().'</error>');
-                exit();
-            }
-
-            foreach ($statements as $statement) {
-                $client->sendCypherQuery($statement);
-            }
-        }
 
         $end = microtime(true);
         $diff = $end - $start;
-
         $output->writeln('<info>Graph generation done in '.$diff.' seconds</info>');
     }
+
 }

@@ -7,7 +7,7 @@ use Faker\Factory;
 
 class GraphJSONConverter implements ConverterInterface
 {
-    private $labels;
+    private $identifiers;
 
     private $nodes;
 
@@ -21,7 +21,7 @@ class GraphJSONConverter implements ConverterInterface
     {
         $this->nodes = [];
         $this->edges = [];
-        $this->labels = [];
+        $this->identifiers = [];
         $this->style = [];
         $this->clusterColors = [];
         $this->faker = Factory::create();
@@ -29,16 +29,17 @@ class GraphJSONConverter implements ConverterInterface
 
     public function convert(Graph $graph)
     {
-        foreach ($graph->getNodes() as $node){
-            if (!in_array($node['label'], $this->labels)) {
-                $this->labels[] = $node['label'];
-                $this->setClusterForLabel($node['label']);
+        foreach ($graph->getNodes() as $node) {
+            if (!in_array($node['identifier'], $this->identifiers)) {
+                $this->identifiers[] = $node['identifier'];
+                $this->setClusterForLabel($node['identifier']);
             }
             $n = [];
             $n['_id'] = $node['neogen_id'];
-            $n['label'] = $node['label'];
+            $n['identifier'] = $node['identifier'];
             $n['properties'] = $node['properties'];
-            $n['cluster'] = $this->clusterColors[$node['label']];
+            $n['labels'] = $node['labels'];
+            $n['cluster'] = $this->clusterColors[$node['identifier']];
             $this->nodes[] = $n;
         }
 
@@ -60,9 +61,9 @@ class GraphJSONConverter implements ConverterInterface
 
     public function buildStyle()
     {
-        foreach ($this->labels as $path) {
+        foreach ($this->identifiers as $path) {
             $style = [];
-            $k = 'nodeStyle.label.'.$path;
+            $k = 'nodeStyle.identifier.'.$path;
             $color = $this->faker->hexcolor;
             $style[] = ['fill' => $color];
             $this->style[$k] = $style;
@@ -85,7 +86,7 @@ class GraphJSONConverter implements ConverterInterface
     private function setClusterForLabel($label)
     {
         $cluster = $this->faker->numberBetween(0, 12);
-        if (in_array($cluster, $this->clusterColors) && count($this->clusterColors) < 12){
+        if (in_array($cluster, $this->clusterColors) && count($this->clusterColors) < 12) {
             $this->setClusterForLabel($label);
         }
         $this->clusterColors[$label] = $cluster;
