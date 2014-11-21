@@ -20,7 +20,7 @@ class GraphSchemaDefinition
 
     public function replaceNode($identifier, $nodeDefinition)
     {
-        if (!array_key_exists($identifier, $this->nodes)){
+        if (!array_key_exists($identifier, $this->nodes)) {
             throw new \InvalidArgumentException('The identifier does not exist');
         }
         $this->nodes[$identifier] = $nodeDefinition;

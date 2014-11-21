@@ -14,12 +14,18 @@ use Neoxygen\NeoClient\ClientBuilder,
     Neoxygen\Neogen\Neogen,
     Neoxygen\Neogen\Converter\StandardCypherConverter;
 
-class GenerateCypherCommand extends Command {
-    
-    protected function configure() {
+class GenerateCypherCommand extends Command
+{
+    protected function configure()
+    {
         $this
             ->setName('generate-cypher')
             ->setDescription('Generate fixtures based on "neogen.cql" file')
+            ->addOption(
+                'source',
+                null,
+                InputOption::VALUE_REQUIRED,
+                '/neogen.cql')
             ->addOption(
                 'export',
                 null,
@@ -29,32 +35,33 @@ class GenerateCypherCommand extends Command {
             )
             ;
     }
-    
-    protected function execute(InputInterface $input, OutputInterface $output) {
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         $start = microtime(true);
-        
+
         $output->writeln('<info>Locating fixtures file</info>');
-        $fixtures_file = getcwd().'/neogen.cql';
-        
-        if($input->getOption('export') == null) {
+        $fixtures_file = getcwd().'/'.$input->getOption('source');
+        $fs = new Filesystem();
+
+        if (!$fs->exists($fixtures_file)) {
+            throw new \InvalidArgumentException(sprintf('The source file %s does not exist', $fixtures_file));
+        }
+
+        if ($input->getOption('export') == null) {
             $output->writeln('<error>The --export option is mandatory</error>');
-            exit();
+            throw new \InvalidArgumentException('The --export option is mandatory');
         }
-        elseif (!file_exists($fixtures_file)) {
-            $output->writeln('<error>No fixtures file found</error>');
-            exit();
-        }
-        else {
+
             $gen = new Neogen();
             $graph = $gen->generateGraphFromCypher(file_get_contents($fixtures_file));
-            
+
             $converter = new StandardCypherConverter();
             $converter->convert($graph);
             $statements = $converter->getStatements();
-            
+
             $exportFile = $input->getOption('export');
             $exportFilePath = getcwd().'/'.$exportFile;
-            $fs = new Filesystem();
                 if ($fs->exists($exportFilePath)) {
                     $fs->copy($exportFilePath, $exportFilePath.'.backup');
                 }
@@ -64,11 +71,10 @@ class GenerateCypherCommand extends Command {
                 }
                 $fs->dumpFile($exportFilePath, $txt);
                 $output->writeln('<info>Exporting the queries to '.$exportFile.'</info>');
-        }
-        
+
         $end = microtime(true);
         $diff = $end - $start;
         $output->writeln('<info>Graph generation done in '.$diff.' seconds</info>');
     }
-    
+
 }

@@ -40,7 +40,7 @@ class CypherStatementsConverter implements ConverterInterface
 
         // Creating node creation statements
         foreach ($nodesByIdentifier as $key => $type) {
-            if (!isset($type[0])){
+            if (!isset($type[0])) {
                 continue;
             }
             $node = $type[0];
@@ -49,13 +49,13 @@ class CypherStatementsConverter implements ConverterInterface
             $idx = strtolower($key);
             $q = 'UNWIND {props} as prop'.PHP_EOL;
             $q .= 'MERGE ('.$idx.':'.$label.' {neogen_id: prop.neogen_id})'.PHP_EOL;
-            if ($labelsCount > 1){
+            if ($labelsCount > 1) {
                 $q .= 'SET ';
                 $li = 1;
-                foreach ($node['labels'] as $lbl){
-                    if ($lbl !== $label){
+                foreach ($node['labels'] as $lbl) {
+                    if ($lbl !== $label) {
                         $q .= $idx.' :'.$lbl;
-                        if ($li < $labelsCount){
+                        if ($li < $labelsCount) {
                             $q .= ', ';
                         }
                     }
@@ -64,7 +64,7 @@ class CypherStatementsConverter implements ConverterInterface
             }
             $propsCount = count($node['properties']);
             if ($propsCount > 0) {
-                if ($labelsCount > 1){
+                if ($labelsCount > 1) {
                     $q .= ', ';
                 } else {
                     $q .= 'SET ';
@@ -88,9 +88,9 @@ class CypherStatementsConverter implements ConverterInterface
             $this->nodeStatements[] = $nts;
         }
 
-        foreach ($graph->getEdges() as $edge){
+        foreach ($graph->getEdges() as $edge) {
             $edgeType = $edge['source_label'] . $edge['type'] . $edge['target_label'];
-            if (!in_array($edgeType, $edgeTypes)){
+            if (!in_array($edgeType, $edgeTypes)) {
                 $edgeTypes[] = $edgeType;
             }
             $edgesByType[$edgeType][] = $edge;
@@ -98,8 +98,8 @@ class CypherStatementsConverter implements ConverterInterface
 
         // Creating edge statements
         $i = 1;
-        foreach ($edgesByType as $type => $rels){
-            if (!isset($type[0])){
+        foreach ($edgesByType as $type => $rels) {
+            if (!isset($type[0])) {
                 continue;
             }
             $rel = $rels[0];
@@ -163,7 +163,7 @@ class CypherStatementsConverter implements ConverterInterface
     private function addRemoveIdsStatements(array $labels)
     {
         $i = 1;
-        foreach ($labels as $label){
+        foreach ($labels as $label) {
             $q = 'MATCH (n'.$i.':'.$label.') REMOVE n'.$i.'.neogen_id;';
             $statement = [
                 'statement' => $q

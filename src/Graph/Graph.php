@@ -30,7 +30,6 @@ class Graph
 
     public function getNodesCount()
     {
-
         return count($this->nodes);
     }
 

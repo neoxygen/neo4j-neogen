@@ -24,9 +24,9 @@ class ModelLayerHandler
     {
         $files = $this->finder->files()->name('*.yml')->in($this->resourcesPath);
 
-        foreach ($files as $file){
+        foreach ($files as $file) {
             $definitions = Yaml::parse($file);
-            foreach ($definitions as $key => $definition){
+            foreach ($definitions as $key => $definition) {
                 $this->models[$key] = $definition;
             }
         }

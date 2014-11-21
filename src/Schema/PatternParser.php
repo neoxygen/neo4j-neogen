@@ -16,8 +16,6 @@ namespace Neoxygen\Neogen\Schema;
  *
  */
 
-use Neoxygen\Neogen\Schema\Processor;
-
 class PatternParser
 {
     const INGOING_RELATIONSHIP = 'IN';
@@ -25,7 +23,6 @@ class PatternParser
     const OUTGOING_RELATIONSHIP = 'OUT';
 
     const DEFAULT_RELATIONSHIP_DIRECTION = 'OUT';
-
 
     private $nodes = [];
 
@@ -46,7 +43,6 @@ class PatternParser
         }
     }
 
-
     public function parse($pattern = null)
     {
         if (null === $pattern) {
@@ -56,7 +52,6 @@ class PatternParser
         } else {
             $cypherPattern = $pattern;
         }
-
 
         $nodePattern = '/(\\([-:,*.{}\\w\\s]*\\))/';
         $relPattern = '/((-<?>?)(\\[[:*.\\s\\w]+\\])(-<?>?))/';
@@ -172,8 +167,6 @@ class PatternParser
             'type' => $type,
             'mode' => $mode
         ];
-
-
 
     }
 

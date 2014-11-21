@@ -41,7 +41,7 @@ class CypherPattern
 
         foreach ($lines as $line) {
             $parts = $this->parseLine($line);
-            foreach($parts as $key => $part){
+            foreach ($parts as $key => $part) {
                 if (preg_match(self::NODE_PATTERN, $part, $output)) {
                     $nodeInfo = $this->getNodePatternInfo($output, $part);
                     $this->processNode($nodeInfo, $part);
@@ -59,7 +59,7 @@ class CypherPattern
     {
         $lines = explode("\n", $pattern);
         $paste = '';
-        foreach ($lines as $line){
+        foreach ($lines as $line) {
             $l = trim($line);
             if (false === strpos($l, '//')) {
                 $paste .= $l;
@@ -93,10 +93,10 @@ class CypherPattern
     public function processNode(array $nodeInfo, $part = null)
     {
         $identifier = $nodeInfo['identifier'];
-        if (array_key_exists($identifier, $this->nodes)){
+        if (array_key_exists($identifier, $this->nodes)) {
             return;
         }
-        if (empty($nodeInfo['labels']) && !array_key_exists($nodeInfo['identifier'], $this->nodes)){
+        if (empty($nodeInfo['labels']) && !array_key_exists($nodeInfo['identifier'], $this->nodes)) {
             throw new SchemaException(sprintf('The identifier "%s" has not been declared in "%s"', $nodeInfo['identifier'], $part));
         }
 
@@ -121,16 +121,16 @@ class CypherPattern
             }
         }
 
-        if ($nodeInfo['properties']){
+        if ($nodeInfo['properties']) {
 
             try {
                 $properties = Yaml::parse($node['properties']);
                 if (null !== $properties) {
                     foreach ($properties as $key => $type) {
-                        if (is_array($type)){
+                        if (is_array($type)) {
                             $props[$key]['type'] = key($type);
                             $props[$key]['params'] = [];
-                            foreach(current($type) as $k => $v) {
+                            foreach (current($type) as $k => $v) {
                                 $props[$key]['params'][] = $v;
                             }
                         } else {
@@ -140,7 +140,7 @@ class CypherPattern
                     $node['properties'] = $props;
                 }
 
-            } catch (ParseException $e){
+            } catch (ParseException $e) {
                 throw new CypherPatternException(sprintf('Malformed inline properties near "%s"', $node['properties']));
             }
         }
@@ -179,10 +179,10 @@ class CypherPattern
             $properties = Yaml::parse($edgeInfo['properties']);
             if (null !== $properties) {
                 foreach ($properties as $key => $type) {
-                    if (is_array($type)){
+                    if (is_array($type)) {
                         $props[$key]['type'] = key($type);
                         $props[$key]['params'] = [];
-                        foreach(current($type) as $k => $v) {
+                        foreach (current($type) as $k => $v) {
                             $props[$key]['params'][] = $v;
                         }
                     } else {
@@ -221,7 +221,7 @@ class CypherPattern
 
     public function getNodePatternInfo(array $nodePattern, $part)
     {
-        if (empty($nodePattern[3])){
+        if (empty($nodePattern[3])) {
             throw new SchemaException(sprintf('An identifier must be defined for nodes in "%s"', $part));
         }
 
@@ -229,9 +229,9 @@ class CypherPattern
         array_shift($labels);
         $models = [];
         $lbls = [];
-        foreach ($labels as $lbl){
+        foreach ($labels as $lbl) {
             $pos = strpos($lbl, '#');
-            if ($pos !== false && 0 === $pos){
+            if ($pos !== false && 0 === $pos) {
                 $sanitized = str_replace('#', '', $lbl);
                 $models[] = $sanitized;
                 $lbls[] = $sanitized;
@@ -246,7 +246,7 @@ class CypherPattern
             'count' => $this->nullString($nodePattern[6]),
             'models' => $models
         ];
-        if (empty($defaultInfo['count']) || '' == $defaultInfo['count']){
+        if (empty($defaultInfo['count']) || '' == $defaultInfo['count']) {
             $defaultInfo['count'] = 1;
         }
 
@@ -315,7 +315,7 @@ class CypherPattern
     {
         if ($start === '-[' && $end === ']->') {
             return self::OUTGOING_RELATIONSHIP;
-        } elseif ($start === '<-[' && $end === ']-'){
+        } elseif ($start === '<-[' && $end === ']-') {
             return self::INGOING_RELATIONSHIP;
         }
 

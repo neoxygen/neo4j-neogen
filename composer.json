@@ -21,7 +21,7 @@
         "symfony/console": "~2.5",
         "symfony/yaml": "~2.5",
         "symfony/finder": "~2.5",
-        "neoxygen/neoclient": "~1.6",
+        "neoxygen/neoclient": "~2.0@dev",
         "ikwattro/faker-extra": "~0.3"
     },
     "require-dev": {

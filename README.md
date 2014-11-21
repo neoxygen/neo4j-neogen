@@ -47,16 +47,16 @@ nodes:
 
 relationships:
   person_works_for:
-    start: Person
-    end: Company
+    start: persons
+    end: companies
     type: WORKS_AT
-    mode: 1
+    mode: n..1
 
   friendships:
-    start: Person
-    end: Person
+    start: persons
+    end: persons
     type: KNOWS
-    mode: random
+    mode: n..n
 ```
 
 #### Run the generate command :
@@ -95,8 +95,8 @@ nodes:
 
 relationships:
     person_works_for:
-        start: Person
-        end: Company
+        start: persons
+        end: companies
         type: WORKS_AT
         mode: random
         properties:

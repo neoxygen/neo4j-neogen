@@ -35,18 +35,18 @@ class StandardCypherConverter implements ConverterInterface
         foreach ($graph->getNodes() as $node) {
             $label = $identifierToLabelMap[$node['identifier']];
             $labelsCount = count($node['labels']);
-            if (!isset($node['neogen_id']) && isset($node['_id'])){
+            if (!isset($node['neogen_id']) && isset($node['_id'])) {
                 $node['neogen_id'] = $node['_id'];
             }
             $identifier = 'n'.$i;
             $statement = 'MERGE ('.$identifier.':'.$label.' {neogen_id: \''.$node['neogen_id'].'\' })';
-            if ($labelsCount > 1){
+            if ($labelsCount > 1) {
                 $statement .= 'SET ';
                 $li = 1;
-                foreach ($node['labels'] as $lbl){
-                    if ($lbl !== $label){
+                foreach ($node['labels'] as $lbl) {
+                    if ($lbl !== $label) {
                         $statement .= $identifier.' :'.$lbl;
-                        if ($li < $labelsCount){
+                        if ($li < $labelsCount) {
                             $statement .= ', ';
                         }
                     }
@@ -55,7 +55,7 @@ class StandardCypherConverter implements ConverterInterface
             }
             $statement .= PHP_EOL;
             if (!empty($node['properties'])) {
-                if ($labelsCount > 1){
+                if ($labelsCount > 1) {
                     $statement .= ', ';
                 } else {
                     $statement .= 'SET ';
@@ -63,11 +63,11 @@ class StandardCypherConverter implements ConverterInterface
                 $xi = 1;
                 $propsCount = count($node['properties']);
                 foreach ($node['properties'] as $prop => $value) {
-                    if (is_string($value)){
+                    if (is_string($value)) {
                         $val = '\''.addslashes($value).'\'';
-                    } elseif (is_int($value)){
+                    } elseif (is_int($value)) {
                         $val = $value;
-                    } elseif (is_float($value)){
+                    } elseif (is_float($value)) {
                         $val = $value;
                     } else {
                         $val = addslashes($value);
@@ -85,14 +85,13 @@ class StandardCypherConverter implements ConverterInterface
         }
 
         $e = 1;
-        foreach ($graph->getEdges() as $rel)
-        {
+        foreach ($graph->getEdges() as $rel) {
             $starti = 's'.$e;
             $endi = 'e'.$e;
             $eid = 'edge'.$e;
             $q = 'MATCH ('.$starti.':'.$rel['source_label'].' {neogen_id: \''.$rel['source'].'\'}), ('.$endi.':'.$rel['target_label'].' { neogen_id: \''.$rel['target'].'\'})'.PHP_EOL;
             $q .= 'MERGE ('.$starti.')-['.$eid.':'.$rel['type'].']->('.$endi.')'.PHP_EOL;
-            if (empty($rel['properties'])){
+            if (empty($rel['properties'])) {
                 $q .= ';';
             }
             if (!empty($rel['properties'])) {
@@ -100,11 +99,11 @@ class StandardCypherConverter implements ConverterInterface
                 $xi = 1;
                 $propsCount = count($rel['properties']);
                 foreach ($rel['properties'] as $prop => $value) {
-                    if (is_string($value)){
+                    if (is_string($value)) {
                         $val = '\''.addslashes($value).'\'';
-                    } elseif (is_int($value)){
+                    } elseif (is_int($value)) {
                         $val = $value;
-                    } elseif (is_float($value)){
+                    } elseif (is_float($value)) {
                         $val = $value;
                     } else {
                         $val = addslashes($value);
@@ -122,7 +121,7 @@ class StandardCypherConverter implements ConverterInterface
         }
 
         $ssi = 1;
-        foreach ($labels as $label){
+        foreach ($labels as $label) {
             $this->statements[] = 'MATCH (n'.$ssi.':'.$label.') REMOVE n'.$ssi.'.neogen_id;';
             $ssi++;
         }

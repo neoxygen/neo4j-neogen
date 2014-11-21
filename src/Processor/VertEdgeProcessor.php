@@ -33,7 +33,7 @@ class VertEdgeProcessor
             if (!in_array($identifier, $this->identifiers)) {
                 $this->identifiers[] = $identifier;
             }
-            if (!array_key_exists($node['identifier'], $this->nodeDefinitions)){
+            if (!array_key_exists($node['identifier'], $this->nodeDefinitions)) {
                 $this->nodeDefinitions[$node['identifier']] = $node;
             }
             $count = isset($node['count']) ? $node['count'] : range(10, 50);
@@ -83,8 +83,8 @@ class VertEdgeProcessor
                     $startNodes = $this->nodesByIdentifier[$start];
                     $endNodes = $this->nodesByIdentifier[$end];
                     $startCount = count($startNodes);
-                    if ($start === $end){
-                        for ($i = 0; $i < $startCount; $i++){
+                    if ($start === $end) {
+                        for ($i = 0; $i < $startCount; $i++) {
                             $x = array_shift($startNodes);
                             $y = $startNodes[0];
                             $this->setEdge($x, $y, $type, $props, $start, $end);
@@ -92,8 +92,8 @@ class VertEdgeProcessor
                         }
                         break;
                     }
-                    for ($i = 0; $i <= $startCount -1; $i++){
-                        if (!empty($endNodes)){
+                    for ($i = 0; $i <= $startCount -1; $i++) {
+                        if (!empty($endNodes)) {
                             $endN = array_shift($endNodes);
                             $startN = array_shift($startNodes);
                             $this->setEdge($startN, $endN, $type, $props, $start, $end);
@@ -121,42 +121,12 @@ class VertEdgeProcessor
                     }
                     break;
                 case '1..n':
-                    $cstart = count($this->nodesByIdentifier[$start]);
-                    $cend = count($this->nodesByIdentifier[$end]);
-                    if ($cstart <= $cend){
-                        $left = $cend - $cstart;
-                        $free = 1;
-                        if ($left > 1){
-                            $round = round($left / $cstart, null, PHP_ROUND_HALF_UP);
-                            $free = $round >= 1 ? $round : 1;
-                        }
-                        $endNodes = $this->nodesByIdentifier[$end];
-                        $x = 1;
-                        foreach($this->nodesByIdentifier[$start] as $startNode){
-                            for($i=1; $i <= $free; $i++){
-                                $endNode = array_shift($endNodes);
-                                $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
-                            }
-                            if ($x === $cstart){
-                                $remaining = count($endNodes);
-                                for ($i = 1; $i <= $remaining; $i++){
-                                    $endNode = array_shift($endNodes);
-                                    $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
-                                }
-                            }
-                            $x++;
-                        }
-                    } else {
-                        $approx = round($cstart / $cend);
-                        $endNodes = $this->nodesByIdentifier[$end];
-                        foreach ($this->nodesByIdentifier[$start] as $startNode){
-                            $to = (count($endNodes) >= $approx) ? $approx : count($endNodes);
-                            for ($i = 1; $i <= $to; $i++){
-                                $endNode = array_shift($endNodes);
-                                $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
-                            }
-                        }
-                    }
+                    $startNodes = $this->nodesByIdentifier[$start];
+                    $endNodes = $this->nodesByIdentifier[$end];
+                    foreach ($endNodes as $endNode) {
+                        $startNode = $startNodes[array_rand($startNodes)];
+                        $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
+                    }      
                     break;
             }
         }
