@@ -137,7 +137,7 @@ class VertEdgeProcessor
                                 $endNode = array_shift($endNodes);
                                 $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
                             }
-                            if ($x === $cstart) {
+                            if ($x === $cstart+1) {
                                 $remaining = count($endNodes);
                                 for ($i = 1; $i <= $remaining; $i++) {
                                     $endNode = array_shift($endNodes);
