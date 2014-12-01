@@ -47,14 +47,14 @@ nodes:
 
 relationships:
   person_works_for:
-    start: Person
-    end: Company
+    start: persons
+    end: companies
     type: WORKS_AT
     mode: n..1
 
   friendships:
-    start: Person
-    end: Person
+    start: persons
+    end: persons
     type: KNOWS
     mode: n..n
 ```
@@ -95,8 +95,8 @@ nodes:
 
 relationships:
     person_works_for:
-        start: Person
-        end: Company
+        start: persons
+        end: companies
         type: WORKS_AT
         mode: random
         properties:
