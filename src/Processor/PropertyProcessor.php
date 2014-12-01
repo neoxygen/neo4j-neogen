@@ -71,7 +71,11 @@ class PropertyProcessor
             if (isset($vertedge['properties'])) {
                 foreach ($vertedge['properties'] as $key => $type) {
                     if (is_array($type)) {
-                        $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
+                        if ($type['type'] == 'randomElement' || $type['type'] == 'randomElements') {
+                            $value = call_user_func_array(array($this->faker, $type['type']), array($type['params']));
+                        } else {
+                            $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
+                        }
                     } else {
                         $value = $this->faker->$type;
                     }
