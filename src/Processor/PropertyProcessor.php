@@ -50,7 +50,11 @@ class PropertyProcessor
                 if ($type['type'] == 'password') {
                     $type['type'] = 'sha1';
                 }
-                $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
+                if ($type['type'] == 'randomElement' || $type['type'] == 'randomElements') {
+                    $value = call_user_func_array(array($this->faker, $type['type']), array($type['params']));
+                } else {
+                    $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
+                }
                 if ($value instanceof \DateTime) {
                     $value = $value->format('Y-m-d H:i:s');
                 }
