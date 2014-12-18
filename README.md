@@ -6,15 +6,17 @@
 
 The library ease the generation of test graphs. The [faker](https://github.com/fzaninotto/faker) library is also used to generate random property values.
 
+You can define your graph model in YAML or in a slightly modified Cypher pattern.
+
 ## This is in development
 
-The library is in its early stage, pushed on Github to have feedbacks or requirements for other people using Neo4j with PHP.
+The library is in its early stage and is targetted to be used in developement environment.
 
-A lot of work is currently done in order to have a start point, so changes are very likely to happen until the 1.0 version is released.
+This library is the heart of the popular [Graphgen web application](http://graphgen.neoxygen.io)
 
-### Usage
+## Usage
 
-#### Download the library :
+### Download the library :
 
 ```bash
 git clone https://github.com/neoxygen/neogen
@@ -22,7 +24,7 @@ git clone https://github.com/neoxygen/neogen
 cd neogen
 ```
 
-#### Define your testgraph schema :
+### Define your graph model in YAML :
 
 ```yaml
 connection:
@@ -102,6 +104,29 @@ relationships:
         properties:
             since: { type: "dateTimeBetween", params: ["-10 years", "now"]}
 ```
+
+### Define your graph model in Cypher :
+
+```
+//eg:
+(person:Person {firstname:firstName, lastname:lastName} *30)-[:KNOWS *n..n]->(person)
+(person)-[:WORKS_AT *n..1]->(company:Company {name:company, slogan:catchPhrase} *5)
+```
+
+For a complete description, see the [Graphgen documentation](http://graphgen.neoxygen.io/documentation)
+
+Generating the graph from a cypher pattern :
+
+```bash
+./bin/neogen generate-cypher --source="pattern.cypher" --export="export.gen"
+```
+
+Or you may want to import the graph directly in an accessible neo4j database :
+
+```bash
+./bin/neogen generate-cypher --source="pattern.cypher" --export-db="localhost:7474"
+```
+
 
 ---
 

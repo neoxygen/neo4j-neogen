@@ -126,7 +126,7 @@ class VertEdgeProcessor
                     foreach ($endNodes as $endNode) {
                         $startNode = $startNodes[array_rand($startNodes)];
                         $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
-                    }      
+                    }
                     break;
             }
         }
