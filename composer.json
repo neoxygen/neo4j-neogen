@@ -21,6 +21,7 @@
         "symfony/console": "~2.5.0",
         "symfony/yaml": "~2.5.0",
         "symfony/finder": "~2.5.0",
+        "symfony/dependency-injection": "~2.5.0",
         "neoxygen/neoclient": "~2.0.0",
         "ikwattro/faker-extra": "~0.3"
     },
@@ -28,7 +29,6 @@
         "phpunit/phpunit": "4.*",
         "phpspec/phpspec": "2.1.0-RC1"
     },
-    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Neoxygen\\Neogen\\": "src"
