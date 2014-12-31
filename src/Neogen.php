@@ -12,9 +12,9 @@ class Neogen
 
     private $generator;
 
-    public function __construct()
+    public function __construct($seed = null)
     {
-        $this->generator = new GraphGenerator();
+        $this->generator = new GraphGenerator($seed);
     }
 
     public static function getVersion()

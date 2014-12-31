@@ -16,10 +16,10 @@ class GraphGenerator
 
     private $modelLayersHandler;
 
-    public function __construct()
+    public function __construct($seed = null)
     {
         $this->vertEdgeProcessor = new VertEdgeProcessor();
-        $this->propertyProcessor = new PropertyProcessor();
+        $this->propertyProcessor = new PropertyProcessor($seed);
         $this->modelLayersHandler = new ModelLayerHandler();
     }
 

@@ -17,9 +17,12 @@ class PropertyProcessor
 
     private $graph;
 
-    public function __construct()
+    public function __construct($seed = null)
     {
         $faker = Factory::create();
+        if (null !== $seed) {
+            $faker->seed((int) $seed);
+        }
         $faker->addProvider(new Skill($faker));
         $faker->addProvider(new PersonExtra($faker));
         $faker->addProvider(new Hashtag($faker));
