@@ -2,7 +2,7 @@
 
 namespace spec\Neoxygen\Neogen\Parser;
 
-use Neoxygen\Neogen\Parser\YamlFile;
+use Neoxygen\Neogen\Parser\YamlFileParser;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -11,7 +11,7 @@ class ParserManagerSpec extends ObjectBehavior
 {
     function let($parser)
     {
-        $parser->beADoubleOf('Neoxygen\Neogen\Parser\YamlFile');
+        $parser->beADoubleOf('Neoxygen\Neogen\Parser\YamlFileParser');
     }
 
     function it_is_initializable()

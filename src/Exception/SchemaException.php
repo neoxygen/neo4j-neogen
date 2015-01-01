@@ -2,6 +2,6 @@
 
 namespace Neoxygen\Neogen\Exception;
 
-class SchemaException extends \InvalidArgumentException
+class SchemaException extends NeogenException
 {
 }
