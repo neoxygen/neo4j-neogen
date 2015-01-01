@@ -2,39 +2,63 @@
 
 namespace Neoxygen\Neogen;
 
-use Neoxygen\Neogen\Parser\CypherPattern,
-    Neoxygen\Neogen\Parser\YamlFile as Parser,
-    Neoxygen\Neogen\Generator\GraphGenerator;
+use Symfony\Component\DependencyInjection\ContainerBuilder,
+    Symfony\Component\DependencyInjection\ContainerInterface;
+use Neoxygen\Neogen\DependencyInjection\NeogenExtension;
 
 class Neogen
 {
-    private static $version = '0.1-dev';
+    protected $serviceContainer;
 
-    private $generator;
+    protected $configuration = [];
 
-    public function __construct($seed = null)
+    public function __construct(ContainerInterface $container = null)
     {
-        $this->generator = new GraphGenerator($seed);
+        if (null === $container) {
+            $container = new ContainerBuilder();
+        }
+
+        $this->serviceContainer = $container;
+
+        return $this;
     }
 
-    public static function getVersion()
+    public static function create()
     {
-        return self::$version;
+        return new self();
     }
 
-    public function generateGraphFromFile($file)
+    public function getConfiguration()
     {
-        $parser = new Parser();
-        $schema = $parser->parseSchema($file);
-
-        return $this->generator->generate($schema);
+        return $this->configuration;
     }
 
-    public function generateGraphFromCypher($cypher, $precalculationOnly = false)
+    public function build()
     {
-        $parser = new CypherPattern();
-        $parser->parseCypher($cypher);
+        $extension = new NeogenExtension();
+        $this->serviceContainer->registerExtension($extension);
+        $this->serviceContainer->loadFromExtension($extension->getAlias(), $this->getConfiguration());
+        $this->serviceContainer->compile();
 
-        return $this->generator->generate($parser->getSchema(), $precalculationOnly);
+        return $this;
+    }
+
+    public function getServiceContainer()
+    {
+        return $this->serviceContainer;
+    }
+
+    public function getParserManager()
+    {
+        return $this->getService('neogen.parser_manager');
+    }
+
+    private function getService($id)
+    {
+        if (!$this->serviceContainer->isFrozen()) {
+            throw new \RuntimeException(sprintf('The Service "%s" can not be accessed. Maybe you forgot to call the "build" method?', $id));
+        }
+
+        return $this->serviceContainer->get($id);
     }
 }
