@@ -5,11 +5,11 @@ namespace spec\Neoxygen\Neogen;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class BuilderSpec extends ObjectBehavior
+class NeogenBuilderSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType('Neoxygen\Neogen\Builder');
+        $this->shouldHaveType('Neoxygen\Neogen\NeogenBuilder');
     }
 
     function it_has_a_di_container_by_default()
@@ -27,15 +27,8 @@ class BuilderSpec extends ObjectBehavior
         $this->build()->shouldHaveType('Neoxygen\Neogen\Neogen');
     }
 
-    function it_should_add_seed_to_config()
+    function it_should_have_a_non_frozen_container_by_default()
     {
-        $this->setSeed(1234);
-        $this->getSeed()->shouldReturn(1234);
-        $this->getConfiguration()->shouldHaveKey('seed');
-    }
-
-    function it_should_have_no_seed_by_default()
-    {
-        $this->getSeed()->shouldReturn(null);
+        $this->getServiceContainer()->isFrozen()->shouldReturn(false);
     }
 }

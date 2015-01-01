@@ -6,7 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder,
     Symfony\Component\DependencyInjection\ContainerInterface;
 use Neoxygen\Neogen\DependencyInjection\NeogenExtension;
 
-class Builder
+class NeogenBuilder
 {
     protected $serviceContainer;
 
@@ -48,25 +48,5 @@ class Builder
     public function getServiceContainer()
     {
         return $this->serviceContainer;
-    }
-
-    public function setSeed($arg)
-    {
-        if (null !== $arg) {
-            $v = (int) $arg;
-            $this->configuration['seed'] = $v;
-        }
-
-        return $this;
-    }
-
-    public function getSeed()
-    {
-        if (!array_key_exists('seed', $this->configuration)) {
-
-            return null;
-        }
-
-        return $this->configuration['seed'];
     }
 }

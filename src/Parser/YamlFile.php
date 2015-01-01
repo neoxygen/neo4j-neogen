@@ -4,10 +4,11 @@ namespace Neoxygen\Neogen\Parser;
 
 use Symfony\Component\Yaml\Yaml;
 use Neoxygen\Neogen\Schema\GraphSchemaDefinition;
+use Neoxygen\Neogen\Parser\ParserInterface;
 
-class YamlFile
+class YamlFile implements ParserInterface
 {
-    public function parseSchema($schemaFilePath)
+    public function parse($schemaFilePath)
     {
         $schema = Yaml::parse($schemaFilePath);
         $def = new GraphSchemaDefinition();
@@ -23,5 +24,15 @@ class YamlFile
         $def->setEdges($schema['relationships']);
 
         return $def;
+    }
+
+    public function getName()
+    {
+        return 'YamlParser';
+    }
+
+    public function getSchema()
+    {
+        
     }
 }

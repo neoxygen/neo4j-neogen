@@ -1,0 +1,3 @@
+services:
+  neogen.parser_manager:
+    class: "Neoxygen\\Neogen\\Parser\\ParserManager"
