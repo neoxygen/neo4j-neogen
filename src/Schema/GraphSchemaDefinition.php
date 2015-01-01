@@ -8,6 +8,15 @@ class GraphSchemaDefinition
 
     private $edges;
 
+    public function __construct()
+    {
+        $this->buildDefinition(array());
+    }
+
+    public function buildDefinition(array $schema)
+    {
+    }
+
     public function setEdge(array $edgeDefinition)
     {
         $this->edges[] = $edgeDefinition;

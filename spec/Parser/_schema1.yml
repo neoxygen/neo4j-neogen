@@ -1,0 +1,4 @@
+nodes:
+  persons:
+    label: Person
+    count: 1
