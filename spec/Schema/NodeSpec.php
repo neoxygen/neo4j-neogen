@@ -64,6 +64,14 @@ class NodeSpec extends ObjectBehavior
         $this->getUniqueProperties()->shouldHaveCount(1);
     }
 
+    function it_should_not_duplicate_properties(NodeProperty $property)
+    {
+        $property->getName()->willReturn('first_name');
+        $this->addProperty($property);
+        $this->addProperty($property);
+        $this->getProperties()->shouldHaveCount(1);
+    }
+
     function it_should_not_have_labels_by_default()
     {
         $this->getLabels()->shouldHaveCount(0);
@@ -87,5 +95,13 @@ class NodeSpec extends ObjectBehavior
         $this->addLabel('Person');
         $this->addLabels(array('Person', 'Adult'));
         $this->getLabels()->shouldHaveCount(2);
+    }
+
+    function it_should_tell_whether_or_not_the_node_has_a_specified_property(NodeProperty $property)
+    {
+        $property->getName()->willReturn('first_name');
+        $this->addProperty($property);
+        $this->hasProperty('first_name')->shouldReturn(true);
+        $this->hasProperty('last_name')->shouldReturn(false);
     }
 }

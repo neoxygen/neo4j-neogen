@@ -51,6 +51,12 @@ class Node
      */
     public function addProperty(NodeProperty $property)
     {
+        foreach ($this->properties as $prop) {
+            if ($prop->getName() === $property->getName()) {
+                $this->properties->removeElement($prop);
+            }
+        }
+
         return $this->properties->add($property);
     }
 
@@ -176,6 +182,20 @@ class Node
             $l = (string) $label;
             if ($this->labels->contains($l)) {
                 return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function hasProperty($name)
+    {
+        if (null !== $name) {
+            $n = (string) $name;
+            foreach ($this->properties as $property) {
+                if ($property->getName() === $n) {
+                    return true;
+                }
             }
         }
 
