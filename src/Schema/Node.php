@@ -46,7 +46,7 @@ class Node
     /**
      * Adds a property to the node
      *
-     * @param NodeProperty $property
+     * @param  NodeProperty $property
      * @return bool
      */
     public function addProperty(NodeProperty $property)
@@ -141,7 +141,7 @@ class Node
     /**
      * Adds a label to this node, checks if the label does not exist to avoid duplicates
      *
-     * @param string $label
+     * @param  string $label
      * @return bool
      */
     public function addLabel($label)
@@ -173,7 +173,7 @@ class Node
     /**
      * Checks whether or not this node has the specified label
      *
-     * @param string $label
+     * @param  string $label
      * @return bool
      */
     public function hasLabel($label)

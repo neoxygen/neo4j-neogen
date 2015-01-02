@@ -2,7 +2,6 @@
 
 namespace Neoxygen\Neogen\Parser;
 
-use Neoxygen\Neogen\Parser\ParserInterface;
 use Neoxygen\Neogen\Exception\ParserNotFoundException;
 
 class ParserManager
@@ -40,7 +39,6 @@ class ParserManager
     public function hasParsers()
     {
         if (!empty($this->parsers)) {
-
             return true;
         }
 
@@ -56,7 +54,6 @@ class ParserManager
     public function hasParser($name)
     {
         if (array_key_exists($name, $this->parsers)) {
-
             return true;
         }
 
@@ -75,6 +72,7 @@ class ParserManager
         if (!$this->hasParser($name)) {
             throw new ParserNotFoundException(sprintf('The parser with NAME "%s" is not registered', $name));
         }
+
         return $this->parsers[$name];
     }
 }

@@ -29,8 +29,8 @@ class Relationship
 
     /**
      * @param string $startNode The start node identifier of the relationship
-     * @param string $endNode The end node identifier of the relationship
-     * @param string $type the relationship's type
+     * @param string $endNode   The end node identifier of the relationship
+     * @param string $type      the relationship's type
      */
     public function __construct($startNode, $endNode, $type)
     {
@@ -83,7 +83,7 @@ class Relationship
     /**
      * Adds a relationship property to the collection and avoid duplicated
      *
-     * @param RelationshipProperty $property
+     * @param  RelationshipProperty $property
      * @return bool
      */
     public function addProperty(RelationshipProperty $property)
@@ -114,7 +114,7 @@ class Relationship
     /**
      * Checks whether or not this relationship has the property with the specified name
      *
-     * @param string $name The relationship property name
+     * @param  string $name The relationship property name
      * @return bool
      */
     public function hasProperty($name)

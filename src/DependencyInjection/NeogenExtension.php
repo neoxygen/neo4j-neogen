@@ -8,7 +8,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder,
     Symfony\Component\DependencyInjection\Definition,
     Symfony\Component\Config\Definition\Processor,
     Symfony\Component\Config\FileLocator;
-use Neoxygen\Neogen\DependencyInjection\Configuration;
 
 class NeogenExtension implements ExtensionInterface
 {

@@ -51,8 +51,8 @@ class Property
     /**
      * Sets the property faker provider to use
      *
-     * @param string $provider The property faker provider
-     * @param array $arguments The property faker provider arguments (optional)
+     * @param string $provider  The property faker provider
+     * @param array  $arguments The property faker provider arguments (optional)
      */
     public function setProvider($provider, array $arguments = array())
     {

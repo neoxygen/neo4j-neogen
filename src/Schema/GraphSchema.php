@@ -47,7 +47,7 @@ class GraphSchema
     /**
      * Adds a node to the nodes collection
      *
-     * @param Node $node
+     * @param  Node                      $node
      * @return bool
      * @throws SchemaDefinitionException
      */
@@ -65,7 +65,7 @@ class GraphSchema
     /**
      * Adds a relationship to the relationship collection
      *
-     * @param Relationship $relationship
+     * @param  Relationship              $relationship
      * @return bool
      * @throws SchemaDefinitionException
      */

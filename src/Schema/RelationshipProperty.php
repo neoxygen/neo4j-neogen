@@ -17,7 +17,6 @@ class RelationshipProperty extends Property
     public function isUnique()
     {
         if ($this->unique) {
-
             return true;
         }
 
