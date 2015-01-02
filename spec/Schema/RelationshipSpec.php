@@ -65,4 +65,11 @@ class RelationshipSpec extends ObjectBehavior
         $this->getStartNode()->shouldReturn('person');
         $this->getEndNode()->shouldReturn('company');
     }
+
+    function it_should_not_have_a_default_cardinality()
+    {
+        $this->getCardinality()->shouldBeNull();
+        $this->setCardinality('1..1');
+        $this->getCardinality()->shouldReturn('1..1');
+    }
 }

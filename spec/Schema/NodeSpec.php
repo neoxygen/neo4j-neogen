@@ -104,4 +104,11 @@ class NodeSpec extends ObjectBehavior
         $this->hasProperty('first_name')->shouldReturn(true);
         $this->hasProperty('last_name')->shouldReturn(false);
     }
+
+    function it_should_have_a_default_amount_of_1()
+    {
+        $this->getAmount()->shouldReturn(1);
+        $this->setAmount(25);
+        $this->getAmount()->shouldReturn(25);
+    }
 }

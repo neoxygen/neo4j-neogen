@@ -23,6 +23,11 @@ class Node
     protected $properties;
 
     /**
+     * @var int amount of nodes to be generated
+     */
+    protected $amount;
+
+    /**
      * @param $identifier The node identifier
      */
     public function __construct($identifier)
@@ -30,6 +35,7 @@ class Node
         $this->identifier = (string) $identifier;
         $this->properties = new ObjectCollection();
         $this->labels = new ObjectCollection();
+        $this->amount = 1;
     }
 
     /**
@@ -206,5 +212,17 @@ class Node
         }
 
         return false;
+    }
+
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    public function setAmount($amount)
+    {
+        if (null !== $amount) {
+            $this->amount = (int) $amount;
+        }
     }
 }

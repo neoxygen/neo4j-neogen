@@ -2,6 +2,7 @@
 
 namespace Neoxygen\Neogen;
 
+use Neoxygen\Neogen\Parser\YamlFileParser;
 use Symfony\Component\DependencyInjection\ContainerBuilder,
     Symfony\Component\DependencyInjection\ContainerInterface;
 use Neoxygen\Neogen\DependencyInjection\NeogenExtension;
@@ -39,6 +40,7 @@ class Neogen
         $this->serviceContainer->registerExtension($extension);
         $this->serviceContainer->loadFromExtension($extension->getAlias(), $this->getConfiguration());
         $this->serviceContainer->compile();
+        $this->getParserManager()->registerParser(new YamlFileParser());
 
         return $this;
     }

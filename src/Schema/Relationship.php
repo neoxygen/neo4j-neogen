@@ -28,6 +28,11 @@ class Relationship
     protected $properties;
 
     /**
+     * @var string Cardinality of the relationshop
+     */
+    protected $cardinality;
+
+    /**
      * @param string $startNode The start node identifier of the relationship
      * @param string $endNode   The end node identifier of the relationship
      * @param string $type      the relationship's type
@@ -129,5 +134,17 @@ class Relationship
         }
 
         return false;
+    }
+
+    public function getCardinality()
+    {
+        return $this->cardinality;
+    }
+
+    public function setCardinality($v)
+    {
+        if (null !== $v) {
+            $this->cardinality = (string) $v;
+        }
     }
 }
