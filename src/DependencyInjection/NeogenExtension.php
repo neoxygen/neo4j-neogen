@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder,
     Symfony\Component\DependencyInjection\Definition,
     Symfony\Component\Config\Definition\Processor,
     Symfony\Component\Config\FileLocator;
+use Neoxygen\Neogen\DependencyInjection\Configuration;
 
 class NeogenExtension implements ExtensionInterface
 {
@@ -20,6 +21,8 @@ class NeogenExtension implements ExtensionInterface
         $configuration = new Configuration();
 
         $config = $processor->processConfiguration($configuration, $configs);
+        $container->setParameter('faker.class', $config['faker']['class']);
+
 
         $loader = new YamlFileLoader(
             $container,

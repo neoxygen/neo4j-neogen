@@ -4,3 +4,11 @@ services:
 
   neogen.graph_generator:
     class: "Neoxygen\\Neogen\\GraphGenerator\\Generator"
+    arguments: ["@neogen.property_processor"]
+
+  neogen.faker:
+    class: "%faker.class%"
+
+  neogen.property_processor:
+    class: "Neoxygen\\Neogen\\Processor\\PropertyProcessor"
+    arguments: ["@neogen.faker"]

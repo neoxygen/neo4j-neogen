@@ -24,7 +24,20 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('neogen');
 
         $rootNode->children()
-
+            ->scalarNode('test')->defaultValue('cool')->end()
+            ->arrayNode('faker')
+            ->addDefaultsIfNotSet()
+                ->children()
+                ->scalarNode('class')->defaultValue('Neoxygen\Neogen\FakerProvider\Faker')->end()
+                ->arrayNode('providers')
+                    ->prototype('array')
+                    ->children()->end()
+                    ->end()
+                ->end() // end providers
+                ->arrayNode('extensions')
+                    ->prototype('array')->end()
+            ->end()
+            ->end() // end faker
             ->end();
 
         return $treeBuilder;

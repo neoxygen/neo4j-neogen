@@ -12,10 +12,10 @@ class Generator
 
     protected $propertyProcessor;
 
-    public function __construct()
+    public function __construct(PropertyProcessor $propertyProcessor)
     {
         $this->vertedgeProcessor = new VertEdgeProcessor();
-        $this->propertyProcessor = new PropertyProcessor();
+        $this->propertyProcessor = $propertyProcessor;
     }
 
     public function generateGraph(GraphSchema $graphSchema)
@@ -27,6 +27,6 @@ class Generator
         $vE = $this->vertedgeProcessor->process($graphSchema);
         $graph = $this->propertyProcessor->process($vE, $vE->getGraph());
 
-        print_r($graph);
+        return $graph;
     }
 }

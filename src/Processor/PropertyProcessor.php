@@ -5,10 +5,9 @@ namespace Neoxygen\Neogen\Processor;
 use Faker\Factory;
 use Neoxygen\Neogen\Exception\SchemaDefinitionException as SchemaException,
     Neoxygen\Neogen\Processor\VertEdgeProcessor,
-    Neoxygen\Neogen\Graph\Graph;
-use Ikwattro\FakerExtra\Provider\Skill,
-    Ikwattro\FakerExtra\Provider\PersonExtra,
-    Ikwattro\FakerExtra\Provider\Hashtag;
+    Neoxygen\Neogen\Graph\Graph,
+    Neoxygen\Neogen\FakerProvider\Faker;
+
 
 class PropertyProcessor
 {
@@ -17,16 +16,8 @@ class PropertyProcessor
 
     private $graph;
 
-    public function __construct($seed = null)
+    public function __construct(Faker $faker)
     {
-        $faker = Factory::create();
-        if (null !== $seed) {
-            $faker->seed((int) $seed);
-        }
-        $faker->addProvider(new Skill($faker));
-        $faker->addProvider(new PersonExtra($faker));
-        $faker->addProvider(new Hashtag($faker));
-
         $this->faker = $faker;
     }
 
@@ -49,16 +40,7 @@ class PropertyProcessor
     {
         $props = [];
         foreach ($vertedge['properties'] as $key => $property) {
-            $type = $property->getProvider();
-            if ($type == 'password') { $type = 'sha1'; }
-            if ($type == 'randomElement' || $type == 'randomElements') {
-                $value = call_user_func_array(array($this->faker, $type), array($property->getArguments()));
-            } else {
-                $value = call_user_func_array(array($this->faker, $type), $property->getArguments());
-            }
-            if ($value instanceof \DateTime) {
-                $value = $value->format('Y-m-d H:i:s');
-            }
+            $value = $this->faker->generate($property->getProvider(), $property->getArguments());
             $props[$property->getName()] = $value;
         }
         $vertedge['properties'] = $props;
@@ -70,16 +52,7 @@ class PropertyProcessor
         try {
             $props = [];
             foreach ($vertedge['properties'] as $key => $property) {
-                $type = $property->getProvider();
-                if ($type == 'password') { $type = 'sha1'; }
-                if ($type == 'randomElement' || $type == 'randomElements') {
-                    $value = call_user_func_array(array($this->faker, $type), array($property->getArguments()));
-                } else {
-                    $value = call_user_func_array(array($this->faker, $type), $property->getArguments());
-                }
-                if ($value instanceof \DateTime) {
-                    $value = $value->format('Y-m-d H:i:s');
-                }
+                $value = $this->faker->generate($property->getProvider(), $property->getArguments());
                 $props[$property->getName()] = $value;
             }
             $vertedge['properties'] = $props;

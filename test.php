@@ -15,6 +15,6 @@ $userSchema = $p->parse($file);
 
 $def = $gsb->buildGraph($userSchema);
 $gen = $neogen->getGraphGenerator();
-$gen->generateGraph($def);
+$g = $gen->generateGraph($def);
 
-print_r($def);
+print_r($g);
