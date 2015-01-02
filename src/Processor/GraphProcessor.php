@@ -63,6 +63,8 @@ class GraphProcessor
         switch ($relationship->getCardinality()) {
             case 'n..1':
                 return $this->processNTo1Relationship($relationship, $seed);
+            case '1..1':
+                return $this->process1To1Relationship($relationship, $seed);
         }
     }
 
@@ -83,6 +85,39 @@ class GraphProcessor
 
         return $collection;
 
+    }
+
+    private function process1To1Relationship(RelationshipDefinition $relationship, $seed)
+    {
+        $collection = new ObjectCollection();
+        $usedEnds = [];
+        $startNodes = $this->nodesByIdentifier[$relationship->getStartNode()];
+        $endNodes = $this->nodesByIdentifier[$relationship->getEndNode()];
+        $maxEnds = $endNodes->count();
+        $i = 0;
+        foreach ($startNodes as $startNode) {
+            if (!in_array($i, $usedEnds)) {
+                $endPosition = $this->getNotUsedNodePosition($usedEnds, $endNodes, $startNode);
+                if (null !== $endPosition) {
+                    $endNode = $endNodes->get($endPosition);
+                    $rel = $this->createRelationship(
+                        $relationship->getType(),
+                        $startNode->getId(),
+                        $startNode->getLabel(),
+                        $endNode->getId(),
+                        $endNode->getLabel(),
+                        $relationship->getProperties(),
+                        $seed
+                    );
+                    $collection->add($rel);
+                    $usedEnds[] = $endPosition;
+                    $usedEnds[] = $i;
+                }
+            }
+            $i++;
+        }
+
+        return $collection;
     }
 
     private function createRelationship($type, $sourceId, $sourceLabel, $targetId, $targetLabel, $properties, $seed)
@@ -106,6 +141,24 @@ class GraphProcessor
         $i = rand(0, $max-1);
 
         return $nodes->get($i);
+    }
+
+    private function getNotUsedNodePosition($usedNodes, ObjectCollection $collection, $avoidSelf = null)
+    {
+        $coll = $collection->toArray();
+        foreach ($coll as $k => $n) {
+            if (!in_array($k, $usedNodes)) {
+                if (null !== $avoidSelf) {
+                    if ($n !== $avoidSelf) {
+                        return $k;
+                    }
+                } else {
+                    return $k;
+                }
+            }
+        }
+
+        return null;
     }
 
     private function getFakeData(Property $property, $seed)
