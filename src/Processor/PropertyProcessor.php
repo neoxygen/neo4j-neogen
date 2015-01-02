@@ -3,7 +3,7 @@
 namespace Neoxygen\Neogen\Processor;
 
 use Faker\Factory;
-use Neoxygen\Neogen\Exception\SchemaException,
+use Neoxygen\Neogen\Exception\SchemaDefinitionException as SchemaException,
     Neoxygen\Neogen\Processor\VertEdgeProcessor,
     Neoxygen\Neogen\Graph\Graph;
 use Ikwattro\FakerExtra\Provider\Skill,
@@ -30,9 +30,9 @@ class PropertyProcessor
         $this->faker = $faker;
     }
 
-    public function process(VertEdgeProcessor $vertEdge, Graph $graph)
+    public function process(VertEdgeProcessor $vertEdge)
     {
-        $this->graph = $graph;
+        $this->graph = new Graph();
 
         foreach ($vertEdge->getNodes() as $node) {
             $this->addNodeProperties($node);
@@ -48,24 +48,18 @@ class PropertyProcessor
     public function addNodeProperties(array $vertedge)
     {
         $props = [];
-        foreach ($vertedge['properties'] as $key => $type) {
-            if (is_array($type)) {
-                if ($type['type'] == 'password') {
-                    $type['type'] = 'sha1';
-                }
-                if ($type['type'] == 'randomElement' || $type['type'] == 'randomElements') {
-                    $value = call_user_func_array(array($this->faker, $type['type']), array($type['params']));
-                } else {
-                    $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
-                }
-                if ($value instanceof \DateTime) {
-                    $value = $value->format('Y-m-d H:i:s');
-                }
+        foreach ($vertedge['properties'] as $key => $property) {
+            $type = $property->getProvider();
+            if ($type == 'password') { $type = 'sha1'; }
+            if ($type == 'randomElement' || $type == 'randomElements') {
+                $value = call_user_func_array(array($this->faker, $type), array($property->getArguments()));
             } else {
-                $ntype = $type == 'password' ? 'sha1' : $type;
-                $value = $this->faker->$ntype;
+                $value = call_user_func_array(array($this->faker, $type), $property->getArguments());
             }
-            $props[$key] = $value;
+            if ($value instanceof \DateTime) {
+                $value = $value->format('Y-m-d H:i:s');
+            }
+            $props[$property->getName()] = $value;
         }
         $vertedge['properties'] = $props;
         $this->graph->setNode($vertedge);
@@ -75,22 +69,18 @@ class PropertyProcessor
     {
         try {
             $props = [];
-            if (isset($vertedge['properties'])) {
-                foreach ($vertedge['properties'] as $key => $type) {
-                    if (is_array($type)) {
-                        if ($type['type'] == 'randomElement' || $type['type'] == 'randomElements') {
-                            $value = call_user_func_array(array($this->faker, $type['type']), array($type['params']));
-                        } else {
-                            $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
-                        }
-                    } else {
-                        $value = $this->faker->$type;
-                    }
-                    if ($value instanceof \DateTime) {
-                        $value = $value->format('Y-m-d H:i:s');
-                    }
-                    $props[$key] = $value;
+            foreach ($vertedge['properties'] as $key => $property) {
+                $type = $property->getProvider();
+                if ($type == 'password') { $type = 'sha1'; }
+                if ($type == 'randomElement' || $type == 'randomElements') {
+                    $value = call_user_func_array(array($this->faker, $type), array($property->getArguments()));
+                } else {
+                    $value = call_user_func_array(array($this->faker, $type), $property->getArguments());
                 }
+                if ($value instanceof \DateTime) {
+                    $value = $value->format('Y-m-d H:i:s');
+                }
+                $props[$property->getName()] = $value;
             }
             $vertedge['properties'] = $props;
             $this->graph->setEdge($vertedge);

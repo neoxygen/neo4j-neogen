@@ -31,6 +31,7 @@ class GraphSchemaBuilderSpec extends ObjectBehavior
     {
         return array(
             'labels' => 'Person',
+            'count' => 10,
             'properties' => array(
                 'first_name' => 'firstName',
                 'last_name' => 'lastName',

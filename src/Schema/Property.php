@@ -16,9 +16,9 @@ class Property
     protected $provider;
 
     /**
-     * @var null|array The property faker provider arguments (optional)
+     * @var array The property faker provider arguments (optional)
      */
-    protected $arguments;
+    protected $arguments = [];
 
     /**
      * @param string $name
@@ -84,10 +84,10 @@ class Property
      */
     public function hasArguments()
     {
-        if (null === $this->arguments) {
-            return false;
+        if (!empty($this->arguments)) {
+            return true;
         }
 
-        return true;
+        return false;
     }
 }
