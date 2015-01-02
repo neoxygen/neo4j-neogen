@@ -2,20 +2,16 @@
 
 namespace Neoxygen\Neogen\GraphGenerator;
 
-use Neoxygen\Neogen\Processor\PropertyProcessor;
 use Neoxygen\Neogen\Schema\GraphSchema;
-use Neoxygen\Neogen\Processor\VertEdgeProcessor;
+use Neoxygen\Neogen\Processor\GraphProcessor;
 
 class Generator
 {
-    protected $vertedgeProcessor;
+    protected $graphProcessor;
 
-    protected $propertyProcessor;
-
-    public function __construct(PropertyProcessor $propertyProcessor)
+    public function __construct(GraphProcessor $graphProcessor)
     {
-        $this->vertedgeProcessor = new VertEdgeProcessor();
-        $this->propertyProcessor = $propertyProcessor;
+        $this->graphProcessor = $graphProcessor;
     }
 
     public function generateGraph(GraphSchema $graphSchema)
@@ -24,8 +20,7 @@ class Generator
          * <-- Here should come the model manager adding properties to the schema
          */
 
-        $vE = $this->vertedgeProcessor->process($graphSchema);
-        $graph = $this->propertyProcessor->process($vE, $vE->getGraph());
+        $graph = $this->graphProcessor->process($graphSchema);
 
         return $graph;
     }
