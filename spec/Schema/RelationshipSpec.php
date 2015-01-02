@@ -11,7 +11,7 @@ class RelationshipSpec extends ObjectBehavior
 {
     function let()
     {
-        $this->beConstructedWith('RELATES');
+        $this->beConstructedWith('person', 'company', 'RELATES');
     }
 
     function it_is_initializable()
@@ -58,5 +58,11 @@ class RelationshipSpec extends ObjectBehavior
         $this->addProperty($property);
         $this->hasProperty('since')->shouldReturn(true);
         $this->hasProperty('weight')->shouldReturn(false);
+    }
+
+    function it_should_have_a_start_and_end_node_by_default()
+    {
+        $this->getStartNode()->shouldReturn('person');
+        $this->getEndNode()->shouldReturn('company');
     }
 }

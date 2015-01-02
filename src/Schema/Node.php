@@ -188,6 +188,12 @@ class Node
         return false;
     }
 
+    /**
+     * Checks whether or not the node has a property with the specified name
+     *
+     * @param $name
+     * @return bool
+     */
     public function hasProperty($name)
     {
         if (null !== $name) {
