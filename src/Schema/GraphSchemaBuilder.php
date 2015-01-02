@@ -41,6 +41,7 @@ class GraphSchemaBuilder
     public function buildNode($identifier, array $nodeInfo)
     {
         $node = new Node($identifier);
+        $node->setAmount($nodeInfo['count']);
         if (is_string($nodeInfo['labels'])) {
             $node->addLabel($nodeInfo['labels']);
         } elseif (is_array($nodeInfo['labels'])) {

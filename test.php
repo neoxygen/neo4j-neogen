@@ -14,5 +14,7 @@ $p = $neogen->getParserManager()->getParser('YamlParser');
 $userSchema = $p->parse($file);
 
 $def = $gsb->buildGraph($userSchema);
+$gen = $neogen->getGraphGenerator();
+$gen->generateFromFile($def);
 
 print_r($def);

@@ -55,6 +55,11 @@ class Neogen
         return $this->getService('neogen.parser_manager');
     }
 
+    public function getGraphGenerator()
+    {
+        return $this->getService('neogen.graph_generator');
+    }
+
     private function getService($id)
     {
         if (!$this->serviceContainer->isFrozen()) {

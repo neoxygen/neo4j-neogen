@@ -1,3 +1,6 @@
 services:
   neogen.parser_manager:
     class: "Neoxygen\\Neogen\\Parser\\ParserManager"
+
+  neogen.graph_generator:
+    class: "Neoxygen\\Neogen\\GraphGenerator\\Generator"

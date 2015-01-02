@@ -13,7 +13,7 @@ class Node
     protected $identifier;
 
     /**
-     * @var ObjectCollection
+     * @var ObjectCollection[string]
      */
     protected $labels;
 
