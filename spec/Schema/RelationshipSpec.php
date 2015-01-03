@@ -72,4 +72,22 @@ class RelationshipSpec extends ObjectBehavior
         $this->setCardinality('1..1');
         $this->getCardinality()->shouldReturn('1..1');
     }
+
+    function it_should_not_have_a_percentage_by_default()
+    {
+        $this->getPercentage()->shouldReturn(null);
+        $this->hasPercentage()->shouldReturn(false);
+    }
+
+    function it_should_set_percentage()
+    {
+        $this->setPercentage(10);
+        $this->getPercentage()->shouldReturn(10);
+        $this->hasPercentage()->shouldReturn(true);
+    }
+
+    function it_should_not_accept_null_percentage()
+    {
+        $this->shouldThrow('Neoxygen\Neogen\Exception\SchemaDefinitionException')->duringSetPercentage(0);
+    }
 }

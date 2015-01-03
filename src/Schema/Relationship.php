@@ -4,6 +4,7 @@ namespace Neoxygen\Neogen\Schema;
 
 use Neoxygen\Neogen\Util\ObjectCollection,
     Neoxygen\Neogen\Schema\RelationshipProperty;
+use Neoxygen\Neogen\Exception\SchemaDefinitionException;
 
 class Relationship
 {
@@ -31,6 +32,11 @@ class Relationship
      * @var string Cardinality of the relationshop
      */
     protected $cardinality;
+
+    /**
+     * @var null|int User defined percentage of target nodes
+     */
+    protected $percentage;
 
     /**
      * @param string $startNode The start node identifier of the relationship
@@ -146,5 +152,25 @@ class Relationship
         if (null !== $v) {
             $this->cardinality = (string) $v;
         }
+    }
+
+    public function getPercentage()
+    {
+        return $this->percentage;
+    }
+
+    public function hasPercentage()
+    {
+        return null !== $this->percentage;
+    }
+
+    public function setPercentage($percentage)
+    {
+        $pct = (int) $percentage;
+        if (0 === $pct) {
+            throw new SchemaDefinitionException(sprintf('A percentage of O is not allowed for the "%s" relationship', $this->getType()));
+        }
+
+        $this->percentage = $pct;
     }
 }
