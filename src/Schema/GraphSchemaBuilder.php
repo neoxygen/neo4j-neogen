@@ -82,9 +82,11 @@ class GraphSchemaBuilder
     {
         $relationship = new Relationship($relInfo['start'], $relInfo['end'], $relInfo['type']);
         $relationship->setCardinality($relInfo['mode']);
-        foreach ($relInfo['properties'] as $name => $info) {
-            $property = $this->buildRelationshipProperty($name, $info);
-            $relationship->addProperty($property);
+        if (isset($relInfo['properties'])) {
+            foreach ($relInfo['properties'] as $name => $info) {
+                $property = $this->buildRelationshipProperty($name, $info);
+                $relationship->addProperty($property);
+            }
         }
 
         return $relationship;
@@ -97,6 +99,12 @@ class GraphSchemaBuilder
      */
     public function buildRelationshipProperty($name, $info)
     {
+        if (0 === strpos($name, '!')) {
+            $name = substr($name, 1, strlen($name)-1);
+            $unique = true;
+        } else {
+            $unique = false;
+        }
         $property = new RelationshipProperty($name);
         if (is_array($info)) {
             $property->setProvider($info['type'], $info['params']);
@@ -104,8 +112,10 @@ class GraphSchemaBuilder
             $property->setProvider($info);
         }
 
+        if ($unique) {
+            $property->setUnique();
+        }
+
         return $property;
     }
-
-
 }

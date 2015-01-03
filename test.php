@@ -5,6 +5,8 @@ require_once __DIR__.'/vendor/autoload.php';
 use Neoxygen\Neogen\Neogen;
 use Neoxygen\Neogen\Schema\GraphSchemaBuilder;
 
+//gc_disable();
+
 $neogen = Neogen::create()
     ->build();
 

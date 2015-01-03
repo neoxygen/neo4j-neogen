@@ -1,0 +1,25 @@
+connection:
+      scheme: http
+      host: localhost
+      port: 7474
+     
+nodes:
+      users:
+        labels: User
+        count: 1000
+        models: ["User"]
+        properties:
+          label: {type: randomElement, params: ["a","b","c"]}
+          first_name: firstName
+          birth_date: {type: dateTimeBetween, params: ["-65 years", "-18 years"]}
+
+     
+relationships:
+      fileSpaceRels:
+        start: users
+        end: users
+        type: FILESPACE
+        mode: n..n
+        properties:
+          !since: sentence
+

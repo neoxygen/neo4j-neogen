@@ -42,7 +42,7 @@ class GraphProcessor
         print_r($graphRels);
     }
 
-    private function processNodeDefinition(NodeDefinition $node, $seed)
+    public function processNodeDefinition(NodeDefinition $node, $seed)
     {
         $collection = new ObjectCollection();
         for ($i=0; $i < $node->getAmount(); $i++) {
@@ -58,17 +58,19 @@ class GraphProcessor
         return $collection;
     }
 
-    private function processRelationshipDefinition(RelationshipDefinition $relationship, $seed)
+    public function processRelationshipDefinition(RelationshipDefinition $relationship, $seed)
     {
         switch ($relationship->getCardinality()) {
             case 'n..1':
                 return $this->processNTo1Relationship($relationship, $seed);
             case '1..1':
                 return $this->process1To1Relationship($relationship, $seed);
+            case 'n..n':
+                return $this->processNToNRelationship($relationship, $seed);
         }
     }
 
-    private function processNTo1Relationship(RelationshipDefinition $relationship, $seed)
+    public function processNTo1Relationship(RelationshipDefinition $relationship, $seed)
     {
         $collection = new ObjectCollection();
         foreach ($this->nodesByIdentifier[$relationship->getStartNode()] as $startNode) {
@@ -87,7 +89,7 @@ class GraphProcessor
 
     }
 
-    private function process1To1Relationship(RelationshipDefinition $relationship, $seed)
+    public function process1To1Relationship(RelationshipDefinition $relationship, $seed)
     {
         $collection = new ObjectCollection();
         $usedEnds = [];
@@ -120,7 +122,58 @@ class GraphProcessor
         return $collection;
     }
 
-    private function createRelationship($type, $sourceId, $sourceLabel, $targetId, $targetLabel, $properties, $seed)
+    public function processNToNRelationship(RelationshipDefinition $relationship, $seed)
+    {
+        $collection = new ObjectCollection();
+        $targetCount = $this->getTargetNodesCount($relationship, $this->nodesByIdentifier[$relationship->getEndNode()]);
+        $startNodes = $this->nodesByIdentifier[$relationship->getStartNode()];
+        $endNodes = $this->nodesByIdentifier[$relationship->getEndNode()];
+        foreach ($startNodes as $i => $startNode) {
+            print($i);
+            $usedTargets = [];
+            $x = 0;
+            while ($x < $targetCount) {
+                $endNodePosition = $this->getNotUsedNodePosition($usedTargets, $endNodes, $startNode);
+                $endNode = $endNodes->get($endNodePosition);
+                $rel = $this->createRelationship(
+                    $relationship->getType(),
+                    $startNode->getId(),
+                    $startNode->getLabel(),
+                    $endNode->getId(),
+                    $endNode->getLabel(),
+                    $relationship->getProperties(),
+                    $seed
+                );
+                $collection->add($rel);
+                $usedTargets[] = $i;
+                $x++;
+            }
+        }
+
+        return $collection;
+    }
+
+    /**
+     * @param RelationshipDefinition $relationship
+     * @param ObjectCollection $targetNodes
+     * @return int
+     */
+    public function getTargetNodesCount(RelationshipDefinition $relationship, ObjectCollection $targetNodes)
+    {
+        $targetCount = $targetNodes->count();
+        if ($relationship->hasPercentage()) {
+            $pct = $relationship->getPercentage();
+        } else {
+            $pct = $targetCount <= 100 ? 60 : 20;
+        }
+
+        $percentage = $pct/100;
+        $count = round($targetCount*$percentage);
+
+        return (int) $count;
+    }
+
+    public function createRelationship($type, $sourceId, $sourceLabel, $targetId, $targetLabel, $properties, $seed)
     {
         $relationship = new Relationship();
         $relationship->setType($type);
@@ -143,10 +196,9 @@ class GraphProcessor
         return $nodes->get($i);
     }
 
-    private function getNotUsedNodePosition($usedNodes, ObjectCollection $collection, $avoidSelf = null)
+    private function getNotUsedNodePosition($usedNodes, ObjectCollection $collection, $avoidSelf = null, $shuffle = false)
     {
-        $coll = $collection->toArray();
-        foreach ($coll as $k => $n) {
+        foreach ($collection as $k => $n) {
             if (!in_array($k, $usedNodes)) {
                 if (null !== $avoidSelf) {
                     if ($n !== $avoidSelf) {
