@@ -18,11 +18,11 @@
     "require": {
         "php": ">=5.4",
         "fzaninotto/faker": "~1.4",
-        "symfony/console": "~2.5.0",
-        "symfony/yaml": "~2.5.0",
-        "symfony/finder": "~2.5.0",
-        "symfony/dependency-injection": "~2.5.0",
-        "neoxygen/neoclient": "~2.0.0",
+        "symfony/console": "~2.5",
+        "symfony/yaml": "~2.5",
+        "symfony/finder": "~2.5",
+        "symfony/dependency-injection": "~2.5",
+        "neoxygen/neoclient": "~2.0",
         "ikwattro/faker-extra": "~0.3"
     },
     "require-dev": {
