@@ -2,7 +2,7 @@
 
 namespace Neoxygen\Neogen\Tests;
 
-use Neoxygen\Neogen\NeogenBuilder;
+use Neoxygen\Neogen\Neogen;
 
 class BuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -10,7 +10,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 
     public function setup()
     {
-        $neogen = NeogenBuilder::create()
+        $neogen = Neogen::create()
             ->build();
 
         $this->neogen = $neogen;
