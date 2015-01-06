@@ -3,6 +3,7 @@
 namespace Neoxygen\Neogen\Processor;
 
 use Neoxygen\Neogen\FakerProvider\Faker;
+use Neoxygen\Neogen\Graph\Graph;
 use Neoxygen\Neogen\Schema\GraphSchema;
 use Neoxygen\Neogen\Graph\Node;
 use Neoxygen\Neogen\Schema\Node as NodeDefinition;
@@ -13,35 +14,66 @@ use Neoxygen\Neogen\Util\ObjectCollection;
 
 class GraphProcessor
 {
+    /**
+     * @var Faker
+     */
     protected $faker;
 
+    /**
+     * @var ObjectCollection
+     */
     protected $nodesByIdentifier;
 
+    /**
+     * @var ObjectCollection
+     */
+    protected $nodes;
+
+    /**
+     * @var ObjectCollection
+     */
+    protected $relationships;
+
+    /**
+     * @param Faker $faker
+     */
     public function __construct(Faker $faker)
     {
         $this->faker = $faker;
     }
 
+    /**
+     * @param  GraphSchema $schema
+     * @param  null|int    $seed
+     * @return Graph
+     */
     public function process(GraphSchema $schema, $seed = null)
     {
-        $this->nodesByIdentifier = [];
-        $graphNodes = new ObjectCollection();
-        $graphRels = new ObjectCollection();
+        $this->nodesByIdentifier = new ObjectCollection();
+        $this->nodes = new ObjectCollection();
+        $this->relationships = new ObjectCollection();
 
         foreach ($schema->getNodes() as $node) {
-            $nodes = $this->processNodeDefinition($node, $seed);
-            $graphNodes->add($nodes->toArray());
-            $this->nodesByIdentifier[$node->getIdentifier()] = $nodes;
+            $this->processNodeDefinition($node, $seed);
         }
 
         foreach ($schema->getRelationships() as $relationship) {
-            $relationships = $this->processRelationshipDefinition($relationship, $seed);
-            $graphRels->add($relationships->toArray());
+            $this->processRelationshipDefinition($relationship, $seed);
         }
 
-        print_r($graphRels);
+        $graph = new Graph();
+        $graph->setNodes($this->nodes);
+        $graph->setEdges($this->relationships);
+        $graph->setSchema($schema);
+
+        return $graph;
     }
 
+    /**
+     * @param  NodeDefinition   $node
+     * @param  null|int         $seed
+     * @return ObjectCollection
+     */
     public function processNodeDefinition(NodeDefinition $node, $seed)
     {
         $collection = new ObjectCollection();
@@ -53,47 +85,61 @@ class GraphProcessor
                 $n->addProperty($property->getName(), $this->getFakeData($property, $seed));
             }
             $collection->add($n);
+            $this->nodes->add($n);
         }
 
-        return $collection;
+        $this->nodesByIdentifier->set($node->getIdentifier(), $collection);
     }
 
+    /**
+     * @param RelationshipDefinition $relationship
+     * @param null|int               $seed
+     */
     public function processRelationshipDefinition(RelationshipDefinition $relationship, $seed)
     {
         switch ($relationship->getCardinality()) {
             case 'n..1':
-                return $this->processNTo1Relationship($relationship, $seed);
+                $this->processNTo1Relationship($relationship, $seed);
+                break;
             case '1..1':
-                return $this->process1To1Relationship($relationship, $seed);
+                $this->process1To1Relationship($relationship, $seed);
+                break;
             case 'n..n':
-                return $this->processNToNRelationship($relationship, $seed);
+                $this->processNToNRelationship($relationship, $seed);
+                break;
             case '1..n':
-                return $this->process1ToNRelationship($relationship, $seed);
+                $this->process1ToNRelationship($relationship, $seed);
+                break;
+            default:
+                throw new \RuntimeException(sprintf('Unable to process relationship with "%s" cardinality', $relationship->getCardinality()));
         }
     }
 
+    /**
+     * @param RelationshipDefinition $relationship
+     * @param null|int               $seed
+     */
     public function processNTo1Relationship(RelationshipDefinition $relationship, $seed)
     {
-        $collection = new ObjectCollection();
         foreach ($this->nodesByIdentifier[$relationship->getStartNode()] as $startNode) {
             $endNode = $this->getRandomNode($this->nodesByIdentifier[$relationship->getEndNode()]);
-            $r = $this->createRelationship($relationship->getType(),
+            $this->createRelationship($relationship->getType(),
                 $startNode->getId(),
                 $startNode->getLabel(),
                 $endNode->getId(),
                 $endNode->getLabel(),
                 $relationship->getProperties(),
                 $seed);
-            $collection->add($r);
         }
-
-        return $collection;
 
     }
 
+    /**
+     * @param RelationshipDefinition $relationship
+     * @param null|int               $seed
+     */
     public function process1To1Relationship(RelationshipDefinition $relationship, $seed)
     {
-        $collection = new ObjectCollection();
         $usedEnds = [];
         $startNodes = $this->nodesByIdentifier[$relationship->getStartNode()];
         $endNodes = $this->nodesByIdentifier[$relationship->getEndNode()];
@@ -104,7 +150,7 @@ class GraphProcessor
                 $endPosition = $this->getNotUsedNodePosition($usedEnds, $endNodes, $startNode);
                 if (null !== $endPosition) {
                     $endNode = $endNodes->get($endPosition);
-                    $rel = $this->createRelationship(
+                    $this->createRelationship(
                         $relationship->getType(),
                         $startNode->getId(),
                         $startNode->getLabel(),
@@ -113,20 +159,20 @@ class GraphProcessor
                         $relationship->getProperties(),
                         $seed
                     );
-                    $collection->add($rel);
                     $usedEnds[] = $endPosition;
                     $usedEnds[] = $i;
                 }
             }
             $i++;
         }
-
-        return $collection;
     }
 
+    /**
+     * @param RelationshipDefinition $relationship
+     * @param null|int               $seed
+     */
     public function processNToNRelationship(RelationshipDefinition $relationship, $seed)
     {
-        $collection = new ObjectCollection();
         $targetCount = $this->getTargetNodesCount($relationship, $this->nodesByIdentifier[$relationship->getEndNode()]);
         $startNodes = $this->nodesByIdentifier[$relationship->getStartNode()];
         $endNodes = $this->nodesByIdentifier[$relationship->getEndNode()];
@@ -137,7 +183,7 @@ class GraphProcessor
             while ($x < $targetCount) {
                 $endNodePosition = $this->getNotUsedNodePosition($usedTargets, $endNodes, $startNode);
                 $endNode = $endNodes->get($endNodePosition);
-                $rel = $this->createRelationship(
+                $this->createRelationship(
                     $relationship->getType(),
                     $startNode->getId(),
                     $startNode->getLabel(),
@@ -146,18 +192,18 @@ class GraphProcessor
                     $relationship->getProperties(),
                     $seed
                 );
-                $collection->add($rel);
                 $usedTargets[] = $i;
                 $x++;
             }
         }
-
-        return $collection;
     }
 
+    /**
+     * @param RelationshipDefinition $relationship
+     * @param null|int               $seed
+     */
     public function process1ToNRelationship(RelationshipDefinition $relationship, $seed)
     {
-        $rels = new ObjectCollection();
         $startNodes = $this->nodesByIdentifier[$relationship->getStartNode()];
         $endNodes = $this->nodesByIdentifier[$relationship->getEndNode()];
         $target = $this->calculateApproxTargetNodes($startNodes->count(), $endNodes->count());
@@ -169,7 +215,7 @@ class GraphProcessor
             for ($i = 0; $i < $maxIteration; $i++) {
                 $startNode = $startNodes->get($s);
                 $endNode = $endNodes->get($eci);
-                $rels->add($this->createRelationship(
+                $this->createRelationship(
                     $relationship->getType(),
                     $startNode->getId(),
                     $startNode->getLabel(),
@@ -177,7 +223,7 @@ class GraphProcessor
                     $endNode->getLabel(),
                     $relationship->getProperties(),
                     $seed
-                ));
+                );
                 $eci++;
             }
             $ssi++;
@@ -186,7 +232,7 @@ class GraphProcessor
             $lastStartNode = $startNodes->get($ssi);
             for ($eci; $eci < $ec; $eci++) {
                 $endNode = $endNodes->get($eci);
-                $rels->add($this->createRelationship(
+                $this->createRelationship(
                     $relationship->getType(),
                     $lastStartNode->getId(),
                     $lastStartNode->getLabel(),
@@ -194,11 +240,9 @@ class GraphProcessor
                     $endNode->getLabel(),
                     $relationship->getProperties(),
                     $seed
-                ));
+                );
             }
         }
-
-        return $rels;
     }
 
     /**
@@ -251,6 +295,16 @@ class GraphProcessor
         return (int) $count;
     }
 
+    /**
+     * @param $type
+     * @param $sourceId
+     * @param $sourceLabel
+     * @param $targetId
+     * @param $targetLabel
+     * @param $properties
+     * @param $seed
+     * @return Relationship
+     */
     public function createRelationship($type, $sourceId, $sourceLabel, $targetId, $targetLabel, $properties, $seed)
     {
         $relationship = new Relationship();
@@ -263,9 +317,13 @@ class GraphProcessor
             $relationship->addProperty($property->getName(), $this->getFakeData($property, $seed));
         }
 
-        return $relationship;
+        $this->relationships->add($relationship);
     }
 
+    /**
+     * @param  ObjectCollection $nodes
+     * @return mixed|null
+     */
     private function getRandomNode(ObjectCollection $nodes)
     {
         $max = $nodes->count();
@@ -274,6 +332,13 @@ class GraphProcessor
         return $nodes->get($i);
     }
 
+    /**
+     * @param $usedNodes
+     * @param  ObjectCollection $collection
+     * @param  null             $avoidSelf
+     * @param  bool             $shuffle
+     * @return int|null|string
+     */
     private function getNotUsedNodePosition($usedNodes, ObjectCollection $collection, $avoidSelf = null, $shuffle = false)
     {
         foreach ($collection as $k => $n) {
@@ -291,6 +356,11 @@ class GraphProcessor
         return null;
     }
 
+    /**
+     * @param  Property                                 $property
+     * @param $seed
+     * @return string|\DateTime|int|float|array|boolean
+     */
     private function getFakeData(Property $property, $seed)
     {
         $v = $this->faker->generate($property->getProvider(), $property->getArguments(), $seed, $property->isUnique());
@@ -298,6 +368,12 @@ class GraphProcessor
         return $this->sanitizeValueForGraph($v);
     }
 
+    /**
+     * Sanitizes values for Neo4j primitives. E.g.: DateTime objects are converted to strings
+     *
+     * @param $v
+     * @return string
+     */
     private function sanitizeValueForGraph($v)
     {
         if ($v instanceof \DateTime) {
