@@ -11,8 +11,8 @@ $neogen = Neogen::create()
     ->build();
 
 $gsb = new GraphSchemaBuilder();
-$file = __DIR__.'/neogen.yml';
-$p = $neogen->getParserManager()->getParser('YamlParser');
+$file = file_get_contents(__DIR__.'/neogen.cypher');
+$p = $neogen->getParserManager()->getParser('cypher');
 $userSchema = $p->parse($file);
 
 $def = $gsb->buildGraph($userSchema);

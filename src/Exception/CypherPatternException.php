@@ -2,6 +2,6 @@
 
 namespace Neoxygen\Neogen\Exception;
 
-class CypherPatternException extends SchemaException
+class CypherPatternException extends SchemaDefinitionException
 {
 }

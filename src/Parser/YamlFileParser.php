@@ -42,7 +42,7 @@ class YamlFileParser implements ParserInterface
      */
     public function getName()
     {
-        return 'YamlParser';
+        return 'yaml';
     }
 
     /**
