@@ -2,12 +2,10 @@
 
 namespace Neoxygen\Neogen\Processor;
 
-use Faker\Factory;
 use Neoxygen\Neogen\Exception\SchemaDefinitionException as SchemaException,
     Neoxygen\Neogen\Processor\VertEdgeProcessor,
     Neoxygen\Neogen\Graph\Graph,
     Neoxygen\Neogen\FakerProvider\Faker;
-
 
 class PropertyProcessor
 {

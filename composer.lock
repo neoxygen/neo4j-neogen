@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "31d3293bdeaf55700d30d6098e6cf6ce",
+    "hash": "3393a4777bef9406f5dc5e5dc838b0c1",
     "packages": [
         {
             "name": "doctrine/collections",
@@ -76,16 +76,16 @@
         },
         {
             "name": "fzaninotto/faker",
-            "version": "v1.4.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "010c7efedd88bf31141a02719f51fb44c732d5a0"
+                "reference": "9d9bd78a9c875e6cd8ab9555823017ef3182ece5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/010c7efedd88bf31141a02719f51fb44c732d5a0",
-                "reference": "010c7efedd88bf31141a02719f51fb44c732d5a0",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/9d9bd78a9c875e6cd8ab9555823017ef3182ece5",
+                "reference": "9d9bd78a9c875e6cd8ab9555823017ef3182ece5",
                 "shasum": ""
             },
             "require": {
@@ -95,14 +95,18 @@
                 "phpunit/phpunit": "~4.0",
                 "squizlabs/php_codesniffer": "~1.5"
             },
+            "suggest": {
+                "ext-intl": "*"
+            },
             "type": "library",
             "extra": {
-                "branch-alias": []
+                "branch-alias": {
+                    "dev-master": "1.5.x-dev"
+                }
             },
             "autoload": {
-                "psr-0": {
-                    "Faker": "src/",
-                    "Faker\\PHPUnit": "test/"
+                "psr-4": {
+                    "Faker\\": "src/Faker/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -120,7 +124,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2014-06-04 14:43:02"
+            "time": "2015-01-04 23:56:37"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -359,16 +363,16 @@
         },
         {
             "name": "neoxygen/neoclient",
-            "version": "2.0.7",
+            "version": "2.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/neoxygen/neo4j-neoclient.git",
-                "reference": "e25c223b91510c94ff78ea4c9827e3e407e4e38c"
+                "reference": "8399b6bf16df52e276e4bd0bf2c1098cf0350ec1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/neoxygen/neo4j-neoclient/zipball/e25c223b91510c94ff78ea4c9827e3e407e4e38c",
-                "reference": "e25c223b91510c94ff78ea4c9827e3e407e4e38c",
+                "url": "https://api.github.com/repos/neoxygen/neo4j-neoclient/zipball/8399b6bf16df52e276e4bd0bf2c1098cf0350ec1",
+                "reference": "8399b6bf16df52e276e4bd0bf2c1098cf0350ec1",
                 "shasum": ""
             },
             "require": {
@@ -417,7 +421,7 @@
                 "high-availibility",
                 "neo4j"
             ],
-            "time": "2014-12-30 11:43:03"
+            "time": "2015-01-05 14:29:39"
         },
         {
             "name": "psr/log",
@@ -1830,7 +1834,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "fzaninotto/faker": 20
+    },
     "prefer-stable": false,
     "platform": {
         "php": ">=5.4"

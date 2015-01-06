@@ -15,7 +15,7 @@ class GraphSchemaBuilder
     /**
      * Build a graph definition based on the user parsed schema
      *
-     * @param array $userSchema
+     * @param  array                               $userSchema
      * @return \Neoxygen\Neogen\Schema\GraphSchema
      */
     public function buildGraph(array $userSchema)
@@ -34,8 +34,8 @@ class GraphSchemaBuilder
     }
 
     /**
-     * @param string $identifier
-     * @param array $nodeInfo
+     * @param  string $identifier
+     * @param  array  $nodeInfo
      * @return Node
      */
     public function buildNode($identifier, array $nodeInfo)
@@ -56,8 +56,8 @@ class GraphSchemaBuilder
     }
 
     /**
-     * @param string $name
-     * @param string|array $info
+     * @param  string       $name
+     * @param  string|array $info
      * @return NodeProperty
      */
     public function buildNodeProperty($name, $info)
@@ -75,7 +75,7 @@ class GraphSchemaBuilder
     /**
      * Builds the relationship object based on user schema
      *
-     * @param array $relInfo relationship info from user schema
+     * @param  array        $relInfo relationship info from user schema
      * @return Relationship
      */
     public function buildRelationship(array $relInfo)
@@ -93,8 +93,8 @@ class GraphSchemaBuilder
     }
 
     /**
-     * @param string $name
-     * @param string|array $info
+     * @param  string               $name
+     * @param  string|array         $info
      * @return RelationshipProperty
      */
     public function buildRelationshipProperty($name, $info)

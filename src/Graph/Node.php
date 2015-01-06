@@ -2,8 +2,6 @@
 
 namespace Neoxygen\Neogen\Graph;
 
-use Neoxygen\Neogen\Util\ObjectCollection;
-
 class Node
 {
     protected $id;
@@ -26,8 +24,6 @@ class Node
         return $this->id;
     }
 
-
-
     public function getProperties()
     {
         return $this->properties;
@@ -37,7 +33,6 @@ class Node
     {
         $this->properties[$name] = $value;
     }
-
 
     public function hasProperty($name)
     {
@@ -62,6 +57,7 @@ class Node
         if (empty($this->labels)) {
             throw new \RuntimeException('The node has no label');
         }
+
         return $this->labels;
     }
 

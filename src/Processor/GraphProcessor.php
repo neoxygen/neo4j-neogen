@@ -67,6 +67,8 @@ class GraphProcessor
                 return $this->process1To1Relationship($relationship, $seed);
             case 'n..n':
                 return $this->processNToNRelationship($relationship, $seed);
+            case '1..n':
+                return $this->process1ToNRelationship($relationship, $seed);
         }
     }
 
@@ -153,9 +155,85 @@ class GraphProcessor
         return $collection;
     }
 
+    public function process1ToNRelationship(RelationshipDefinition $relationship, $seed)
+    {
+        $rels = new ObjectCollection();
+        $startNodes = $this->nodesByIdentifier[$relationship->getStartNode()];
+        $endNodes = $this->nodesByIdentifier[$relationship->getEndNode()];
+        $target = $this->calculateApproxTargetNodes($startNodes->count(), $endNodes->count());
+        $maxIteration = 1 === $target ? $startNodes->count() : $startNodes->count() -1;
+        $ec = $endNodes->count();
+        $eci = 0;
+        $ssi = 0;
+        for ($s = 0; $s < $startNodes->count()-1; $s++) {
+            for ($i = 0; $i < $maxIteration; $i++) {
+                $startNode = $startNodes->get($s);
+                $endNode = $endNodes->get($eci);
+                $rels->add($this->createRelationship(
+                    $relationship->getType(),
+                    $startNode->getId(),
+                    $startNode->getLabel(),
+                    $endNode->getId(),
+                    $endNode->getLabel(),
+                    $relationship->getProperties(),
+                    $seed
+                ));
+                $eci++;
+            }
+            $ssi++;
+        }
+        if ($ssi < $startNodes->count()) {
+            $lastStartNode = $startNodes->get($ssi);
+            for ($eci; $eci < $ec; $eci++) {
+                $endNode = $endNodes->get($eci);
+                $rels->add($this->createRelationship(
+                    $relationship->getType(),
+                    $lastStartNode->getId(),
+                    $lastStartNode->getLabel(),
+                    $endNode->getId(),
+                    $endNode->getLabel(),
+                    $relationship->getProperties(),
+                    $seed
+                ));
+            }
+        }
+
+        return $rels;
+    }
+
     /**
-     * @param RelationshipDefinition $relationship
-     * @param ObjectCollection $targetNodes
+     *
+     * Guess the number of nodes to be associated to 1 node
+     *
+     * @param  int $startCount The count of relationship start nodes
+     * @param  int $endCount   The count of relationship end nodes
+     * @return int The targeted nodes count
+     */
+    public function calculateApproxTargetNodes($startCount, $endCount)
+    {
+        if (1 === $startCount) {
+            return $endCount;
+        }
+        if ($startCount <= $endCount) {
+            $diff = $endCount - $startCount;
+            if (1 < $diff) {
+                $target = (int) round($endCount/$diff);
+
+                return $target;
+            }
+
+            return 1;
+        }
+
+        $diff = (int) round($startCount/$endCount);
+        $newStart = $startCount/$diff;
+
+        return $this->calculateApproxTargetNodes($newStart, $endCount);
+    }
+
+    /**
+     * @param  RelationshipDefinition $relationship
+     * @param  ObjectCollection       $targetNodes
      * @return int
      */
     public function getTargetNodesCount(RelationshipDefinition $relationship, ObjectCollection $targetNodes)
