@@ -15,3 +15,6 @@ services:
   neogen.graph_processor:
     class: "Neoxygen\\Neogen\\Processor\\GraphProcessor"
     arguments: ["@neogen.faker"]
+
+  neogen.graph_serializer:
+    class: "Neoxygen\\Neogen\\Util\\GraphSerializer"
