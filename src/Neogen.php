@@ -10,6 +10,9 @@ use Neoxygen\Neogen\DependencyInjection\NeogenExtension;
 
 class Neogen
 {
+    /**
+     * @var string
+     */
     public static $version = '1.0.0';
 
     /**
@@ -37,6 +40,8 @@ class Neogen
     }
 
     /**
+     * Creates a new instance of Neogen
+     *
      * @return Neogen
      */
     public static function create()
@@ -44,17 +49,14 @@ class Neogen
         return new self();
     }
 
+    /**
+     * Returns the Neogen library's version
+     *
+     * @return string Neogen version
+     */
     public static function getVersion()
     {
         return self::$version;
-    }
-
-    /**
-     * @return array
-     */
-    public function getConfiguration()
-    {
-        return $this->configuration;
     }
 
     /**
@@ -72,6 +74,12 @@ class Neogen
         return $this;
     }
 
+    /**
+     * Generates a graph based on a given user schema array
+     *
+     * @param array $userSchema
+     * @return Graph\Graph
+     */
     public function generateGraph(array $userSchema)
     {
         $graphSchema = $this->getSchemaBuilder()->buildGraph($userSchema);
@@ -88,6 +96,8 @@ class Neogen
     }
 
     /**
+     * Returns the parser manager service
+     *
      * @return \Neoxygen\Neogen\Parser\ParserManager
      */
     public function getParserManager()
@@ -96,14 +106,28 @@ class Neogen
     }
 
     /**
-     * @return \Neoxygen\Neogen\Schema\GraphSchemaBuilder
+     * @param string $parser
+     * @return Parser\ParserInterface
+     * @throws Exception\ParserNotFoundException
      */
-    public function getSchemaBuilder()
+    public function getParser($parser)
     {
-        return $this->getService('neogen.schema_builder');
+        return $this->getParserManager()->getParser($parser);
     }
 
     /**
+     * Returns the graph serializer service
+     *
+     * @return \Neoxygen\Neogen\Util\GraphSerializer
+     */
+    public function getGraphSerializer()
+    {
+        return $this->getService('neogen.graph_serializer');
+    }
+
+    /**
+     * Returns the graph generator service
+     *
      * @return \Neoxygen\Neogen\GraphGenerator\Generator
      */
     public function getGraphGenerator()
@@ -122,5 +146,15 @@ class Neogen
         }
 
         return $this->serviceContainer->get($id);
+    }
+
+    /**
+     * Return the current configuration
+     *
+     * @return array
+     */
+    private function getConfiguration()
+    {
+        return $this->configuration;
     }
 }

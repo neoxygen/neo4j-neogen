@@ -38,7 +38,9 @@ class GenerateCommand extends Command
         $filePath = getcwd() . '/neogen.yml';
         $schema = $yamlParser->parse($filePath);
         $g = $neogen->generateGraph($schema);
-        return $g;
+
+        $serializer = $neogen->getServiceContainer()->get('neogen.graph_serializer');
+        $json = $serializer->serializeGraphToJson($g);
 
     }
 }
