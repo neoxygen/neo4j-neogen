@@ -177,7 +177,6 @@ class GraphProcessor
         $startNodes = $this->nodesByIdentifier[$relationship->getStartNode()];
         $endNodes = $this->nodesByIdentifier[$relationship->getEndNode()];
         foreach ($startNodes as $i => $startNode) {
-            print($i);
             $usedTargets = [];
             $x = 0;
             while ($x < $targetCount) {
@@ -192,7 +191,7 @@ class GraphProcessor
                     $relationship->getProperties(),
                     $seed
                 );
-                $usedTargets[] = $i;
+                $usedTargets[$i] = null;
                 $x++;
             }
         }
@@ -342,7 +341,7 @@ class GraphProcessor
     private function getNotUsedNodePosition($usedNodes, ObjectCollection $collection, $avoidSelf = null, $shuffle = false)
     {
         foreach ($collection as $k => $n) {
-            if (!in_array($k, $usedNodes)) {
+            if (!array_key_exists($k, $usedNodes)) {
                 if (null !== $avoidSelf) {
                     if ($n !== $avoidSelf) {
                         return $k;

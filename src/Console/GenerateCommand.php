@@ -37,10 +37,14 @@ class GenerateCommand extends Command
         $yamlParser = $neogen->getParserManager()->getParser('yaml');
         $filePath = getcwd() . '/neogen.yml';
         $schema = $yamlParser->parse($filePath);
+        $start = microtime(true);
         $g = $neogen->generateGraph($schema);
+        $end = microtime(true);
+        print($end - $start);
+        echo PHP_EOL;
 
         $serializer = $neogen->getServiceContainer()->get('neogen.graph_serializer');
-        $json = $serializer->serializeGraphToJson($g);
+        //$json = $serializer->serializeGraphToJson($g);
 
     }
 }

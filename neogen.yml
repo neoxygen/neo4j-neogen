@@ -6,26 +6,18 @@ connection:
 nodes:
       users:
         labels: User
-        count: 10
+        count: 5000
         models: ["User"]
         properties:
-          label: {type: randomElement, params: ["a","b","c"]}
           first_name: firstName
-          birth_date: {type: dateTimeBetween, params: ["-65 years", "-18 years"]}
-
-      companies:
-        labels: Company
-        count: 3
-        properties:
-          time: unixTime
+          uuid: uuid
 
      
 relationships:
       fileSpaceRels:
-        start: companies
+        start: users
         end: users
-        type: FILESPACE
-        mode: 1..n
+        type: FOLLOWS
+        mode: n..n
         properties:
-          since: sentence
 
