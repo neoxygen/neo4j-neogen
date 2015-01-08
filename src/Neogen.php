@@ -10,6 +10,8 @@ use Neoxygen\Neogen\DependencyInjection\NeogenExtension;
 
 class Neogen
 {
+    public static $version = '1.0.0';
+
     /**
      * @var ContainerBuilder|ContainerInterface
      */
@@ -42,6 +44,11 @@ class Neogen
         return new self();
     }
 
+    public static function getVersion()
+    {
+        return self::$version;
+    }
+
     /**
      * @return array
      */
@@ -65,6 +72,13 @@ class Neogen
         return $this;
     }
 
+    public function generateGraph(array $userSchema)
+    {
+        $graphSchema = $this->getSchemaBuilder()->buildGraph($userSchema);
+
+        return $this->getGraphGenerator()->generateGraph($graphSchema);
+    }
+
     /**
      * @return ContainerBuilder|ContainerInterface
      */
@@ -79,6 +93,14 @@ class Neogen
     public function getParserManager()
     {
         return $this->getService('neogen.parser_manager');
+    }
+
+    /**
+     * @return \Neoxygen\Neogen\Schema\GraphSchemaBuilder
+     */
+    public function getSchemaBuilder()
+    {
+        return $this->getService('neogen.schema_builder');
     }
 
     /**

@@ -82,4 +82,12 @@ class GraphSchema
 
         return $this->relationships->add($relationship);
     }
+
+    public function toArray()
+    {
+        return array(
+            'nodes' => $this->nodes->getValues(),
+            'relationships' => $this->relationships->getValues()
+        );
+    }
 }

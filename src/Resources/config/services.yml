@@ -9,6 +9,9 @@ services:
   neogen.faker:
     class: "%faker.class%"
 
+  neogen.schema_builder:
+    class: "Neoxygen\\Neogen\\Schema\\GraphSchemaBuilder"
+
   neogen.graph_processor:
     class: "Neoxygen\\Neogen\\Processor\\GraphProcessor"
     arguments: ["@neogen.faker"]

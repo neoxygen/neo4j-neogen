@@ -42,4 +42,13 @@ class Graph
     {
         return $this->schema;
     }
+
+    public function toArray()
+    {
+        return array(
+            'nodes' => $this->nodes->getValues(),
+            'edges' => $this->edges->getValues(),
+            'schema' => $this->getSchema()->toArray()
+        );
+    }
 }
