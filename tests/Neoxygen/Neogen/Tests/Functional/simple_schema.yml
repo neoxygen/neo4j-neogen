@@ -1,0 +1,7 @@
+nodes:
+  person:
+    labels: Person
+    count: 3
+    properties:
+      id: uuid
+      birth: {type: dateTimeBetween, params:["-65 years","-18 years"]}

@@ -25,6 +25,9 @@ class GraphSchemaBuilder
             $node = $this->buildNode($id, $nodeInfo);
             $graphSchema->addNode($node);
         }
+        if (!isset($userSchema['relationships'])) {
+            $userSchema['relationships'] = [];
+        }
         foreach ($userSchema['relationships'] as $rel) {
             $relationship = $this->buildRelationship($rel);
             $graphSchema->addRelationship($relationship);

@@ -82,7 +82,7 @@ class Neogen
      */
     public function generateGraph(array $userSchema)
     {
-        $graphSchema = $this->getSchemaBuilder()->buildGraph($userSchema);
+        $graphSchema = $this->getService('neogen.schema_builder')->buildGraph($userSchema);
 
         return $this->getGraphGenerator()->generateGraph($graphSchema);
     }
