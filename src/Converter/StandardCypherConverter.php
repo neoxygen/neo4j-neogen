@@ -24,8 +24,6 @@ class StandardCypherConverter implements ConverterInterface
             }
         }
 
-        $this->statements[] = 'BEGIN TRANSACTION';
-
         foreach ($nodesByIdentifier as $nodeIdentifier => $node) {
             $identifier = strtolower($nodeIdentifier);
             $label = $identifierToLabelMap[$nodeIdentifier];
@@ -33,9 +31,6 @@ class StandardCypherConverter implements ConverterInterface
             $ccs = 'CREATE CONSTRAINT ON (' . $identifier . ':' . $label . ') ASSERT ' . $identifier . '.neogen_id IS UNIQUE;';
             $this->statements[] = $ccs;
         }
-
-        $this->statements[] = 'COMMIT';
-        $this->statements[] = 'BEGIN TRANSACTION';
 
         $i = 1;
         foreach ($graph->getNodes() as $node) {
@@ -131,8 +126,6 @@ class StandardCypherConverter implements ConverterInterface
             $this->statements[] = 'MATCH (n'.$ssi.':'.$label.') REMOVE n'.$ssi.'.neogen_id;';
             $ssi++;
         }
-
-        $this->statements[] = 'COMMIT';
 
         return $this->statements;
 
