@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": ">=5.4",
-        "fzaninotto/faker": "dev-master",
+        "fzaninotto/faker": "~1.4",
         "symfony/console": "~2.5",
         "symfony/yaml": "~2.5",
         "symfony/finder": "~2.5",
