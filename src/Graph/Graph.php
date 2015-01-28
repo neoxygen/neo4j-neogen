@@ -37,4 +37,9 @@ class Graph
     {
         return count($this->edges);
     }
+
+    public function setEdges(array $edges)
+    {
+        $this->edges = $edges;
+    }
 }

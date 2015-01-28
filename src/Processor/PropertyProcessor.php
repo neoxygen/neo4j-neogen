@@ -17,6 +17,8 @@ class PropertyProcessor
 
     private $graph;
 
+    private $edges;
+
     public function __construct($seed = null)
     {
         $faker = Factory::create();
@@ -33,14 +35,16 @@ class PropertyProcessor
     public function process(VertEdgeProcessor $vertEdge, Graph $graph)
     {
         $this->graph = $graph;
+        $this->edges = [];
+        $n = 1;
 
         foreach ($vertEdge->getNodes() as $node) {
             $this->addNodeProperties($node);
+            echo $n.'-';
+            $n++;
         }
-
-        foreach ($vertEdge->getEdges() as $edge) {
-            $this->addEdgeProperties($edge);
-        }
+        $this->addEdgeProperties($vertEdge->getEdges());
+        $this->graph->setEdges($this->edges);
 
         return $this->graph;
     }
@@ -71,9 +75,11 @@ class PropertyProcessor
         $this->graph->setNode($vertedge);
     }
 
-    public function addEdgeProperties(array $vertedge)
+    public function addEdgeProperties(array $edges)
     {
-        try {
+        $e = 0;
+        foreach ($edges as $vertedge) {
+            try {
             $props = [];
             if (isset($vertedge['properties'])) {
                 foreach ($vertedge['properties'] as $key => $type) {
@@ -93,7 +99,9 @@ class PropertyProcessor
                 }
             }
             $vertedge['properties'] = $props;
-            $this->graph->setEdge($vertedge);
+            $this->edges[] = $vertedge;
+            echo $e.'-';
+            $e++;
         } catch (\InvalidArgumentException $e) {
             $msg = $e->getMessage();
             preg_match('/((?:")(.*)(?:"))/', $msg, $output);
@@ -101,6 +109,7 @@ class PropertyProcessor
                 $msg = sprintf('The faker type "%s" is not defined', $output[2]);
             }
             throw new SchemaException($msg);
+        }
         }
 
     }

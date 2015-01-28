@@ -50,6 +50,7 @@ class VertEdgeProcessor
                 $this->nodesByIdentifier[$identifier][] = $id;
                 $x++;
             }
+            echo 'Generated '.$count.' '.$node['identifier']. ' nodes'.PHP_EOL;
         }
 
         foreach ($schema->getEdges() as $k => $rel) {
@@ -73,8 +74,9 @@ class VertEdgeProcessor
                 case 'n..1':
                     foreach ($this->nodesByIdentifier[$start] as $node) {
                         $endNodes = $this->nodesByIdentifier[$end];
-                        shuffle($endNodes);
-                        $endNode = current($endNodes);
+                        $max = count($endNodes);
+                        $current = mt_rand(0, $max-1);
+                        $endNode = $endNodes[$current];
                         $this->setEdge($node, $endNode, $type, $props, $start, $end);
                     }
                     break;
@@ -104,15 +106,18 @@ class VertEdgeProcessor
                 case 'n..n':
                     $endNodes = $this->nodesByIdentifier[$end];
                     $max = count($endNodes);
-                    $pct = $max <= 100 ? 0.8 : 0.55;
+                    $pct = $max <= 100 ? 0.1 : 0.01;
+                    if ('ORDER_ITEM' == $type || 'STARRED' == $type) {
+                        $pct = 0.001;
+                    }
                     $maxi = round($max * $pct);
-                    $random = rand(1, $maxi);
+                    $random = $maxi;
+                    $shuffleMax = count($endNodes);
+                    //$suffleRange = range(0, $shuffleMax-1);
                     foreach ($this->nodesByIdentifier[$start] as $node) {
                         for ($i = 1; $i <= $random; $i++) {
-                            reset($endNodes);
-                            shuffle($endNodes);
-                            $endNode = current($endNodes);
-                            next($endNodes);
+                            $ran = mt_rand(0, $shuffleMax-1);
+                            $endNode = $endNodes[$ran];
                             if ($endNode !== $node) {
                                 $this->setEdge($node, $endNode, $type, $props, $start, $end);
                             }
@@ -124,11 +129,16 @@ class VertEdgeProcessor
                     $startNodes = $this->nodesByIdentifier[$start];
                     $endNodes = $this->nodesByIdentifier[$end];
                     foreach ($endNodes as $endNode) {
-                        $startNode = $startNodes[array_rand($startNodes)];
+                        //$startNode = $startNodes[array_rand($startNodes)];
+                        $maxEnd = count($startNodes);
+                        $ran = mt_rand(0, $maxEnd-1);
+                        $startNode = $startNodes[$ran];
                         $this->setEdge($startNode, $endNode, $type, $props, $start, $end);
                     }
                     break;
             }
+
+            echo 'Generated '.$type.' relationships'.PHP_EOL;
         }
 
         return $this;

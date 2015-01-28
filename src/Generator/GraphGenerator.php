@@ -55,6 +55,8 @@ class GraphGenerator
             return $vertEdge->getGraph();
         }
 
+        echo 'Processing properties'.PHP_EOL;
+
         $this->propertyProcessor->process($vertEdge, $graph);
 
         return $graph;

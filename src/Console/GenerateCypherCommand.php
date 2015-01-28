@@ -84,6 +84,7 @@ class GenerateCypherCommand extends Command
             $exportFile = $input->getOption('export');
             $this->exportToFile($exportFile, $this->generateGraph(), $output);
         } elseif ($input->getOption('export-db') != null) {
+            $output->writeln('<info>Starting the Import in the database');
             $client = $this->getDBConnection($input->getOption('export-db'));
             $this->exportToDB($this->generateGraph(), $output, $client);
         }
@@ -138,9 +139,12 @@ class GenerateCypherCommand extends Command
             $output->writeln('<info>Created '.$nodes.' node(s)</info>');
             $edges = 0;
             foreach ($converter->getEdgeStatements() as $es) {
-                $params = isset($es['parameters']) ? $es['parameters'] : ['pairs' => []];
-                $client->sendCypherQuery($es['statement'], $params);
-                $edges += count($params['pairs']);
+                $chunks = array_chunk($es['parameters']['pairs'], 50000);
+                foreach ($chunks as $chunk) {
+                    $client->sendCypherQuery($es['statement'], ['pairs' => $chunk]);
+                    $edges += count($chunk);
+                    echo 'Total relationships created : '.$edges.PHP_EOL;
+                }
             }
             $output->writeln('<info>Created '.$edges.' relationship(s)</info>');
         } catch (HttpException $e) {
@@ -153,15 +157,24 @@ class GenerateCypherCommand extends Command
         $defaults = [
             'scheme' => 'http',
             'host' => 'localhost',
-            'port' => 7474
+            'port' => 7474,
+            'user' => null,
+            'pass' => null
         ];
         $conn = array_merge($defaults, parse_url($dbConnection));
+        if ($conn['user'] === null && $conn['pass'] === null) {
+            $auth = false;
+        } else {
+            $auth = true;
+        }
         if (!array_key_exists('scheme', $conn) || !array_key_exists('host', $conn) || !array_key_exists('port', $conn)) {
             throw new InvalidArgumentException('The connection settings does not seem to be correct');
         }
+        var_dump($auth);
 
         $client = ClientBuilder::create()
-            ->addConnection('default', $conn['scheme'], $conn['host'], $conn['port'])
+            ->addConnection('default', $conn['scheme'], $conn['host'], $conn['port'], $auth, $conn['user'], $conn['pass'])
+            ->setDefaultTimeout(10000000)
             ->build();
 
         return $client;
