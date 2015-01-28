@@ -139,7 +139,7 @@ class GenerateCypherCommand extends Command
             $output->writeln('<info>Created '.$nodes.' node(s)</info>');
             $edges = 0;
             foreach ($converter->getEdgeStatements() as $es) {
-                $chunks = array_chunk($es['parameters']['pairs'], 50000);
+                $chunks = array_chunk($es['parameters']['pairs'], 5000);
                 foreach ($chunks as $chunk) {
                     $client->sendCypherQuery($es['statement'], ['pairs' => $chunk]);
                     $edges += count($chunk);
