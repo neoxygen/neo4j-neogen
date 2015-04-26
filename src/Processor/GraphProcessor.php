@@ -177,7 +177,6 @@ class GraphProcessor
         $startNodes = $this->nodesByIdentifier[$relationship->getStartNode()];
         $endNodes = $this->nodesByIdentifier[$relationship->getEndNode()];
         foreach ($startNodes as $i => $startNode) {
-            print($i);
             $usedTargets = [];
             $x = 0;
             while ($x < $targetCount) {
@@ -192,7 +191,7 @@ class GraphProcessor
                     $relationship->getProperties(),
                     $seed
                 );
-                $usedTargets[$i] = null;
+                $usedTargets[$endNodePosition] = null;
                 $x++;
             }
         }
