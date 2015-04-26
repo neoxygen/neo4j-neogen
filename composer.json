@@ -17,13 +17,13 @@
     ],
     "require": {
         "php": ">=5.4",
-        "fzaninotto/faker": "dev-master",
+        "fzaninotto/faker": "~1.4",
         "symfony/console": "~2.5.0",
         "symfony/yaml": "~2.5.0",
         "symfony/finder": "~2.5.0",
         "symfony/dependency-injection": "~2.5.0",
         "doctrine/collections": "~1.2.0",
-        "neoxygen/neoclient": "~2.0.0",
+        "neoxygen/neoclient": "~2.1",
         "ikwattro/faker-extra": "~0.3",
         "jms/serializer": "~0.16"
     },
