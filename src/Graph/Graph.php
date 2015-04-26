@@ -2,11 +2,16 @@
 
 namespace Neoxygen\Neogen\Graph;
 
+use Neoxygen\Neogen\Schema\GraphSchema;
+use Neoxygen\Neogen\Util\ObjectCollection;
+
 class Graph
 {
-    private $nodes = [];
+    private $nodes;
 
-    private $edges = [];
+    private $edges;
+
+    private $schema;
 
     public function getEdges()
     {
@@ -18,23 +23,32 @@ class Graph
         return $this->nodes;
     }
 
-    public function setEdge(array $edge)
+    public function setNodes(ObjectCollection $nodes)
     {
-        $this->edges[] = $edge;
+        $this->nodes = $nodes;
     }
 
-    public function setNode(array $node)
+    public function setEdges(ObjectCollection $edges)
     {
-        $this->nodes[] = $node;
+        $this->edges = $edges;
     }
 
-    public function getNodesCount()
+    public function setSchema(GraphSchema $schema)
     {
-        return count($this->nodes);
+        $this->schema = $schema;
     }
 
-    public function getEdgesCount()
+    public function getSchema()
     {
-        return count($this->edges);
+        return $this->schema;
+    }
+
+    public function toArray()
+    {
+        return array(
+            'nodes' => $this->nodes->getValues(),
+            'edges' => $this->edges->getValues(),
+            'schema' => $this->getSchema()->toArray()
+        );
     }
 }

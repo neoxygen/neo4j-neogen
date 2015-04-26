@@ -1,0 +1,20 @@
+services:
+  neogen.parser_manager:
+    class: "Neoxygen\\Neogen\\Parser\\ParserManager"
+
+  neogen.graph_generator:
+    class: "Neoxygen\\Neogen\\GraphGenerator\\Generator"
+    arguments: ["@neogen.graph_processor"]
+
+  neogen.faker:
+    class: "%faker.class%"
+
+  neogen.schema_builder:
+    class: "Neoxygen\\Neogen\\Schema\\GraphSchemaBuilder"
+
+  neogen.graph_processor:
+    class: "Neoxygen\\Neogen\\Processor\\GraphProcessor"
+    arguments: ["@neogen.faker"]
+
+  neogen.graph_serializer:
+    class: "Neoxygen\\Neogen\\Util\\GraphSerializer"

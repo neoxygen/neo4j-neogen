@@ -1,0 +1,23 @@
+connection:
+      scheme: http
+      host: localhost
+      port: 7474
+     
+nodes:
+      users:
+        labels: User
+        count: 5000
+        models: ["User"]
+        properties:
+          first_name: firstName
+          uuid: uuid
+
+     
+relationships:
+      fileSpaceRels:
+        start: users
+        end: users
+        type: FOLLOWS
+        mode: n..n
+        properties:
+

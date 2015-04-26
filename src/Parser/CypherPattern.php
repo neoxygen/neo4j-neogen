@@ -3,34 +3,67 @@
 namespace Neoxygen\Neogen\Parser;
 
 use Neoxygen\Neogen\Exception\CypherPatternException;
-use Neoxygen\Neogen\Exception\SchemaException,
-    Neoxygen\Neogen\Schema\GraphSchemaDefinition;
 use Symfony\Component\Yaml\Yaml,
     Symfony\Component\Yaml\Exception\ParseException;
 
-class CypherPattern
+class CypherPattern implements ParserInterface
 {
+    /**
+     *
+     */
     const NODE_PATTERN = '/(^(\\()([_\w\d]+)([:#\w\d]+)*(\s?{[-,:~\'\"{}\[\]\s\w\d]+})?(\s?\*\d+)?(\s*\))$)/';
 
+    /**
+     *
+     */
     const EDGE_PATTERN = '/(<?>?-\[)(?::)([_\w\d]+)(\s?{[-,:~\'\"{}\[\]\s\w\d]+})?(\s?\*[\w\d+]\.\.[\w\d])(\]-<?>?)/';
 
+    /**
+     *
+     */
     const SPLIT_PATTERN = "/((?:<?->?)(?:\\[[^<^>.]*\\*[a-z0-9]+\\.\\.[a-z0-9]+\\])(?:<?->?))/";
 
+    /**
+     *
+     */
     const INGOING_RELATIONSHIP = 'IN';
 
+    /**
+     *
+     */
     const OUTGOING_RELATIONSHIP = 'OUT';
 
+    /**
+     * @var array
+     */
     private $nodes;
 
+    /**
+     * @var array
+     */
     private $edges;
 
+    /**
+     * @var array
+     */
     private $labels;
 
+    /**
+     * @var array
+     */
     private $identifiers;
 
+    /**
+     * @var array
+     */
     private $nodeInfoMap;
 
-    public function parseCypher($cypherPattern)
+    /**
+     * @param  string                 $cypherPattern
+     * @return array                  The converted Cypher => array schema
+     * @throws CypherPatternException When parse exception
+     */
+    public function parse($cypherPattern)
     {
         $this->nodes = [];
         $this->edges = [];
@@ -53,8 +86,14 @@ class CypherPattern
                 }
             }
         }
+
+        return $this->getSchema();
     }
 
+    /**
+     * @param $pattern
+     * @return mixed
+     */
     public function preFormatPattern($pattern)
     {
         $lines = explode("\n", $pattern);
@@ -70,6 +109,10 @@ class CypherPattern
         return $formatInLines;
     }
 
+    /**
+     * @param $cypherPattern
+     * @return array
+     */
     public function splitLineBreaks($cypherPattern)
     {
         $lines = explode("\n", $cypherPattern);
@@ -83,6 +126,10 @@ class CypherPattern
         return $parsedLines;
     }
 
+    /**
+     * @param $cypherLineText
+     * @return array
+     */
     public function parseLine($cypherLineText)
     {
         $parts = preg_split(self::SPLIT_PATTERN, $cypherLineText, null, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
@@ -90,6 +137,11 @@ class CypherPattern
         return $parts;
     }
 
+    /**
+     * @param  array                  $nodeInfo
+     * @param  null                   $part
+     * @throws CypherPatternException
+     */
     public function processNode(array $nodeInfo, $part = null)
     {
         $identifier = $nodeInfo['identifier'];
@@ -97,7 +149,7 @@ class CypherPattern
             return;
         }
         if (empty($nodeInfo['labels']) && !array_key_exists($nodeInfo['identifier'], $this->nodes)) {
-            throw new SchemaException(sprintf('The identifier "%s" has not been declared in "%s"', $nodeInfo['identifier'], $part));
+            throw new CypherPatternException(sprintf('The identifier "%s" has not been declared in "%s"', $nodeInfo['identifier'], $part));
         }
 
         $labels = $nodeInfo['labels'];
@@ -149,6 +201,12 @@ class CypherPattern
         $this->labels[] = $labels;
     }
 
+    /**
+     * @param  array                  $edgeInfo
+     * @param $key
+     * @param  array                  $parts
+     * @throws CypherPatternException
+     */
     public function processEdge(array $edgeInfo, $key, array $parts)
     {
         $prev = trim($parts[$key-1]);
@@ -199,30 +257,25 @@ class CypherPattern
 
     }
 
-    public function getNodes()
-    {
-        return $this->nodes;
-    }
-
-    public function getEdges()
-    {
-        return $this->edges;
-    }
-
-    public function getIdentifiers()
-    {
-        return $this->identifiers;
-    }
-
+    /**
+     * @param $identifier
+     * @return bool
+     */
     public function hasIdentifier($identifier)
     {
         return array_key_exists($identifier, $this->identifiers);
     }
 
+    /**
+     * @param  array                  $nodePattern
+     * @param $part
+     * @return array
+     * @throws CypherPatternException
+     */
     public function getNodePatternInfo(array $nodePattern, $part)
     {
         if (empty($nodePattern[3])) {
-            throw new SchemaException(sprintf('An identifier must be defined for nodes in "%s"', $part));
+            throw new CypherPatternException(sprintf('An identifier must be defined for nodes in "%s"', $part));
         }
 
         $labels = explode(':', trim($nodePattern['4']));
@@ -255,6 +308,11 @@ class CypherPattern
         return $defaultInfo;
     }
 
+    /**
+     * @param  array                  $edgePattern
+     * @return array
+     * @throws CypherPatternException
+     */
     public function getEdgePatternInfo(array $edgePattern)
     {
         $arrowStart = $edgePattern[1];
@@ -264,11 +322,11 @@ class CypherPattern
             $edgePart = &$edgePattern;
             unset($edgePart[0]);
             $patt = implode('', $edgePart);
-            throw new SchemaException(sprintf('The direction of the relationship must be defined, near "%s".', $patt));
+            throw new CypherPatternException(sprintf('The direction of the relationship must be defined, near "%s".', $patt));
         }
         $type = $this->nullString($edgePattern[2]);
         if (null === $type) {
-            throw new SchemaException(sprintf('The type of the relationship must be defined, near "%s"', $edgePattern));
+            throw new CypherPatternException(sprintf('The type of the relationship must be defined, near "%s"', $edgePattern));
         }
         $edge = [
             'type' => $type,
@@ -281,36 +339,62 @@ class CypherPattern
 
     }
 
+    /**
+     * @return string
+     */
     public function getNodePattern()
     {
         return self::NODE_PATTERN;
     }
 
+    /**
+     * @return string
+     */
     public function getEdgePattern()
     {
         return self::EDGE_PATTERN;
     }
 
+    /**
+     * @param $pattern
+     * @return mixed
+     * @throws CypherPatternException
+     */
     public function checkCardinality($pattern)
     {
         $allowedCardinalities = ['1..n', 'n..n', '1..1', 'n..1'];
         $cardinality = str_replace('*', '', trim($pattern[4]));
         if (!in_array($cardinality, $allowedCardinalities)) {
-            throw new SchemaException(sprintf('The cardinality "%s" is not allowed', $cardinality));
+            throw new CypherPatternException(sprintf('The cardinality "%s" is not allowed', $cardinality));
         }
 
         return $cardinality;
     }
 
+    /**
+     * @return array
+     */
     public function getSchema()
     {
-        $schema = new GraphSchemaDefinition();
-        $schema->setNodes($this->nodes);
-        $schema->setEdges($this->edges);
-
-        return $schema;
+        return array(
+            'nodes' => $this->nodes,
+            'relationships' => $this->edges
+        );
     }
 
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'cypher';
+    }
+
+    /**
+     * @param $start
+     * @param $end
+     * @return null|string
+     */
     private function detectEdgeDirection($start, $end)
     {
         if ($start === '-[' && $end === ']->') {
@@ -322,6 +406,10 @@ class CypherPattern
         return null;
     }
 
+    /**
+     * @param $string
+     * @return mixed|null
+     */
     private function nullString($string)
     {
         if (trim($string) === '') {

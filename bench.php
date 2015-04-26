@@ -11,15 +11,12 @@ $neogen = Neogen::create()
     ->build();
 
 $gsb = new GraphSchemaBuilder();
-$file = file_get_contents(__DIR__.'/neogen.cypher');
-$p = $neogen->getParserManager()->getParser('cypher');
+$file = __DIR__.'/neogen.yml';
+$p = $neogen->getParserManager()->getParser('YamlParser');
 $userSchema = $p->parse($file);
 
 $def = $gsb->buildGraph($userSchema);
 $gen = $neogen->getGraphGenerator();
 $g = $gen->generateGraph($def);
 
-$ser = $neogen->getGraphSerializer();
-$json = $ser->serializeGraphToJson($g);
-
-print_r($json);
+print_r($g);
