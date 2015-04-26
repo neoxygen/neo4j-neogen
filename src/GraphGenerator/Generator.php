@@ -21,7 +21,6 @@ class Generator
          */
 
         $graph = $this->graphProcessor->process($graphSchema);
-
         return $graph;
     }
 }

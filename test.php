@@ -19,4 +19,7 @@ $def = $gsb->buildGraph($userSchema);
 $gen = $neogen->getGraphGenerator();
 $g = $gen->generateGraph($def);
 
-print_r($g);
+$ser = $neogen->getGraphSerializer();
+$json = $ser->serializeGraphToJson($g);
+
+print_r($json);
