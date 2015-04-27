@@ -207,11 +207,16 @@ class GraphProcessor
         $endNodes = $this->nodesByIdentifier[$relationship->getEndNode()];
         $target = $this->calculateApproxTargetNodes($startNodes->count(), $endNodes->count());
         $maxIteration = 1 === $target ? $startNodes->count() : $startNodes->count() -1;
+        if ($endNodes->count() > $startNodes->count()) {
+            if ($endNodes->count() % $startNodes->count() === 0) {
+                $maxIteration = $startNodes->count();
+            }
+        }
         $ec = $endNodes->count();
         $eci = 0;
         $ssi = 0;
-        for ($s = 0; $s < $startNodes->count()-1; $s++) {
-            for ($i = 0; $i < $target-1; $i++) {
+        for ($s = 0; $s < $maxIteration; $s++) {
+            for ($i = 0; $i < $target; $i++) {
                 $startNode = $startNodes->get($s);
                 $endNode = $endNodes->get($eci);
                 $this->createRelationship(
@@ -265,6 +270,7 @@ class GraphProcessor
                     return 2;
                 }
                 $target = (int) round($endCount/$startCount);
+                print_r($target);
 
                 return $target;
             }
