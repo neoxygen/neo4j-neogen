@@ -50,6 +50,9 @@ class GraphSchemaBuilder
         } elseif (is_array($nodeInfo['labels'])) {
             $node->addLabels($nodeInfo['labels']);
         }
+        if (!is_array($nodeInfo['properties'])){
+            $nodeInfo['properties'] = [];
+        }
         foreach ($nodeInfo['properties'] as $key => $info) {
             $property = $this->buildNodeProperty($key, $info);
             $node->addProperty($property);

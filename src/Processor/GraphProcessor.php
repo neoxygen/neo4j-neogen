@@ -211,7 +211,7 @@ class GraphProcessor
         $eci = 0;
         $ssi = 0;
         for ($s = 0; $s < $startNodes->count()-1; $s++) {
-            for ($i = 0; $i < $maxIteration; $i++) {
+            for ($i = 0; $i < $target-1; $i++) {
                 $startNode = $startNodes->get($s);
                 $endNode = $endNodes->get($eci);
                 $this->createRelationship(
