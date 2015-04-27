@@ -260,7 +260,11 @@ class GraphProcessor
         if ($startCount <= $endCount) {
             $diff = $endCount - $startCount;
             if (1 < $diff) {
-                $target = (int) round($endCount/$diff);
+                if ($endCount / $startCount === 2) {
+
+                    return 2;
+                }
+                $target = (int) round($endCount/$startCount);
 
                 return $target;
             }

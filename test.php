@@ -22,4 +22,4 @@ $g = $gen->generateGraph($def);
 $ser = $neogen->getGraphSerializer();
 $json = $ser->serializeGraphToJson($g);
 
-print_r($json);
+//print_r($json);

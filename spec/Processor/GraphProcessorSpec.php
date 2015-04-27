@@ -58,5 +58,6 @@ class GraphProcessorSpec extends ObjectBehavior
         $this->calculateApproxTargetNodes(6,3)->shouldReturn(1);
         $this->calculateApproxTargetNodes(30,11)->shouldReturn(1);
         $this->calculateApproxTargetNodes(30,10)->shouldReturn(1);
+        $this->calculateApproxTargetNodes(5, 20)->shouldReturn(4);
     }
 }
