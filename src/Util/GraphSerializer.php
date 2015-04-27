@@ -17,6 +17,6 @@ class GraphSerializer
 
     public function serializeGraphToJson(Graph $graph)
     {
-        return $this->serializer->serialize($graph, 'json');
+        return $this->serializer->serialize($graph->toArray(), 'json');
     }
 }

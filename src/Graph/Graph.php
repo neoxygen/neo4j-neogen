@@ -46,8 +46,8 @@ class Graph
     public function toArray()
     {
         return array(
-            'nodes' => $this->nodes->getValues(),
-            'edges' => $this->edges->getValues(),
+            'nodes' => $this->nodes->toArray(),
+            'edges' => $this->edges->toArray(),
             'schema' => $this->getSchema()->toArray()
         );
     }
