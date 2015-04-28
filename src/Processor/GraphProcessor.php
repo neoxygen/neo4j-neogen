@@ -270,7 +270,6 @@ class GraphProcessor
                     return 2;
                 }
                 $target = (int) round($endCount/$startCount);
-                print_r($target);
 
                 return $target;
             }
