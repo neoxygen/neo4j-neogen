@@ -2,6 +2,8 @@
 
 namespace GraphAware\Neogen\Parser;
 
+use GraphAware\Neogen\Parser\Definition\NodeDefinition;
+use GraphAware\Neogen\Parser\Definition\PropertyDefinition;
 use Neoxygen\Neogen\Exception\CypherPatternException;
 use GraphAware\Neogen\Exception\ParseException;
 use GraphAware\Neogen\Helper\ArrayUtils;
@@ -162,8 +164,25 @@ class CypherPattern implements ParserInterface
             throw new ParseException(sprintf('A node identifier is mandatory, none given in "%s"', $patternPart));
         }
 
+        $identifier = trim((string) $pregMatchOutput[1]);
+
         if (!array_key_exists(2, $pregMatchOutput) || empty($pregMatchOutput[2])) {
             throw new ParseException(sprintf('At least one label is required in the pattern, none given in "%s"', $patternPart));
+        }
+
+        $defintion = new NodeDefinition($identifier);
+
+        $labels = ArrayUtils::cleanEmptyStrings(explode(':', trim($pregMatchOutput[2])));
+        foreach ($labels as $k => $label) {
+            $label = trim($label);
+            $model = null;
+            if (0 === strpos($label, '#')) {
+                $label = substr($label, 1);
+                $model = $label;
+            }
+
+            $defintion->addLabel($label);
+            $defintion->addModel($model);
         }
 
         if (array_key_exists(3, $pregMatchOutput)) {
@@ -172,30 +191,29 @@ class CypherPattern implements ParserInterface
                 if (!preg_match(self::PROPERTY_KEY_VALIDATION_PATTERN, $k, $out)) {
                     throw new ParseException(sprintf('The property key "%s" is not valid in part "%s"', $k, $patternPart));
                 }
+
+                if ($defintion->hasProperty($k)) {
+                    throw new ParseException(sprintf('The property key "%s" can only be defined once in part "%s"', $k, $patternPart));
+                }
+
+                $defintion->addProperty($this->getPropertyDefinition($k, $v));
             }
         }
 
-        $labels = ArrayUtils::cleanEmptyStrings(explode(':', trim($pregMatchOutput[2])));
-        $cleanedLabels = [];
-        $models = [];
-        foreach ($labels as $k => $label) {
-            $label = trim($label);
-            $model = null;
-            if (0 === strpos($label, '#')) {
-                $label = substr($label, 1);
-                $model = $label;
-            }
-            // this may be removed when we have the schema definition object
-            if (in_array($label, $cleanedLabels)) {
-                throw new ParseException(sprintf('The label "%s" is given more than one time in part "%s"', $label, $patternPart));
-            }
-            $cleanedLabels[] = $label;
-            if ($model) {
-                $models[] = $model;
-            }
+        return $defintion;
+    }
+
+    public function getPropertyDefinition($key, $generator)
+    {
+        $u = false;
+        $i = false;
+        if (0 === strpos($key, '!')) {
+            $u = true;
+        } elseif (0 === strpos($key, '?')) {
+            $i = true;
         }
 
-        return $pregMatchOutput;
+        return new PropertyDefinition($key, $generator, $i, $u);
     }
 
     public function getEdgePatternDefinition(array $pregMatchOutput, $patternPart)

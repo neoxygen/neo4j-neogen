@@ -41,9 +41,11 @@ class CypherPatternParserTest extends \PHPUnit_Framework_TestCase
     {
         $parser = new CypherPattern();
         $str = '(a:Node:#SuperNode:Person {uuid: {randomNumber:[0,20]}} *100)';
-        $output = $parser->matchPattern($str);
+        $definition = $parser->matchPattern($str);
 
-        $this->assertCount(5, $output);
+        $this->assertEquals("a", $definition->getIdentifier());
+        $this->assertCount(3, $definition->getLabels());
+        $this->assertCount(1, $definition->getModels());
     }
 
     public function testIdentifierIsRequired()
@@ -66,14 +68,24 @@ class CypherPatternParserTest extends \PHPUnit_Framework_TestCase
     {
         $parser = new CypherPattern();
         $str = '(a:Node {?uuid: uuid})';
-        $output = $parser->matchPattern($str);
+        $definition = $parser->matchPattern($str);
+
+        $this->assertCount(1, $definition->getProperties());
+        foreach ($definition->getProperties() as $prop) {
+            $this->assertTrue($prop->isIndexed());
+        }
     }
 
     public function testUniqueConstraintMarkIsTaken()
     {
         $parser = new CypherPattern();
         $str = '(a:Node {!uuid: uuid})';
-        $out = $parser->matchPattern($str);
+        $definition = $parser->matchPattern($str);
+
+        $this->assertCount(1, $definition->getProperties());
+        foreach ($definition->getProperties() as $prop) {
+            $this->assertTrue($prop->isUnique());
+        }
     }
 
     public function testOtherMarkersThrowErrors()
