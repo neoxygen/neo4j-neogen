@@ -19,9 +19,17 @@ This library is the heart of the popular [Graphgen web application](http://graph
 ### Download the library :
 
 ```bash
-git clone https://github.com/neoxygen/neogen
+git clone https://github.com/graphaware/neo4j-neogen
 
 cd neogen
+```
+
+### Define your graph model in Cypher, refer to Graphgen for documentation reference :
+
+```cypher
+(p:Person:User {uuid: uuid, dob:{dateTimeBetween:["-65years","-18 years"]}} *10)
+(c:Company {name: company, slogan: catchPhrase} *5)
+(p)-[:WORKS_AT *n..1]->(c)
 ```
 
 ### Define your graph model in YAML :
