@@ -1,18 +1,19 @@
 {
-    "name": "neoxygen/neogen",
+    "name": "graphaware/neo4j-neogen",
     "type": "library",
-    "description": "Neo4j Graph generator for PHP5.4+",
+    "description": "Neo4j Graph generation engine",
     "keywords": [
         "graph",
         "neo4j",
-        "generator"
+        "generation",
+        "faker"
     ],
-    "homepage": "http://neoxygen.io",
+    "homepage": "http://graphaware.com",
     "license": "MIT",
     "authors": [
         {
             "name": "Christophe Willemsen",
-            "email": "chris@neoxygen.io"
+            "email": "christophe@graphaware.com"
         }
     ],
     "require": {
@@ -41,11 +42,6 @@
         "psr-4": {
             "Neoxygen\\Neogen\\Tests\\": "tests/Neoxygen/Neogen/Tests",
             "GraphAware\\Neogen\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0-dev"
         }
     },
     "bin": ["bin/neogen"]
