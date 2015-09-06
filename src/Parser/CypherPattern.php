@@ -209,8 +209,10 @@ class CypherPattern implements ParserInterface
         $i = false;
         if (0 === strpos($key, '!')) {
             $u = true;
+            $key = substr($key, 1);
         } elseif (0 === strpos($key, '?')) {
             $i = true;
+            $key = substr($key, 1);
         }
 
         return new PropertyDefinition($key, $generator, $i, $u);

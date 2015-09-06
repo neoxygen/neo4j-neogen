@@ -103,4 +103,13 @@ class CypherPatternParserTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(ParseException::class);
         $parser->matchPattern($str);
     }
+
+    public function testMarkersAreRemovedInPropertyKeys()
+    {
+        $str = '(w:Node {!uuid: uuid, ?name: word})';
+        $parser = new CypherPattern();
+        $definition = $parser->matchPattern($str);
+        $this->assertEquals('uuid', $definition->getProperties()[0]->getKey());
+        $this->assertEquals('name', $definition->getProperties()[1]->getKey());
+    }
 }
