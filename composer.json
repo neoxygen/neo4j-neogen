@@ -18,12 +18,12 @@
     "require": {
         "php": ">=5.4",
         "fzaninotto/faker": "~1.4",
-        "symfony/console": "~2.5",
-        "symfony/yaml": "~2.5",
-        "symfony/finder": "~2.5",
-        "symfony/dependency-injection": "~2.5",
+        "symfony/console": "~2.7",
+        "symfony/yaml": "~2.7",
+        "symfony/finder": "~2.7",
+        "symfony/dependency-injection": "~2.7",
         "doctrine/collections": "~1.2",
-        "neoxygen/neoclient": "~2.1",
+        "neoxygen/neoclient": "~3.0",
         "ikwattro/faker-extra": "~0.3",
         "jms/serializer": "~0.16"
     },
@@ -33,12 +33,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Neoxygen\\Neogen\\": "src"
+            "Neoxygen\\Neogen\\": "src/",
+            "GraphAware\\Neogen\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Neoxygen\\Neogen\\Tests\\": "tests/Neoxygen/Neogen/Tests"
+            "Neoxygen\\Neogen\\Tests\\": "tests/Neoxygen/Neogen/Tests",
+            "GraphAware\\Neogen\\Tests\\": "tests/"
         }
     },
     "extra": {

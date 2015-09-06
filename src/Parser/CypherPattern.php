@@ -1,17 +1,19 @@
 <?php
 
-namespace Neoxygen\Neogen\Parser;
+namespace GraphAware\Neogen\Parser;
 
 use Neoxygen\Neogen\Exception\CypherPatternException;
+use GraphAware\Neogen\Exception\ParseException;
+use GraphAware\Neogen\Helper\ArrayUtils;
 use Symfony\Component\Yaml\Yaml,
-    Symfony\Component\Yaml\Exception\ParseException;
+    Symfony\Component\Yaml\Exception\ParseException as YamlParseException;
 
 class CypherPattern implements ParserInterface
 {
     /**
      *
      */
-    const NODE_PATTERN = '/(^(\\()([_\w\d]+)([:#\w\d]+)*(\s?{[-,:~\'\"{}\[\]\s\w\d]+})?(\s?\*\d+)?(\s*\))$)/';
+    const NODE_PATTERN = '/(?:^(?:\\()([_\w\d]*)([:#\w\d]+)*(\s?{[-,:~\'\"{}\[\]!\?\s\w\d]+})?(\s?\*\d+)?(?:\s*\))$)/';
 
     /**
      *
@@ -22,6 +24,11 @@ class CypherPattern implements ParserInterface
      *
      */
     const SPLIT_PATTERN = "/((?:<?->?)(?:\\[[^<^>.]*\\*[a-z0-9]+\\.\\.[a-z0-9]+\\])(?:<?->?))/";
+
+    /**
+     *
+     */
+    const PROPERTY_KEY_VALIDATION_PATTERN = "/^[!\\?]?[a-z]+_?[a-z0-9]*$/";
 
     /**
      *
@@ -135,6 +142,65 @@ class CypherPattern implements ParserInterface
         $parts = preg_split(self::SPLIT_PATTERN, $cypherLineText, null, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
 
         return $parts;
+    }
+
+    public function matchPattern($pattern)
+    {
+        if (preg_match(self::NODE_PATTERN, $pattern, $output)) {
+            return $this->getNodePatternDefintion($output, $pattern);
+        } elseif (preg_match(self::EDGE_PATTERN, $pattern, $output)) {
+            //
+        }
+
+        throw new ParseException(sprintf('Unable to parse part "%s"', $pattern));
+
+    }
+
+    public function getNodePatternDefintion(array $pregMatchOutput, $patternPart)
+    {
+        if (!array_key_exists(1, $pregMatchOutput) || empty($pregMatchOutput[1])) {
+            throw new ParseException(sprintf('A node identifier is mandatory, none given in "%s"', $patternPart));
+        }
+
+        if (!array_key_exists(2, $pregMatchOutput) || empty($pregMatchOutput[2])) {
+            throw new ParseException(sprintf('At least one label is required in the pattern, none given in "%s"', $patternPart));
+        }
+
+        if (array_key_exists(3, $pregMatchOutput)) {
+            $properties = Yaml::parse(trim($pregMatchOutput[3]));
+            foreach ($properties as $k => $v) {
+                if (!preg_match(self::PROPERTY_KEY_VALIDATION_PATTERN, $k, $out)) {
+                    throw new ParseException(sprintf('The property key "%s" is not valid in part "%s"', $k, $patternPart));
+                }
+            }
+        }
+
+        $labels = ArrayUtils::cleanEmptyStrings(explode(':', trim($pregMatchOutput[2])));
+        $cleanedLabels = [];
+        $models = [];
+        foreach ($labels as $k => $label) {
+            $label = trim($label);
+            $model = null;
+            if (0 === strpos($label, '#')) {
+                $label = substr($label, 1);
+                $model = $label;
+            }
+            // this may be removed when we have the schema definition object
+            if (in_array($label, $cleanedLabels)) {
+                throw new ParseException(sprintf('The label "%s" is given more than one time in part "%s"', $label, $patternPart));
+            }
+            $cleanedLabels[] = $label;
+            if ($model) {
+                $models[] = $model;
+            }
+        }
+
+        return $pregMatchOutput;
+    }
+
+    public function getEdgePatternDefinition(array $pregMatchOutput, $patternPart)
+    {
+
     }
 
     /**
