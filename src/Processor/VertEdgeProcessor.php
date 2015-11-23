@@ -104,11 +104,12 @@ class VertEdgeProcessor
                 case 'n..n':
                     $endNodes = $this->nodesByIdentifier[$end];
                     $max = count($endNodes);
-                    $pct = $max <= 100 ? 0.8 : 0.55;
+                    $pct = $max <= 100 ? 0.8 : 0.06;
                     $maxi = round($max * $pct);
                     $random = rand(1, $maxi);
                     foreach ($this->nodesByIdentifier[$start] as $node) {
                         for ($i = 1; $i <= $random; $i++) {
+                            echo '.';
                             reset($endNodes);
                             shuffle($endNodes);
                             $endNode = current($endNodes);
@@ -129,6 +130,8 @@ class VertEdgeProcessor
                     }
                     break;
             }
+
+            echo '.';
         }
 
         return $this;
