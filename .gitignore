@@ -1,4 +1,5 @@
 vendor/
 neogen.yml
 neogen.cql
+piotr.cql
 tests/_reports
