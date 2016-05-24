@@ -1,6 +1,6 @@
 <?php
 
-namespace Neoxygen\Neogen\Parser;
+namespace GraphAware\Neogen\Parser;
 
 interface ParserInterface
 {
