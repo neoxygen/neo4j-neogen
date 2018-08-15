@@ -2,6 +2,7 @@
 
 namespace Neoxygen\Neogen\Tests\Parser;
 
+use Neoxygen\Neogen\Neogen;
 use Neoxygen\Neogen\Parser\CypherPattern;
 
 class NewCypherPatternTest extends \PHPUnit_Framework_TestCase
@@ -144,5 +145,19 @@ class NewCypherPatternTest extends \PHPUnit_Framework_TestCase
         $parser = new CypherPattern();
         $this->setExpectedException($this->schemaException);
         $parser->parseCypher($p);
+    }
+
+    public function testNodeWithCustomProperty()
+    {
+        $p = '(d:Date {t: {numberBetween:[0,100]} })';
+        $gen = new Neogen();
+        $gen->generateGraphFromCypher($p);
+    }
+
+    public function testIbanGenerator()
+    {
+        $p = '(account:Account {iban___de_DE: bankAccountNumber }*20)';
+        $gen = new Neogen();
+        $gen->generateGraphFromCypher($p);
     }
 }

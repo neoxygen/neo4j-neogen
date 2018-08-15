@@ -16,6 +16,8 @@ class PropertyProcessor
 
     private $faker;
 
+    private $localizedFakers = [];
+
     private $graph;
 
     public function __construct($seed = null)
@@ -51,21 +53,29 @@ class PropertyProcessor
     {
         $props = [];
         foreach ($vertedge['properties'] as $key => $type) {
+            $fakerToUse = $this->faker;
+            if (strpos($key, '___') !== false) {
+                $parts = explode("___", $key);
+                $key = $parts[0];
+                $fakerToUse = $this->getFaker($parts[1]);
+            }
+            var_dump($key);
             if (is_array($type)) {
                 if ($type['type'] == 'password') {
                     $type['type'] = 'sha1';
                 }
                 if ($type['type'] == 'randomElement' || $type['type'] == 'randomElements') {
-                    $value = call_user_func_array(array($this->faker, $type['type']), array($type['params']));
+                    $value = call_user_func_array(array($fakerToUse, $type['type']), array($type['params']));
                 } else {
-                    $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
+                    var_dump($type);
+                    $value = call_user_func_array(array($fakerToUse, $type['type']), $type['params']);
                 }
                 if ($value instanceof \DateTime) {
                     $value = $value->format('Y-m-d H:i:s');
                 }
             } else {
                 $ntype = $type == 'password' ? 'sha1' : $type;
-                $value = $this->faker->$ntype;
+                $value = $fakerToUse->$ntype;
             }
             $props[$key] = $value;
         }
@@ -79,14 +89,20 @@ class PropertyProcessor
             $props = [];
             if (isset($vertedge['properties'])) {
                 foreach ($vertedge['properties'] as $key => $type) {
+                    $fakerToUse = $this->faker;
+                    if (strpos($key, '___') !== false) {
+                        $parts = explode("___", $key);
+                        $key = $parts[0];
+                        $fakerToUse = $this->getFaker($parts[1]);
+                    }
                     if (is_array($type)) {
                         if ($type['type'] == 'randomElement' || $type['type'] == 'randomElements') {
-                            $value = call_user_func_array(array($this->faker, $type['type']), array($type['params']));
+                            $value = call_user_func_array(array($fakerToUse, $type['type']), array($type['params']));
                         } else {
-                            $value = call_user_func_array(array($this->faker, $type['type']), $type['params']);
+                            $value = call_user_func_array(array($fakerToUse, $type['type']), $type['params']);
                         }
                     } else {
-                        $value = $this->faker->$type;
+                        $value = $fakerToUse->$type;
                     }
                     if ($value instanceof \DateTime) {
                         $value = $value->format('Y-m-d H:i:s');
@@ -104,6 +120,18 @@ class PropertyProcessor
             }
             throw new SchemaException($msg);
         }
+    }
 
+    private function getFaker($locale)
+    {
+        if ($locale === null) {
+            return $this->faker;
+        } else {
+            if (!array_key_exists($locale, $this->localizedFakers)) {
+                $this->localizedFakers[$locale] = Factory::create($locale);
+            }
+
+            return $this->localizedFakers[$locale];
+        }
     }
 }
